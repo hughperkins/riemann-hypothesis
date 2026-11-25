@@ -61,7 +61,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum
 
 namespace GlobalTheory.Mum.TPos
@@ -269,8 +268,7 @@ theorem tensor_pos : ∀ (R : Type) [CommRing R] [IsDomain R] [IsNoetherianRing 
     rw [e] at h
     exact_mod_cast h.ne'
   have hex : ∃ l, n l ≠ 0 ∧ y l ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hrow : ∀ i, ∑ j, ((N : ℤ) * A i j) • z j = 0 := by
       intro i
       simp_rw [hm i, Finset.sum_smul]

@@ -4,47 +4,7 @@ public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsImg
 public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenericBlockMatrixIsBlockDiag
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
 
 @[expose] public section
@@ -97,27 +57,8 @@ theorem coord_ne {z : (Σ k, ι k) → ℂ} {q : Σ k, ι k} (h : (X q : MRing �
 theorem comp_mem_mcPts {K₁ : Type} [Fintype K₁] {ι₁ : K₁ → Type} [∀ k, Fintype (ι₁ k)] {κ : K₁ → K}
     {v : (Σ k, ι₁ k) → (Σ k, ι k)} (hb : IsBlockMap κ v) {Ω₁ Ω : Type} [Field Ω₁] [Field Ω] (φ : Ω₁ →+* Ω)
     {x₁ : (Σ k, ι₁ k) → Ω₁} {x : (Σ k, ι k) → Ω} (hx : ∀ q, x (v q) = φ (x₁ q)) {z : (Σ k, ι k) → ℂ}
-    (hz : z ∈ mcPts (mCoordIdeal x)) : z ∘ v ∈ mcPts (mCoordIdeal x₁) := by
-  refine ⟨fun k => ?_, fun f hf => ?_⟩
-  · obtain ⟨i, hi⟩ := hz.1 (κ k)
-    obtain ⟨⟨k', i'⟩, hp⟩ := hb.2.2.2 ⟨κ k, i⟩ ⟨k, rfl⟩
-    have hk : k' = k := hb.1 (by simpa [hp] using (hb.2.2.1 ⟨k', i'⟩).symm)
-    subst hk
-    exact ⟨i', by simpa [Function.comp, hp] using hi⟩
-  · let ρ : MvPolynomial K₁ Ω₁ →+* MvPolynomial K Ω :=
-      (MvPolynomial.map φ).comp (rename κ : MvPolynomial K₁ Ω₁ →ₐ[Ω₁] MvPolynomial K Ω₁).toRingHom
-    have e : (mConeMap x).comp (rename v) = ρ.toIntAlgHom.comp (mConeMap x₁) := by
-      apply MvPolynomial.algHom_ext
-      intro p
-      show mConeMap x (rename v (X p)) = ρ (mConeMap x₁ (X p))
-      simp [mConeMap, ρ, hx, hb.2.2.1 p]
-    have hf' : mConeMap x₁ f = 0 := hf
-    have hr : rename v f ∈ mCoordIdeal x := by
-      show mConeMap x (rename v f) = 0
-      have e' : mConeMap x (rename v f) = ρ (mConeMap x₁ f) := DFunLike.congr_fun e f
-      rw [e', hf', map_zero]
-    have := hz.2 _ hr
-    rwa [MvPolynomial.map_rename, MvPolynomial.eval_rename] at this
+    (hz : z ∈ mcPts (mCoordIdeal x)) : z ∘ v ∈ mcPts (mCoordIdeal x₁) :=
+  CPts.comp_mem_mcPts hb φ (funext hx) hz
 
 end Orbits
 

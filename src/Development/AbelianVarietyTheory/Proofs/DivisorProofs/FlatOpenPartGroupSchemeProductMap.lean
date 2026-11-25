@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenericFibreHomOfFormalSectionRatiosStatement
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
 import Mathlib.Algebra.Order.Floor.Extended
@@ -55,7 +56,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum
 
 namespace GlobalTheory.Mum.FlatMul
@@ -108,17 +108,7 @@ theorem flat_mu (H : Over T) [GrpObj H] (hH : Flat H.hom) : Flat μ[H].left := b
 
 theorem main : ∀ (T : Scheme.{0}) (H V : Over T) [GrpObj H] (e : V ⟶ H), IsOpenImmersion e.left → Flat H.hom →
     Flat ((fst V V ≫ e) * (snd V V ≫ e)).left := by
-  intro T H V _ e he hH
-  have h1 : Flat (e ▷ V).left := MorphismProperty.of_isPullback (whiskerRight_pb e V)
-    (inferInstance : Flat e.left)
-  have h2 : Flat (H ◁ e).left := MorphismProperty.of_isPullback (whiskerLeft_pb H e)
-    (inferInstance : Flat e.left)
-  have h3 := flat_mu H hH
-  have k : (fst V V ≫ e) * (snd V V ≫ e) = ((e ▷ V) ≫ (H ◁ e)) ≫ μ[H] := by
-    rw [Hom.mul_def]
-    congr 1
-    apply hom_ext <;> simp
-  rw [k, Over.comp_left, Over.comp_left]
-  infer_instance
+  intros
+  apply _root_.GlobalTheory.GenericHomField.flat_mul <;> assumption
 
 end GlobalTheory.Mum.FlatMul

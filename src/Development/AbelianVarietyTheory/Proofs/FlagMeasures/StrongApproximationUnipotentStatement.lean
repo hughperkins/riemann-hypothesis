@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualLatticeUnipotentTranslateStandard
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
 public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
@@ -691,16 +692,7 @@ theorem hf_sum_l {ι : Type*} (s : Finset ι) (x : ι → S.V) (y : S.V) :
 theorem expand {g : Fin (r + 1) → S.V} {gs : Fin r → S.V}
     (H1 : ∀ (a : Fin (r + 1)) (j : Fin r), hf L S.Hm (g a) (gs j) = if a = j.castSucc then 1 else 0)
     (x : S.V) (hx : x ∈ S.spanTo g r) : x = ∑ a : Fin r, hf L S.Hm x (gs a) • g a.castSucc := by
-  unfold Frames.spanTo at hx
-  induction hx using Submodule.span_induction with
-  | mem z hz =>
-    obtain ⟨c, -, rfl⟩ := mem_gen S le_rfl hz
-    simp [H1, Fin.castSucc_inj, ite_smul]
-  | zero => simp [hf]
-  | add a b _ _ ha hb =>
-    rw [Finset.sum_congr rfl (fun i _ => by rw [hf_add_l, add_smul]), Finset.sum_add_distrib, ← ha, ← hb]
-  | smul c a _ ha =>
-    rw [Finset.sum_congr rfl (fun i _ => by rw [hf_smul_l, mul_smul]), ← Finset.smul_sum, ← ha]
+  apply _root_.GlobalTheory.HL.FrameLift.expand <;> assumption
 
 theorem zero_of {g : Fin (r + 1) → S.V} {gs : Fin r → S.V}
     (H1 : ∀ (a : Fin (r + 1)) (j : Fin r), hf L S.Hm (g a) (gs j) = if a = j.castSucc then 1 else 0)
@@ -1347,8 +1339,7 @@ theorem strong_approx_params : ∀ {F E : Type} [Field F] [NumberField F] [Field
     refine (((((s1.union s2).union s3).union hint).union hd).union s6).subset ?_
     intro p hp
     simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_iUnion] at hp ⊢
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     obtain ⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩, h6⟩ := hc
     apply hp
     refine ⟨h1, h2, h3, h4, h5, ?_⟩

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
 public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 public import Mathlib.NumberTheory.NumberField.AdeleRing
@@ -63,17 +64,7 @@ theorem sig_invol {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (x : E) : σ (σ x) 
   rw [h.2.2.2, h.2.2.2, star_star]
 
 theorem sig_ne {σ : E →ₐ[F] E} (h : IsCMExt F E σ) : ∃ x, σ x ≠ x := by
-  by_contra hc
-  push_neg at hc
-  obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := ⟨(IsAlgClosed.lift (R := ℚ) (M := ℂ) (S := E)).toRingHom⟩
-  have hr : NumberField.ComplexEmbedding.IsReal τ := by
-    ext x
-    simp only [NumberField.ComplexEmbedding.conjugate_coe_eq]
-    have e := h.2.2.2 τ x
-    rw [hc] at e
-    exact e.symm
-  have hc2 := h.2.1.isComplex (NumberField.InfinitePlace.mk τ)
-  exact (NumberField.InfinitePlace.isComplex_mk_iff.1 hc2) hr
+  apply _root_.GlobalTheory.SplitDetCharF.sig_ne <;> assumption
 
 
 variable (F E) in
@@ -129,8 +120,7 @@ theorem sq_mem_normGrp {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (a : (AF F)ˣ) 
 theorem exists_isEtaF {σ : E →ₐ[F] E} (h : IsCMExt F E σ) :
     ∃ η : (AF F)ˣ →* Circle, Formalism.IndefR.DatumF.IsEtaF E η := by
   obtain ⟨a, ha⟩ : ∃ a, a ∉ normGrp F E := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     exact normGrp_ne_top h (eq_top_iff.2 fun a _ => hc a)
   obtain ⟨η, h1, h2⟩ := GlobalTheory.VolHeckeCompare.exists_char_of_not_mem _ (sq_mem_normGrp h) a ha
   refine ⟨η, ?_, fun b => h1 (Subgroup.mem_sup_left ⟨b, rfl⟩), fun x => h1 (Subgroup.mem_sup_right ⟨x, rfl⟩),

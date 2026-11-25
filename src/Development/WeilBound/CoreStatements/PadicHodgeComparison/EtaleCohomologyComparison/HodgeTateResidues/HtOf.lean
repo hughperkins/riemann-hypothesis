@@ -370,7 +370,7 @@ theorem coEx : CoEx l K := by
   intro Y m L M hM r j hr
   haveI := AdicGeo.proper_p hM.1
   haveI := hM.2
-  obtain ⟨U⟩ := (cov_ex M.q).1 inferInstance
+  obtain ⟨U⟩ := (_root_.GlobalTheory.CompanionTheory.CovEx.exists_cov M.q).1 inferInstance
   exact CoB.main L.γB M.q L.θ U L.tB_mem m L.ker_θ L.pdB L.nil L.gr r j hr
 
 end CrystallineSemistableComparison.HT
@@ -1497,7 +1497,7 @@ theorem rS_tr (r j n : ℕ) (x : CH.H (Y.SS M r (n + 1)).fn j) :
 theorem ex [FiniteDimensional ℚ_[l] K] (hM : M.Sm) (r j : ℕ) (hr : r < m) (x : Y.Fam M r j) (hx : CB.Comp x) : ∃! w, L.Rho x w := by
   haveI := AdicGeo.proper_p hM.1
   haveI : IsDiscreteValuationRing (OK l K) := OK_dvr
-  obtain ⟨U⟩ := (cov_ex M.p).1 hM.2
+  obtain ⟨U⟩ := (_root_.GlobalTheory.CompanionTheory.CovEx.exists_cov M.p).1 hM.2
   obtain ⟨k, h1, h2⟩ := lift_gr afgA L.γ l m ok_dv (tf_dom (Fact.out : l.Prime).ne_zero ok_dv (by omega)) L.lat M.p U r hr j
   obtain ⟨z, hz⟩ := h1 (fun n => (L.rS M r n).pull j (x n)) fun n =>
     (rS_tr L M r j n (x (n + 1))).symm.trans (congrArg ((L.rS M r n).pull j) (hx n))
@@ -1539,9 +1539,6 @@ open CategoryTheory Limits AlgebraicGeometry TensorProduct
 namespace CrystallineSemistableComparison.HT
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
-
-theorem toV_ex (M : Model l K) (n : ℕ) (v : M.V n) : ∃ ζ : ℤ_[l], ζ ≠ 0 ∧ ∃ x : M.T n, (ζ : ℚ_[l]) • v = M.toV n x :=
-  Inj.exists_int_mul (T := GlobalTheory.EtC.Hl l M.spc n 0) v
 
 theorem sum_coord' {K B V V' V'' : Type _} [Field K] [CommRing B] [AddCommGroup V] [Module K V] [AddCommGroup V'] [Module K V']
     [AddCommGroup V''] [Module K V''] (o : K →+* B) {m m' : ℕ} (b : Module.Basis (Fin m) K V) (b' : Module.Basis (Fin m') K V')
@@ -1659,7 +1656,7 @@ theorem key1 (P : HTPre l K) {M : Model l K} (hM : M.Sm) {i j d : ℕ} (v : M.V 
       ∑ p : (Finset.HasAntidiagonal.antidiagonal d : Finset (ℕ × ℕ)), ∑ s, ∑ s', P.h M p.1.1 i v ((hb P hM i p.1.1).coord s) *
         (P.h M p.1.2 j (M.toV _ y) ((hb P hM j p.1.2).coord s') *
         kC K (φ (cupH M.q (Finset.HasAntidiagonal.mem_antidiagonal.1 p.2) rfl (hb P hM i p.1.1 s) (hb P hM j p.1.2 s')))) := by
-  obtain ⟨ζ, hζ, x, hx⟩ := toV_ex M i v
+  obtain ⟨ζ, hζ, x, hx⟩ := CrystallineSemistableComparison.Inj.toV_exists M i v
   obtain ⟨w, hw, hw'⟩ := hf x
   have e := P.cup M hM x y w hw (hb P hM i) (hb P hM j) d φ
   rw [hw', ← hx, P.lin, f.map_smul, smul_eq_mul, (qC l).map_mul] at e

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHeckeLBoundedInVerticalStrips
 public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
 public import Formalism.LocalRingCardinality.DataParams₂
 public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
@@ -262,21 +263,7 @@ theorem injective_of_isCMType {φ : I → E →+* ℂ} (h : IsCMType φ) : Funct
 
 theorem bijective_of_isCMType {φ : I → E →+* ℂ} (h : IsCMType φ) :
     Function.Bijective fun i => InfinitePlace.mk (φ i) := by
-  constructor
-  · intro i j hij
-    have e := InfinitePlace.mk_eq_iff.1 hij
-    refine (h (φ j)).unique ?_ (Or.inl rfl)
-    rcases e with e | e
-    · exact Or.inl e.symm
-    · exact Or.inr e.symm
-  · intro w
-    obtain ⟨i, hi, -⟩ := h w.embedding
-    refine ⟨i, ?_⟩
-    rcases hi with e | e
-    · show InfinitePlace.mk (φ i) = w
-      rw [← e, InfinitePlace.mk_embedding]
-    · show InfinitePlace.mk (φ i) = w
-      rw [← InfinitePlace.mk_conjugate_eq, ← e, InfinitePlace.mk_embedding]
+  apply _root_.GlobalTheory.CMTypeNorm.place_bijective <;> assumption
 
 theorem exists_perm {K : Type} [Field K] [Algebra K E] {φK : K →+* ℂ} {φ : I → E →+* ℂ} {σ : ℂ ≃+* ℂ}
     (hφ : IsCMType φ) (hK : ∀ i, (φ i).comp (algebraMap K E) = φK) (hc : (starRingEnd ℂ).comp φK ≠ φK)
@@ -942,8 +929,7 @@ theorem sum_log_emb (L : IntermediateField ℚ ℂ) [FiniteDimensional ℚ L] [N
 theorem emb_two {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 : Module.finrank ℚ K = 2)
     (hc : (starRingEnd ℂ).comp φK ≠ φK) (g : K →+* ℂ) : g = φK ∨ g = (starRingEnd ℂ).comp φK := by
   classical
-  by_contra h
-  push_neg at h
+  by_contra! h
   have h3 : ({g, φK, (starRingEnd ℂ).comp φK} : Finset (K →+* ℂ)).card = 3 :=
     Finset.card_eq_three.2 ⟨g, φK, _, h.1, h.2, hc.symm, rfl⟩
   have := Finset.card_le_univ ({g, φK, (starRingEnd ℂ).comp φK} : Finset (K →+* ℂ))

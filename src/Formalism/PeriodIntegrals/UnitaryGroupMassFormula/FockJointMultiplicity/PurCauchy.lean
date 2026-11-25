@@ -3,55 +3,9 @@ module
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurElim
 public import Mathlib.Algebra.MvPolynomial.Funext
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurInv
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurDiag, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurCauchy
@@ -255,8 +209,7 @@ variable {σ : Type*}
 
 theorem exists_support_of_killS {S : Set σ} {P : MvPolynomial σ ℂ} (h : aeval (killS S) P ≠ 0) :
     ∃ e ∈ P.support, ∀ v ∈ S, e v = 0 := by
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply h
   conv_lhs => rw [P.as_sum]
 
@@ -337,27 +290,23 @@ theorem cauchyHW_of (hA : HypAnti) (hS : HypShape) (hD : HypDiag) (hF : HypFree)
       exact absurd (Finset.mem_univ i) h
   have hrowlt : ∀ i : Fin m, (i : ℕ) < n := by
     intro i
-    by_contra hi
-    push_neg at hi
+    by_contra! hi
     have h0 : α i = 0 := by
       rw [← (hsum e heP).1 i]
       exact Finset.sum_eq_zero fun k _ => hoff i k (by have := k.isLt; omega)
     exact (hα i).ne' h0
   have hcollt : ∀ k : Fin n, (k : ℕ) < m := by
     intro k
-    by_contra hk
-    push_neg at hk
+    by_contra! hk
     have h0 : β k = 0 := by
       rw [← (hsum e heP).2 k]
       exact Finset.sum_eq_zero fun i _ => hoff i k (by have := i.isLt; omega)
     exact (hβ k).ne' h0
   have hmn : m = n := by
     apply le_antisymm
-    · by_contra h
-      push_neg at h
+    · by_contra! h
       exact lt_irrefl n (hrowlt ⟨n, h⟩)
-    · by_contra h
-      push_neg at h
+    · by_contra! h
       exact lt_irrefl m (hcollt ⟨m, h⟩)
   have hanti : Antitone α := hA τ m n ι hι α P hP hrow fun e he i => (hsum e he).1 i
   refine ⟨hmn, hanti, fun i k h => (hrowsum i k h).trans (hcolsum i k h).symm, ?_⟩

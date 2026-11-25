@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapComp
 public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LiftToLogResolutionAnalytic
@@ -31,52 +32,9 @@ public import Development.WeilBound.CoreStatements.FlagImmersions.IsHolToOfLocal
 public import Development.WeilBound.CoreStatements.FlagImmersions.NormDetEq
 public import Development.WeilBound.CoreStatements.FlagImmersions.PerCoord
 public import Development.WeilBound.CoreStatements.FlagImmersions.RankLem
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.CoreStatements.FlagImmersions.ExistsInverse, Development.WeilBound.CoreStatements.FlagImmersions.NeZeroOfHasVal, Development.WeilBound.CoreStatements.FlagImmersions.AnalyticAtAeval, Development.WeilBound.CoreStatements.FlagImmersions.TopLeIffCentre, Development.WeilBound.CoreStatements.FlagImmersions.FlagImmersion, Development.WeilBound.CoreStatements.FlagImmersions.GlobalModelRealTower, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GoodTowerRealAgreement
@@ -490,16 +448,8 @@ theorem fibreLatVec_comp {E : Type} [Field E] [NumberField E] [IsCMField E] {H :
 
 theorem exists_tr {Ω Li : Type} [Field Ω] [AddCommGroup Li] [Module Ω Li] {r : ℕ} (b b₀ : Fin r → Li)
     (h : ∀ i, flagStep Ω b i = flagStep Ω b₀ i) (i : Fin r) : ∃ t : Ω, b i - t • b₀ i ∈ flagStep Ω b₀ i := by
-  have h1 : b i ∈ flagStep Ω b₀ (i + 1) := by
-    rw [← h]
-    exact Submodule.subset_span ⟨i, Nat.lt_succ_self _, rfl⟩
-  have h2 : {k : Fin r | (k : ℕ) < i + 1} = insert i {k : Fin r | (k : ℕ) < i} := by
-    ext k
-    simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Fin.ext_iff]
-    omega
-  rw [flagStep, h2, Set.image_insert_eq, Submodule.mem_span_insert] at h1
-  obtain ⟨a, w, hw, e⟩ := h1
-  exact ⟨a, by rw [e, add_sub_cancel_left]; exact hw⟩
+  intros
+  apply _root_.GlobalTheory.CompanionTheory.Ar.OrVert.flag_coef <;> assumption
 
 theorem leadMinor_smul {r : ℕ} (c : ℝ) (Γ : Matrix (Fin r) (Fin r) ℂ) (k : ℕ) :
     leadMinor ((c : ℂ) • Γ) k = c ^ k * leadMinor Γ k := by
@@ -799,8 +749,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.LowerBoundFree (ComponentData ComponentSetting degMu ArLimExists slX)
 
-theorem _root_.GlobalTheory.CompanionTheory.Relay.good_tower_real_agreement : Given → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] [IsAbelianGalois ℚ E] (H : Host E) (D : Datum H) (Xo : ∀ l : Level H, Moduli D l) (l : Level H) (c : Coeff l) (Y : Model (Xo l) c (algebraMap (𝓞 c.F) c.F)) [DecidableEq (CMType H)] (T : RootTower (CMType H) (D.p + D.q)) (o : GoodOrigin Y T) (II : IntersectionSystem), IsGlobal Xo l c Y → o.Extra → IsFullIntersectionSystem II → 1 ≤ D.p → 1 ≤ D.q → (realOf o.toTowerOrigin).Unif := by
-  first | exact @RootFieldNumerics.global_model_real_tower
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GoodTowerRealAgreement =====

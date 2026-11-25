@@ -954,8 +954,7 @@ theorem isSBHalf_sub_smul {m n : ℕ} {e : AE D} {Λ : AddSubgroup (Mx D m n)} {
   obtain ⟨f1, k, hk, f2, f3⟩ := hf
   obtain ⟨g1, l, hl, g2, g3⟩ := hg
   have hne : ∀ t, (f - c • g) t ≠ 0 → f t ≠ 0 ∨ g t ≠ 0 := fun t ht => by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact ht (by rw [Pi.sub_apply, Pi.smul_apply, h.1, h.2, smul_zero, sub_zero])
   have hh : ∀ (j : ℕ) (u : Mx D m n), IsHalf e u → IsHalf e (j • u) := fun j u hu => by
     rw [GlobalTheory.SplitScalar.isHalf_iff] at hu ⊢
@@ -1883,7 +1882,7 @@ theorem gen_of_type_clean : GlobalTheory.Hk3.HoweUnram → ∀ (D : D7) (G : Typ
     (fun PP a ha tr ε hε _ κ hκ _ => hC PP a ha tr ε hε κ hκ) hL
   intro Sb v hv f hT hC hL
   by_cases hpg : ∃ PP ∈ R.Pg, Over PP v
-  · exact GlobalTheory.T.local_generation_thetaFun_at_type_prime D G Pl0 T A Ks R F hG hP i t Sb v hv hpg f hT hC hL
+  · exact _root_.GlobalTheory.DownLift.GenSplit.gen_at_type_prime D G Pl0 T A Ks R F hG hP i t Sb v hv hpg f hT hC hL
   by_cases hq : ∃ PP ∈ R.Q t, Over PP v
   · exact GlobalTheory.T.localGeneration_thetaFunctions_twistPlace D G Pl0 T A Ks R F hG hP i t Sb v hv (fun PP h ho => hpg ⟨PP, h, ho⟩) hq f hT hC hL
   have hoff : ∀ PP, PP ∈ R.Pg ∨ PP ∈ R.Q t → ¬ Over PP v := by

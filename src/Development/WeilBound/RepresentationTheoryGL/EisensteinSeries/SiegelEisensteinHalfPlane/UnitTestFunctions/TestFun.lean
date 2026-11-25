@@ -8,57 +8,8 @@ public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.Sieg
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOfChiNeZero
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdFunHasCompactSupport
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardSectionGood
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.UniformSpace.Uniformizable
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.RingTheory.Henselian
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BumpProfileEqZeroOfLtHalf, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousInfiniteIdeleInclusion, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfForallInM, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasCompactSupportSmallF, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IdeleModuleOfFiniteEq, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfiniteModuleOfFinite, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemOHOfMemIntAd, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemStabOfInvCol, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatCastFiniteAdeleApply, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RealComponentCoe, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ToIdeleMulSelf, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ValEqOneOfMulEq, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZetaIntegrandTensor, Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.TestFun
@@ -668,8 +619,7 @@ theorem finiteModule_lt_one {b : (FiniteAdeleRing (𝓞 k) k)ˣ}
     finiteModule (ofFinite b) < 1 := by
   classical
   obtain ⟨v, hv⟩ : ∃ v : HeightOneSpectrum (𝓞 k), ‖(b : FiniteAdeleRing (𝓞 k) k) v‖ < 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     refine hu ((mem_finiteIntegralUnits k).2 fun v ↦ ⟨mem_integralFiniteAdeles.1 hb v, ?_⟩)
     have hv1 : ‖(b : FiniteAdeleRing (𝓞 k) k) v‖ = 1 :=
       le_antisymm (norm_le_one_of_mem_OH hb v) (hcon v)
@@ -816,16 +766,6 @@ namespace GlobalTheory.CompanionTheory.EisTestFun
 
 variable {k : Type} [Field k] [NumberField k]
 
-theorem infiniteModule_ofFinite (b : (FiniteAdeleRing (𝓞 k) k)ˣ) :
-    infiniteModule (ofFinite b) = 1 := by
-  have h : ((ofFinite b : IdeleGroup k) : AdeleRing (𝓞 k) k).1 = (1 : AdeleRing (𝓞 k) k).1 := rfl
-  unfold infiniteModule
-  refine Finset.prod_eq_one fun w _ => ?_
-  rw [h, adele_fst_one_apply, norm_one, one_pow]
-
-theorem ideleModule_ofFinite (b : (FiniteAdeleRing (𝓞 k) k)ˣ) :
-    (ideleModule k (ofFinite b) : ℝ) = finiteModule (ofFinite b) := by
-  rw [ideleModule_apply, infiniteModule_ofFinite, one_mul]
 
 theorem line_lc_cs {g : (Unit → FiniteAdeleRing (𝓞 k) k) → ℂ}
     (hg : g ∈ GJMatrix.finiteSchwartzBruhatPi k) :
@@ -871,7 +811,7 @@ theorem zFinPos : ZFinPos := by
     have hc : ((1 : HeckeCharacter K).toIdele (ofFinite b) : ℂ) = 1 := by
       rw [HeckeCharacter.toIdele_apply]
       rfl
-    rw [hc, mul_one, ideleModule_ofFinite]
+    rw [hc, mul_one, GlobalTheory.CompanionTheory.EisTF.ideleModule_ofFinite_eq]
     simp only [F, G, finiteZetaBound]
     split_ifs with hb
     · obtain ⟨r, hr, hgr⟩ := hnn (b : FiniteAdeleRing (𝓞 K) K)
@@ -1098,14 +1038,6 @@ namespace GlobalTheory.CompanionTheory.RgEisSupp
 
 open PositivityTheory.RgEis PositivityTheory.RgEis.TF
 
-theorem inM_of_dvd {k : Type} [Field k] [NumberField k] {M N : ℕ} (h : M ∣ N)
-    {x : FiniteAdeleRing (𝓞 k) k} (hx : InM N x) : InM M x := by
-  obtain ⟨c, rfl⟩ := h
-  obtain ⟨y, hy, rfl⟩ := hx
-  refine ⟨(c : FiniteAdeleRing (𝓞 k) k) * y, (OH k).mul_mem (natCast_mem _ c) hy, ?_⟩
-  push_cast
-  ring
-
 theorem col_apply {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι] [DecidableEq ι]
     (i₀ : ι) (κ : GL ι 𝔸[k]) (r : ι) :
     TF.col i₀ κ r = ((κ⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) r i₀ := by
@@ -1175,7 +1107,7 @@ theorem supp : ColLaw → InMTop → Supp := by
       exact isClosed_le continuous_const c1
   have hanti : ∀ n, C (n + 1) ⊆ C n := by
     intro n κ hκ
-    refine ⟨fun j hj => inM_of_dvd (Nat.mul_dvd_mul_right (Nat.factorial_dvd_factorial (Nat.le_succ n)) M₀) (hκ.1 j hj), fun w => ?_⟩
+    refine ⟨fun j hj => GlobalTheory.CompanionTheory.RgEisFin.inM_dvd (Nat.mul_dvd_mul_right (Nat.factorial_dvd_factorial (Nat.le_succ n)) M₀) (hκ.1 j hj), fun w => ?_⟩
     refine le_trans ?_ (hκ.2 w)
     have : (1 : ℝ) / (((n + 1 : ℕ) : ℝ) + 1) ≤ 1 / ((n : ℝ) + 1) := by
       apply one_div_le_one_div_of_le (by positivity)
@@ -1183,8 +1115,7 @@ theorem supp : ColLaw → InMTop → Supp := by
       linarith
     linarith
   have hex : ∃ n, C n ⊆ O := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     obtain ⟨κ, hκ⟩ := IsCompact.nonempty_iInter_of_sequence_nonempty_isCompact_isClosed
       (fun n => C n \ O) (fun n => Set.diff_subset_diff_left (hanti n))
       (fun n => Set.nonempty_of_not_subset (hno n)) ((hCcl 0).sdiff hO).isCompact
@@ -1192,7 +1123,7 @@ theorem supp : ColLaw → InMTop → Supp := by
     have hall : ∀ n, κ ∈ C n := fun n => (Set.mem_iInter.1 hκ n).1
     have hκO : κ ∉ O := (Set.mem_iInter.1 hκ 0).2
     have hfin : ∀ j, j ≠ i₀ → (TF.col i₀ κ.1 j).2 = 0 := fun j hj =>
-      hzero _ fun M hM => inM_of_dvd
+      hzero _ fun M hM => GlobalTheory.CompanionTheory.RgEisFin.inM_dvd
         ((Nat.dvd_factorial (Nat.pos_of_ne_zero hM) le_rfl).mul_right M₀) ((hall M).1 j hj)
     have hone : ∀ w, 1 ≤ ‖(TF.col i₀ κ.1 i₀).1 w‖ ^ 2 := by
       intro w

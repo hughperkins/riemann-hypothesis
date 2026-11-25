@@ -74,8 +74,6 @@ import Development.AbelianVarietyTheory.Proofs.SatakeParameters.OmegaPullId
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 namespace GlobalTheory.PD
@@ -117,8 +115,6 @@ end -- clump:auto
 -- clump-header: {"m": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamPullbackAlongSecondMapSmulIotaMultiKaehler", "h": "module\n\npublic import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Edge1\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Gamma.Basic\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Data.Nat.Choose.Multinomial\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.HaveILetI\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Topology.Sheaves.Init\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -253,17 +249,11 @@ private theorem surj_productMap {Y : Scheme.{0}} [Y.IsSeparated] {A B C : CommRi
       rfl
   rw [hJe] at hJ
   have hs := (IsClosedImmersion.isAffine_surjective_of_isAffine (Spec.map (CommRingCat.ofHom φ))).2
-  have nat := Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom φ)
-  intro c
-  obtain ⟨t, ht⟩ := hs ((Scheme.ΓSpecIso C).inv.hom c)
-  refine ⟨(Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom.hom t, ?_⟩
-  have h3 := congrArg (fun f => f.hom ((Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom.hom t)) nat
-  simp only [CommRingCat.hom_comp, RingHom.comp_apply] at h3
-  have h4 : (Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).inv.hom ((Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom.hom t) = t := by
-    simp
-  rw [h4] at h3
-  have h5 := (ConcreteCategory.injective_of_mono_of_preservesPullback (Scheme.ΓSpecIso C).inv)
-  exact h5 (h3.trans ht)
+  have hcomp := (Scheme.ΓSpecIso C).commRingCatIsoToRingEquiv.surjective.comp hs
+  change Function.Surjective ((Spec.map (CommRingCat.ofHom φ)).appTop ≫ (Scheme.ΓSpecIso C).hom) at hcomp
+  rw [Scheme.ΓSpecIso_naturality] at hcomp
+  exact Function.Surjective.of_comp
+    (show Function.Surjective (φ ∘ (Scheme.ΓSpecIso (.of (A ⊗[ℤ] B))).hom) from hcomp)
 
 private theorem pb_aff {Y : Scheme.{0}} [Y.IsSeparated] {W1 W2 : Y.Opens} (h1 : IsAffineOpen W1) (h2 : IsAffineOpen W2) :
     IsPullback (Spec.map (Y.presheaf.map (homOfLE (inf_le_left : W1 ⊓ W2 ≤ W1)).op))
@@ -445,8 +435,6 @@ section -- clump:auto
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD KaehlerDifferential GlobalTheory.W1 GlobalTheory.W1.Lef
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace UpperTheory.PullbackConnectingMap
@@ -614,8 +602,7 @@ theorem pullC_delta (τ : κ → ι) (φ : E →ₗ[k] E') (c : Finset ι → E)
     rw [pullC_inj τ φ c hinj', map_zsmul, smul_smul, smul_smul, sortSign_mul_cubeSign_image τ hj hinj,
       image_erase_eq_erase_image_of_injOn τ hj hinj]
   · have hcol : ∃ a ∈ s, ∃ b ∈ s, a < b ∧ τ a = τ b := by
-      by_contra hno
-      push_neg at hno
+      by_contra! hno
       apply hinj
       intro x hx y hy hxy
       rcases lt_trichotomy x y with h | h | h
@@ -1233,8 +1220,6 @@ section -- clump:auto
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR GlobalTheory.PD KaehlerDifferential GlobalTheory.W1 GlobalTheory.WH
-
-set_option autoImplicit false
 
 section Alg
 

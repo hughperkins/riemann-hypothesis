@@ -489,8 +489,7 @@ variable [NumberField F] [NumberField E]
 
 theorem exists_gram2E_ne (h : IsCMExt F E σ) (hM : 2 ≤ M) (hJ : IsHermND σ J)
     (z : Fin M → E) (hz : hE σ J z z ≠ 0) : ∃ w, gram2E σ J z w ≠ 0 := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   obtain ⟨d, hd⟩ := GlobalTheory.HermLineZeros.exists_conj_ne h
   set a : Fin M → E := fun i => hE σ J (Pi.single i 1) z
   set b : Fin M → E := fun j => hE σ J z (Pi.single j 1)
@@ -974,10 +973,7 @@ theorem hermitianGramDetTwoVectorsTensor_incl (σ : E →ₐ[F] E) {M : ℕ} (J 
   simp only [gram2R, gram2E, hR_incl, map_sub, map_mul]
 
 theorem sigR_sigR {σ : E →ₐ[F] E} (hσ : ∀ e, σ (σ e) = e) (u : K ⊗[F] E) : sigR K σ (sigR K σ u) = u := by
-  induction u using TensorProduct.induction_on with
-  | zero => simp
-  | tmul k e => simp [sigR, hσ]
-  | add a b ha hb => simp only [map_add (f := _), ha, hb]
+  apply _root_.GlobalTheory.PlaneNorm.FieldCase.sigR_sigR <;> assumption
 
 theorem sigR_hR {σ : E →ₐ[F] E} (hσ : ∀ e, σ (σ e) = e) {M : ℕ} {J : Matrix (Fin M) (Fin M) E}
     (hJ : ∀ i j, σ (J j i) = J i j) (a b : Fin M → K ⊗[F] E) :
@@ -1786,8 +1782,7 @@ theorem exists_isotropic_places : ∀ (F E : Type) [Field F] [NumberField F] [Fi
   classical
   have key : (∃ w ∈ S₁, ∃ u : Fin M → w.Completion ⊗[F] E, u ≠ 0 ∧ hR w.Completion σ J u u = 0) ∨
       (∃ v ∈ S₂, ∃ u : Fin M → Fv F v ⊗[F] E, u ≠ 0 ∧ hR (Fv F v) σ J u u = 0) := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     apply hnc
     apply _root_.GlobalTheory.SUSuppCompact.isCompact_SUSupp_of_bounded F E σ hσ M J hJ S₁ S₂ ε hε
     · intro w hw

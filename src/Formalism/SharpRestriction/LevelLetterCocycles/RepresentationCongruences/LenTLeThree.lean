@@ -4,49 +4,7 @@ import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.
 public import Formalism.SharpRestriction.LevelLetterCocycles.AdmBoundsBOfAdm
 public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
 public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -71,10 +29,6 @@ theorem tsum_three (l : ℕ) (hl : 11 ≤ l) (f : ℕ → ℝ) (x₀ x₁ X : �
     ∑' a : ℕ, f a * ((l : ℝ) - 1) ^ (-(a : ℤ)) ≤
       x₀ + x₁ / ((l : ℝ) - 1) + X / (((l : ℝ) - 1) * ((l : ℝ) - 2)) := by
   apply Formalism.MainNotions.N.FrobeniusPowerSeries.tsum_three <;> assumption
-
-theorem cW_le (l : ℕ) (hl : 11 ≤ l) (h η H : ℕ) (hη : η + 1 ≤ h) (hH : H ≤ h + η) :
-    (cW l H : ℝ) ≤ 2 + Real.logb l (2 * (h : ℝ)) :=
-  Formalism.MainNotions.N.FrobeniusPowerSeries.cW_le l hl h η H hη hH
 
 theorem rr_le (l : ℕ) (hl : 11 ≤ l) (h w S η H H₁ : ℕ) (hη : η + 1 ≤ h)
     (hH : H ≤ h + η) (hH₁ : H₁ ≤ w + S + η) (s r : ℝ)
@@ -151,8 +105,7 @@ theorem sum_lenT (hne : ∃ i, ¬ th i) :
     constructor
     · intro hi
       refine ⟨e i, ?_, ?_⟩
-      · by_contra hlt
-        push_neg at hlt
+      · by_contra! hlt
         have h1 : e i - lenT th c < e i := by omega
         have h2 := he2 i _ h1
         have h3 : i + ((e i - lenT th c : ℕ) : ZMod n) + 1 = c - (lenT th c : ZMod n) + 1 := by
@@ -166,8 +119,7 @@ theorem sum_lenT (hne : ∃ i, ¬ th i) :
         · apply he3
           have e4 : c - (k : ZMod n) + (k : ZMod n) + 1 = c + 1 := by ring
           rw [e4]; exact hc.2
-        · by_contra hlt
-          push_neg at hlt
+        · by_contra! hlt
           apply he1 (c - (k : ZMod n))
           have hth := hLt (k - e (c - (k : ZMod n))) (by omega) (by omega)
           have e5 : c - (k : ZMod n) + ((e (c - (k : ZMod n)) : ℕ) : ZMod n) + 1 =
@@ -187,8 +139,7 @@ theorem sum_lenT (hne : ∃ i, ¬ th i) :
 theorem lenT_le_three (c : ZMod n) (hc : ¬ th (c + 1))
     (halt : ∀ i, ¬ (th i ∧ th (i + 1) ∧ th (i + 2))) : lenT th c ≤ 3 := by
   obtain ⟨-, -, -, hlt⟩ := lenT_spec th c hc
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have a1 := hlt 1 le_rfl (by omega)
   have a2 := hlt 2 (by norm_num) (by omega)
   have a3 := hlt 3 (by norm_num) (by omega)
@@ -204,8 +155,7 @@ theorem lenT_le_three (c : ZMod n) (hc : ¬ th (c + 1))
 theorem lenT_le_R (c : ZMod n) (hc : ¬ th (c + 1)) (R : ℕ)
     (hone : ∀ i, ¬ ∀ u : ℕ, u < R → th (i + (u : ZMod n))) : lenT th c ≤ R := by
   obtain ⟨-, -, -, hlt⟩ := lenT_spec th c hc
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   apply hone (c - (R : ZMod n) + 1)
   intro u hu
   have hth := hlt (R - u) (by omega) (by omega)

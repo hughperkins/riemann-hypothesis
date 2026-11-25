@@ -76,7 +76,6 @@ open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
 open GlobalTheory.ChainFr GlobalTheory.SepRows GlobalTheory.SepPer Matrix
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LevelDenom
 
@@ -207,8 +206,6 @@ open GlobalTheory.ChainFr GlobalTheory.SepRows GlobalTheory.SepPer Matrix
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.exists_common_denominator_selfDual_level : ∀ (D : D7) (V : HSp D) (Λ : Lat V), IsSelfDualC V Λ → ∃ b : ℕ, 0 < b ∧ ∀ k ∈ congLev D.sp.cm V.gram Λ ⊤, ∀ i j, (b : Lev.EAf D) * k.1 i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by
-  first | exact @GlobalTheory.LevelDenom.exists_denom_congLev
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCommonDenominatorSelfDualLevelStatement =====
@@ -223,7 +220,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PointDenom
 
@@ -301,8 +297,6 @@ open GlobalTheory.ChainFr GlobalTheory.SepRows GlobalTheory.SepPer Matrix
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem _root_.GlobalTheory.T.exists_finitePart_denominator_le_height_pow : ∀ (D : D7) (V : HSp D), ∃ (C : ℝ) (A : ℕ), ∀ g : GA D V, ∃ d : ℕ, 0 < d ∧ (d : ℝ) ≤ C * height V g ^ A ∧ ∀ i j, (d : Lev.EAf D) * (Lev.finE V g).1 i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by
-  first | exact @GlobalTheory.PointDenom.exists_denom_le_height_pow
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFinitePartDenominatorLeHeightPowStatement =====
@@ -483,7 +477,6 @@ open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
 open GlobalTheory.ChainFr GlobalTheory.SepRows GlobalTheory.SepPer Matrix
 open scoped TensorProduct InnerProductSpace
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -559,16 +552,6 @@ end GlobalTheory.PoinCount
 
 namespace GlobalTheory.PoinCount
 
-theorem level_den (D : D7) (V : HSp D) (Λ : Lat V) (hΛ : IsSelfDualC V Λ) : ∃ b : ℕ, 0 < b ∧
-    ∀ k ∈ congLev D.sp.cm V.gram Λ ⊤, ∀ i j,
-      (b : Lev.EAf D) * k.1 i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E :=
-  GlobalTheory.T.exists_common_denominator_selfDual_level D V Λ hΛ
-
-theorem point_den (D : D7) (V : HSp D) : ∃ (C : ℝ) (A : ℕ), ∀ g : GA D V, ∃ d : ℕ, 0 < d ∧ (d : ℝ) ≤ C * height V g ^ A ∧
-    ∀ i j, (d : Lev.EAf D) * (Lev.finE V g).1 i j ∈
-      Formalism.L2.Herm.intAf D.host.F D.host.E :=
-  GlobalTheory.T.exists_finitePart_denominator_le_height_pow D V
-
 variable {D : D7}
 
 theorem finE_rat (V : HSp D) (γ : GA D V) (δ : GL (Fin V.rank) D.host.E)
@@ -636,12 +619,6 @@ theorem exists_den (D : D7) (V : HSp D) (Λ : Lat V) (hΛ : IsSelfDualC V Λ) (c
 end GlobalTheory.PoinCount
 
 namespace GlobalTheory.PoinCount
-
-theorem sum_sep_le (ι : Type) [Fintype ι] [Nonempty ι] (n : ℕ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ la : ℝ, 0 < la → la ≤ 1 →
-    ∀ S : Finset (ι → Matrix (Fin n) (Fin n) ℂ),
-      (∀ s ∈ S, ∀ s' ∈ S, s ≠ s' → la ^ Fintype.card ι ≤ ∏ v, hsn (s v - s' v)) →
-      ∑ s ∈ S, ∏ v, ((1 + hsn (s v)) ^ (2 * n ^ 2 + 1))⁻¹ ≤ C * la⁻¹ ^ (2 * n ^ 2 * Fintype.card ι) :=
-  _root_.GlobalTheory.SepSum.sum_weights_le_of_separated ι n
 
 variable {D : D7}
 

@@ -449,8 +449,7 @@ theorem testLatticeCondition_sumLat_nabK_and_delK : ∀ (K : Type) [Field K] [Nu
       obtain ⟨c⟩ := (inferInstance : Nonempty C)
       obtain ⟨i⟩ := GlobalTheory.TestLat.SumLat.idx_nonempty lam
       have ht : ∃ t ∈ T c, t ≠ 0 := by
-        by_contra hn
-        push_neg at hn
+        by_contra! hn
         have hb : T c = ⊥ := by
           apply le_antisymm _ bot_le
           intro t ht
@@ -552,8 +551,6 @@ open Formalism.L2 Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest
 
 namespace GlobalTheory.BigTop.Fun.LeafMMTie
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section Spread
 
@@ -703,7 +700,6 @@ open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain
 open Formalism.L2 Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest
 namespace GlobalTheory.BigTop.Fun.LeafMMTie
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 section Spread
 open GlobalTheory.SignedHC
 variable (D : D7) (C : ℝ) (τ : D.what₂.Tau)

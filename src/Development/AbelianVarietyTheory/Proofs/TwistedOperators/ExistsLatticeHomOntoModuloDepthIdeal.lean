@@ -316,13 +316,11 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.Grow
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelPlusSubgroup (coefPlus Cols SizeRows)
 open GlobalTheory.SepRows GlobalTheory.CoreOnto
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
 namespace GlobalTheory.OntoModPf
 
-open NumberField
 
 variable {K : Type} [Field K] [NumberField K]
 
@@ -371,7 +369,6 @@ end GlobalTheory.OntoModPf
 
 namespace GlobalTheory.OntoModPf
 
-open NumberField
 
 variable {K : Type} [Field K] [NumberField K]
 

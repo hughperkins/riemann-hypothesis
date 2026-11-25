@@ -634,8 +634,7 @@ theorem exists_pair_of_annihilator_any : ∀ (F : Type) [Field F] [NumberField F
   intro F _ _ v κ _ ψ hcont hnorm hne Λ c hc hself hbd η hη
   classical
   have hne' : ∃ t, ψ t ≠ 1 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (by ext t; simpa using h t)
   obtain ⟨n, hn⟩ := _root_.GlobalTheory.ConductorAdicCompletion.exists_conductor_adicCompletion F v ψ hcont hnorm hne'
   obtain ⟨a, ha⟩ := exists_valuation_eq F v n
@@ -1010,11 +1009,7 @@ theorem schA_le {N : Submodule ℂ ((κ → AF F) → ℂ)} (h : ∀ f φ, IsFam
 
 theorem IsFam.finite {φ : ∀ v : Pl F, (κ → Fv F v) → ℂ} (hφ : IsFam φ) (x : κ → AF F) :
     (Function.mulSupport fun v => φ v fun i => evFin F v (x i)).Finite := by
-  have h : ∀ᶠ v in cofinite, ∀ i, evFin F v (x i) ∈ v.adicCompletionIntegers F := eventually_all.2 fun i => (x i).2.2
-  refine (eventually_cofinite.1 ?_)
-  filter_upwards [h, hφ.2] with v h1 h2
-  rw [h2, ind, Set.indicator_of_mem (show _ ∈ {x : κ → Fv F v | ∀ i, x i ∈ v.adicCompletionIntegers F} from h1)]
-  rfl
+  apply _root_.GlobalTheory.RatWeilUnip.finite_mulSupport <;> assumption
 
 def schrL {R : Type} [CommRing R] [Invertible (2 : R)] (ψ : AddChar R ℂ) (w : (κ → R) × (κ → R)) :
     ((κ → R) → ℂ) →ₗ[ℂ] (κ → R) → ℂ where

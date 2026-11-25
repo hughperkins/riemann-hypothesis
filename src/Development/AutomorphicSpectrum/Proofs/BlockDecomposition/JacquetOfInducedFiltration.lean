@@ -25,59 +25,11 @@ import GroundTheory.AutomorphicForms.GeometricLemmaCellSurjective
 import GroundTheory.AutomorphicForms.GeometricLemmaGraded
 import GroundTheory.AutomorphicForms.GeometricLemmaUnnormalized
 import GroundTheory.LocalFields.LocalFourierHaar
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Algebra.Nonarchimedean.TotallyDisconnected
-import Mathlib.Topology.Separation.Connected
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import GroundTheory.AutomorphicForms.GeometricLemmaOrbit
 import Development.AutomorphicSpectrum.Proofs.GlobalProofs.JacquetModuleFiniteLength
-import Mathlib.Tactic.Basify
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.GroupTheory.DoubleCoset
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BernsteinZelevinskyGeometricLemma, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CellLeviTensorDecomposition, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DoubleCosetBlockMatrix, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsPermBlockMatrix, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictBlockOrder, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiltrationTransportEquiv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InductionReindexEquiv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothCompContinuous, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleDeterminantTwist, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleEquiv, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviBlockHomeomorph, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PermutationBlockCounts, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetOfInducedFiltration
@@ -1131,25 +1083,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 theorem label_eq_iff {e' : (Σ j, m' j) ≃ Fin N} {γ : Fin N → ℕ}
     (hγ : ∀ x y, γ x < γ y ↔ blk e' x < blk e' y) (x y : Fin N) :
     γ x = γ y ↔ blk e' x = blk e' y := by
-  refine ⟨fun h => ?_, fun h => ?_⟩
-  · have a1 : ¬ blk e' x < blk e' y := fun hl => by
-      have := (hγ x y).mpr hl
-      rw [h] at this
-      exact lt_irrefl _ this
-    have a2 : ¬ blk e' y < blk e' x := fun hl => by
-      have := (hγ y x).mpr hl
-      rw [h] at this
-      exact lt_irrefl _ this
-    exact le_antisymm (not_lt.mp a2) (not_lt.mp a1)
-  · have a1 : ¬ γ x < γ y := fun hl => by
-      have := (hγ x y).mp hl
-      rw [h] at this
-      exact lt_irrefl _ this
-    have a2 : ¬ γ y < γ x := fun hl => by
-      have := (hγ y x).mp hl
-      rw [h] at this
-      exact lt_irrefl _ this
-    exact le_antisymm (not_lt.mp a2) (not_lt.mp a1)
+  simp only [le_antisymm_iff, ← not_lt, hγ]
 
 theorem unipRad_eq {e' : (Σ j, m' j) ≃ Fin N} {γ : Fin N → ℕ}
     (hγ : ∀ x y, γ x < γ y ↔ blk e' x < blk e' y) :

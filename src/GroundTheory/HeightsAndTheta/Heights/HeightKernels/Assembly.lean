@@ -55,59 +55,11 @@ public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootDivSuppEmp
 public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootHeightNE
 public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PTelescope
 public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Assembly
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRatA
 import Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Mathlib.Tactic.TypeStar
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Algebra.Ring.IsFormallyReal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Real
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualCurvePoint, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualGeomDegPos, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualGeomDegStandard, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineConj, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualPointLineDegree, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopBound, GroundTheory.HeightsAndTheta.Heights.HeightKernels.ReMulOfPos, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopMetricChange, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopStandard, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopSubLattice, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSemipositive, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassHeightBound, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PLineOfLargeDegreeDual, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPointArInt, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPointDegCPos, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PPointVertR, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootArithVar, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootDense, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootLogNormBound, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootPointConj, GroundTheory.HeightsAndTheta.Heights.HeightKernels.PRootPointsFinite, GroundTheory.HeightsAndTheta.Heights.HeightKernels.Assembly
@@ -1843,18 +1795,8 @@ theorem isIntegral_of_pow_eq_one {x : ℂ} {k : ℕ} (hk : 0 < k) (hx : x ^ k = 
   ⟨Polynomial.X ^ k - Polynomial.C 1, Polynomial.monic_X_pow_sub_C 1 hk.ne', by simp [hx]⟩
 
 theorem rootCoord_isIntegral {f j m : ℕ} (ζ : Fin f → Matrix (Fin j) (Fin m) ℂ) (hζ : IsRootMatrix ζ)
-    (p : Σ _ : Fin f, PlIdx j m) : IsIntegral ℤ (rootCoord ζ p) := by
-  refine IsIntegral.det fun a b => ?_
-  simp only [colsOf, Matrix.submatrix_apply, id, onePipe, Matrix.of_apply]
-  generalize (p.2.1.orderEmbOfFin p.2.2) b = c
-  refine Fin.addCases (fun c => ?_) (fun c => ?_) c
-  · rw [Fin.append_left, Matrix.one_apply]
-    split_ifs
-    · exact isIntegral_one
-    · exact isIntegral_zero
-  · rw [Fin.append_right]
-    obtain ⟨k, hk, hx⟩ := hζ p.1 a c
-    exact isIntegral_of_pow_eq_one hk hx
+    (p : Σ _ : Fin f, PlIdx j m) : IsIntegral ℤ (rootCoord ζ p) :=
+  by apply _root_.GroundTheory.Heights₂.Heights.RootDivisorSupportEmpty.isIntegral_rootCoord; assumption
 
 end RootPointsFiniteAlt
 

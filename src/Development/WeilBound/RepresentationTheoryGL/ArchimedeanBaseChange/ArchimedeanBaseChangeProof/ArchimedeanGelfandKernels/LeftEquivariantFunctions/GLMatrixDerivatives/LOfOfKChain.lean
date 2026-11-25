@@ -10,51 +10,7 @@ public import Mathlib.MeasureTheory.Measure.Haar.MulEquivHaarChar
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightBoundFacts
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PositiveConeHomotopy
 public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.GelfandReading
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Algebra.Group.Units
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Topology.Compactness.Paracompact
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ConjTransposeMemGLs, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ContinuousCoords, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.TwMemGLs, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.UnitaryMemGLs, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.LOfOfKChain
@@ -116,12 +72,6 @@ theorem trL_mul_comm {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
   simp only [trL_apply, ContinuousLinearMap.toLinearMap_mul]
   exact LinearMap.trace_mul_comm ℂ _ _
 
-theorem sigma_mem {σ : (Fin n × Fin n → ℝ) → Mat n} (hσ2 : ∀ v ∈ cone n, σ v * (σ v)ᴴ = hOf v) {v} (hv : v ∈ cone n) :
-    σ v ∈ GLs n := by
-  have h1 : (hOf v).det ≠ 0 := (show (hOf v).PosDef from hv).det_pos.ne'
-  rw [← hσ2 v hv, Matrix.det_mul] at h1
-  exact left_ne_zero_of_mul h1
-
 theorem end1 : End1 := by
   intro n lam E Fr ε ι S Γ T hCx _ _ μ _ σ c hσ hσ2 hform k hk hkeq hkΓ d R hR
   set Fm : Mat n → ℂ := fun y => trL E.V (k (y⁻¹ * d.val * yᴴ⁻¹) * T) with hFm
@@ -155,7 +105,7 @@ theorem end1 : End1 := by
   have hcone : ∀ v ∈ cone n, trL E.V (Γ * S 1 * Kc σ c Fr k Γ T d.val (v, v)) =
       ((c : ℂ) * ((hOf v).det ^ n)⁻¹) * Fm (σ v) := by
     intro v hv
-    have hx := sigma_mem hσ2 hv
+    have hx := PositivityTheory.RgBcC.LfSt.GelfandReading.cone_mem_GLs hσ2 hv
     simp only [Kc, Kf, hCx.S1, mul_one, mul_smul_comm, map_smul, smul_eq_mul, hFm]
     congr 1
     have hw := tw_mem hx hdG
@@ -485,8 +435,7 @@ theorem lAsm : LAsm := by
     intro x hx hlt
     by_contra hne
     have hle : lg (x⁻¹ * diagonal z * xᴴ⁻¹) ≤ R := by
-      by_contra hgt
-      push_neg at hgt
+      by_contra! hgt
       exact hne (hd ▸ hsuppk _ (hd ▸ tw_mem_GLs hx hdG) hgt)
     have := hR' 1 ⟨zero_le_one, le_refl _⟩ x hx x hx (by simp) hle
     linarith
@@ -544,10 +493,6 @@ theorem hOf_oPt : hOf (oPt n) = 1 := by
   have h := GlobalTheory.CompanionTheory.ConeHaar.hOf_coords (n := n) 1 isHermitian_one
   have e : oPt n = fun p => ((hb p * 1).trace).re := by funext p; simp [oPt, coords]
   rw [e]; exact h
-
-theorem oPt_mem : oPt n ∈ cone n := by
-  show (hOf (oPt n)).PosDef
-  rw [hOf_oPt]; exact PosDef.one
 
 def thE : G n ≃ₜ* G n where
   toFun y := (star y)⁻¹
@@ -650,7 +595,7 @@ theorem end0 : End0 := by
   set F : Mat n → ℂ := fun y =>
     LinearMap.trace ℂ E.V ((Γ * S 0 * (k (d.val * yᴴ⁻¹) * Γ * T * Fr y⁻¹) : E.V →L[ℂ] E.V) : E.V →ₗ[ℂ] E.V) with hFdef
 
-  have hu0 : σ (oPt n) * (σ (oPt n))ᴴ = 1 := by rw [hσ2 _ oPt_mem, hOf_oPt]
+  have hu0 : σ (oPt n) * (σ (oPt n))ᴴ = 1 := by rw [hσ2 _ GlobalTheory.CompanionTheory.HbBasis.oPt_mem_cone, hOf_oPt]
   have hu0' : (σ (oPt n))ᴴ * σ (oPt n) = 1 := mul_eq_one_comm.mp hu0
   set U0 : Matrix.unitaryGroup (Fin n) ℂ := ⟨σ (oPt n), Matrix.mem_unitaryGroup_iff.2 hu0⟩ with hU0
   have hU0inv : (σ (oPt n))⁻¹ = (U0⁻¹ : Matrix.unitaryGroup (Fin n) ℂ).1 := by

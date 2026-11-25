@@ -16,54 +16,10 @@ public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionExtendsFromStalkPullback
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionLiftIsClosedImmersion
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusPointOverFractionField
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
 import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumber
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCharacterSection, Development.AutomorphicSpectrum.Proofs.GeometryProofs.NatCastSmulMemHtLat
@@ -268,25 +224,13 @@ theorem tan_mem {R : Type} [CommRing R] [IsLocalRing R] (x : Spec (CommRingCat.o
   intro z _
   have hσ : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R R).toRingHom) ≫ v.left = x ≫ (η[G]).left :=
     hv.trans one_left
-  have hs : Function.Surjective (TrivSqZeroExt.fstHom R R R).toRingHom := fun r => ⟨TrivSqZeroExt.inl r, rfl⟩
-  obtain ⟨z', hz'⟩ : ∃ z' : PrimeSpectrum R,
-      PrimeSpectrum.comap (TrivSqZeroExt.fstHom R R R).toRingHom z' = (z : PrimeSpectrum (DualNumber R)) := by
-    have hp : (z : PrimeSpectrum (DualNumber R)).asIdeal.IsPrime := PrimeSpectrum.isPrime _
-    have key : ∀ a : DualNumber R, a - TrivSqZeroExt.inl a.fst ∈ (z : PrimeSpectrum (DualNumber R)).asIdeal := by
-      intro a
-      have h2 : (a - TrivSqZeroExt.inl a.fst) ^ 2 = 0 := by
-        ext <;> simp [pow_two]
-      exact hp.mem_of_pow_mem 2 (by rw [h2]; exact Ideal.zero_mem _)
-    refine ⟨PrimeSpectrum.comap (TrivSqZeroExt.inlHom R R) z, ?_⟩
-    apply PrimeSpectrum.ext
-    ext a
-    constructor
-    · intro h
-      have h' : TrivSqZeroExt.inl a.fst ∈ (z : PrimeSpectrum (DualNumber R)).asIdeal := h
-      simpa using Ideal.add_mem _ (key a) h'
-    · intro h
-      show TrivSqZeroExt.inl a.fst ∈ (z : PrimeSpectrum (DualNumber R)).asIdeal
-      simpa using Ideal.sub_mem _ h (key a)
+  obtain ⟨z', hz'⟩ : (z : PrimeSpectrum (DualNumber R)) ∈
+      Set.range (PrimeSpectrum.comap (TrivSqZeroExt.fstHom R R R).toRingHom) := by
+    rw [_root_.range_comap_of_surjective _ _ TrivSqZeroExt.fst_surjective]
+    intro a ha
+    have ha' : a.fst = 0 := ha
+    have h2 : a ^ 2 = 0 := by ext <;> simp [pow_two, ha']
+    exact (PrimeSpectrum.isPrime _).mem_of_pow_mem 2 (h2 ▸ Ideal.zero_mem _)
   have e1 : v.left z = (x ≫ (η[G]).left) z' := by
     rw [← hσ, ← hz']
     rfl

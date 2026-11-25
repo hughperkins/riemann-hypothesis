@@ -46,7 +46,7 @@ import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
 @[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut Formalism.AUTREP Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2 Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Rows Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev GlobalTheory.TypeRec GlobalTheory.TypeVec
-attribute [local instance] GlobalTheory.TypeRec.factG Formalism.BasicNotions.Host.cmStar
+attribute [local instance] GlobalTheory.TypeRec.factG
 
 namespace GlobalTheory
 
@@ -100,8 +100,7 @@ theorem isotIn_detect_by_eqv_map : ∀ (D : D7) {n : ℕ} (A : Type) [AddCommGro
       by_contra hyK'; exact h4 (hKm ⟨h1, h2, hyK'⟩ h3)
   obtain ⟨Φ, ⟨hΦ, hΦC⟩, hΦK⟩ : ∃ Φ : π.S →ₗ[ℂ] A, (principalLevelFrame.IsEqvA ρ π Φ ∧ LinearMap.range Φ ≤ C) ∧
       ¬ LinearMap.range Φ ≤ K := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hyK ((iSup₂_le fun Φ hΦ => hcon Φ hΦ : principalLevelFrame.isotIn (D := D) ρ C π ≤ K) hy)
   have hΦK' : ∀ f, Φ f ∈ K → f = 0 := (atom K hKSt Φ hΦ).resolve_left hΦK
   have hyK2 : y ∈ K ⊔ LinearMap.range Φ := grow _ (sup_le hKN (rangeLe Φ hΦ hΦC))

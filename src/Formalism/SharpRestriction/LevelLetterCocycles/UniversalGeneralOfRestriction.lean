@@ -8,53 +8,7 @@ public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMem
 public import Formalism.SharpRestriction.LevelLetterCocycles.IsobaricMultiplicityOne
 import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
 import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.Order.Interval.Finset.Box
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -2501,8 +2455,7 @@ theorem nn_bounds [Fintype (K →ₐ[Qp] LL)] (hinj : Function.Injective (algebr
   · rw [hty] at hJ
     refine ⟨?_, fun bs h => absurd h (by simp)⟩
     simp only [eMM]
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     refine hzero (filS_bot W T₂ c s (filCris_bot W hCA T₂ _ _ fun a ha => ?_))
     have := hJ a ha
     simp only [Formalism.MainNotions.LocalTheoryWindows.LT.win, Set.mem_Icc] at this
@@ -2511,8 +2464,7 @@ theorem nn_bounds [Fintype (K →ₐ[Qp] LL)] (hinj : Function.Injective (algebr
     simp only [Formalism.MainNotions.LocalTheoryWindows.LT.ok] at hok
     refine ⟨?_, fun bs' h => absurd h (by simp)⟩
     simp only [eMM]
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     refine hzero (filS_bot W T₂ c s (filCris_bot W hCA T₂ _ _ fun a ha => ?_))
     have := hJ a ha
     simp only [Formalism.MainNotions.LocalTheoryWindows.LT.win, Set.mem_union, Set.mem_Icc] at this
@@ -2521,8 +2473,7 @@ theorem nn_bounds [Fintype (K →ₐ[Qp] LL)] (hinj : Function.Injective (algebr
   · rw [hty] at hJ hok
     simp only [Formalism.MainNotions.LocalTheoryWindows.LT.ok] at hok
     have hb : (bs : ℤ) ≤ α s := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       have hle : FilS W T₂ c s (-(α s)) ≤ FilS W T₂ c s (-(A.η : ℤ)) := by
         apply filS_mono_le
         rcases le_or_gt (-(α s)) (-(A.η : ℤ)) with h | h

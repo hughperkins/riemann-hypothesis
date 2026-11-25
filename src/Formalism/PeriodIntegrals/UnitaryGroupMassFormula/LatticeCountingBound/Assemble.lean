@@ -14,24 +14,9 @@ public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingB
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.ArchPlace
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.LatCountAllOf
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.Lemma
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.Tactic.TypeStar
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlobApprox
 import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabfin
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Algebra.Module.StablyFree.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.ArchIneq, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.BoxBound, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.Choose, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.DualIncl, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.IndexDual, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.LatticeIsDiscreteGroup, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.PackLem, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.SublatticeOfLattice, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.NormProd, Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.Assemble
@@ -230,8 +215,7 @@ theorem box_lattice_point_bound : BoxBound := by
           Real.sqrt_le_sqrt (hs_exp_le X)
       _ = Real.sqrt n * Real.exp (Real.sqrt (Formalism.REAL.hs X)) := Real.sqrt_sq (by positivity)
   show hsN (Formalism.MainNotions.S.uMat g) ≤ Real.sqrt n * Real.exp (sInf S)
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   rcases Nat.eq_zero_or_pos n with hn0 | hnpos
   · subst hn0
     have h0 : hsN (Formalism.MainNotions.S.uMat g) = 0 := by

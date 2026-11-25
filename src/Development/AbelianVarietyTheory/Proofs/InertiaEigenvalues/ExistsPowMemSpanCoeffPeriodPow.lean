@@ -409,8 +409,7 @@ theorem norm_iotaO_le_one (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (w : Wq 
     have hω : ω ^ l ^ a = ω := by
       simp only [ω]
       rw [← map_pow, ← map_pow, Fq.pow_card]
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h2 : 1 < l ^ a := Nat.one_lt_pow (NeZero.ne a) (Fact.out : l.Prime).one_lt
     have h3 : ‖ω‖ ^ 1 < ‖ω‖ ^ l ^ a := pow_lt_pow_right₀ h h2
     rw [pow_one, ← norm_pow, hω] at h3
@@ -434,8 +433,7 @@ theorem norm_lt_one_of_isRoot : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a
   · have : P = 1 := Polynomial.eq_one_of_monic_natDegree_zero hP h0
     rw [this, Polynomial.map_one] at hx
     simp [Polynomial.IsRoot] at hx
-  by_contra hge
-  push_neg at hge
+  by_contra! hge
   have hlpos : (0 : ℝ) < l := by exact_mod_cast (Fact.out : l.Prime).pos
   have hl1 : (1 : ℝ) < l := by exact_mod_cast (Fact.out : l.Prime).one_lt
 
@@ -533,22 +531,9 @@ open Matrix
 noncomputable section
 namespace GlobalTheory.LemZ
 
-theorem weier : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (g : (Wq l a)⟦X⟧), ¬ (l : (Wq l a)⟦X⟧) ∣ g →
-    ∃ (P : Polynomial (Wq l a)) (U : (Wq l a)⟦X⟧), IsUnit U ∧ P.Monic ∧
-      (∀ i < P.natDegree, (l : Wq l a) ∣ P.coeff i) ∧ g = U * (P : (Wq l a)⟦X⟧) := _root_.GlobalTheory.weierstrass_prep_not_dvd_l
-
 theorem descend : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (P Q : Polynomial (Wq l a)), P.Monic →
     (∀ i < P.natDegree, (l : Wq l a) ∣ P.coeff i) → frobS l a (P : (Wq l a)⟦X⟧) ∣ (Q : (Wq l a)⟦X⟧) →
     Polynomial.expand (Wq l a) l (P.map (sigma l a : Wq l a →+* Wq l a)) ∣ Q := _root_.GlobalTheory.expand_map_dvd_of_frobS_dvd
-
-theorem coeffZero : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (P E : Polynomial (Wq l a)) (M : ℕ), P.Monic → E.coeff 0 ≠ 0 →
-    Polynomial.expand (Wq l a) l (P.map (sigma l a : Wq l a →+* Wq l a)) ∣ E ^ M * P → P.coeff 0 ≠ 0 := _root_.GlobalTheory.coeff_zero_ne_zero_of_frobenius_dvd_pow_mul
-
-theorem frobAut : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a], ∃ Φ : Om l ≃ₐ[ℚ_[l]] Om l,
-    ∀ w : Wq l a, Φ (GlobalTheory.TameFrob.iotaO l a w) = GlobalTheory.TameFrob.iotaO l a (sigma l a w) := _root_.GlobalTheory.TameFrob.exists_algEquiv_iotaO_sigma
-
-theorem rootLt : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (P : Polynomial (Wq l a)), P.Monic →
-    (∀ i < P.natDegree, (l : Wq l a) ∣ P.coeff i) → ∀ x : Om l, (P.map (GlobalTheory.TameFrob.iotaO l a)).IsRoot x → ‖x‖ < 1 := _root_.GlobalTheory.RootLt.norm_lt_one_of_isRoot
 
 theorem irr : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (E : Polynomial (Wq l a)), E.Monic → 0 < E.natDegree →
     (∀ i < E.natDegree, (l : Wq l a) ∣ E.coeff i) → (∃ w : (Wq l a)ˣ, E.coeff 0 = (l : Wq l a) * w) →
@@ -556,12 +541,6 @@ theorem irr : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (E : Polynomial 
 
 theorem conj : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (z z' : Om l),
     Polynomial.aeval z' (minpoly (↥(Kunr l a)) z) = 0 → ‖z'‖ = ‖z‖ := _root_.GlobalTheory.conj_norm_eq_of_minpoly_root
-
-theorem expandCoeff : ∀ (l : ℕ) [Fact l.Prime] (a : ℕ) [NeZero a] (E : Polynomial (Wq l a)), E.Monic →
-    Irreducible (E.map (GlobalTheory.TameFrob.iota l a)) → ∀ z : Om l, z ≠ 0 →
-    (∀ z' : Om l, Polynomial.aeval z' (minpoly (↥(Kunr l a)) z) = 0 → ∀ y : Om l, y ^ l = z' →
-      (E.map (GlobalTheory.TameFrob.iotaO l a)).IsRoot y) →
-    ∀ i, ¬ l ∣ i → E.coeff i = 0 := _root_.GlobalTheory.ExpandCoeff.coeff_eq_zero_of_roots
 
 theorem isUnit_of_frob_dvd : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K), ∀ g : bk.S, ¬ (l : bk.S) ∣ g →
     ∀ M : ℕ, frobS l bk.a g ∣ bk.E ^ M * g → IsUnit g := by
@@ -646,8 +625,7 @@ theorem isUnit_of_frob_dvd : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : B
       obtain ⟨c, hc⟩ := h2
       rw [Polynomial.IsRoot, hc, Polynomial.map_mul, Polynomial.eval_mul, h4.eq_zero, zero_mul]
     have hyr : r < ‖y‖ := by
-      by_contra hle
-      push_neg at hle
+      by_contra! hle
       have h5 : ‖y‖ ^ l = r := by rw [← norm_pow, hy, hnz']
       have h6 : r ^ l < r := pow_lt_self_of_lt_one₀ hr0 hr1 (Fact.out : l.Prime).one_lt
       have h7 : ‖y‖ ^ l ≤ r ^ l := pow_le_pow_left₀ (norm_nonneg _) hle l

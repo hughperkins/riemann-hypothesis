@@ -55,7 +55,6 @@ open GlobalTheory.FunObj GlobalTheory.ChiGrid GlobalTheory.SplitFlip GlobalTheor
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation (spV spW spW₁ spV₁ Num IsTripleOf IsDatumA skewGram mulG colV adjV₁)
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc Model Chars Rep IsTriple Acts SInf At latAtV realAd evI)
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BigDat
 
 open Filter Topology
@@ -154,8 +153,7 @@ theorem eq_pure_of_slices : ∀ {F : Type} [Field F] [NumberField F] {κ : Type}
     {v | ¬ vac v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1} with hT0
   have hT0f : T0.Finite := hcof
   have hex : ∀ v, ∃ ζ : κ → Fv F v, vac v ζ ≠ 0 := fun v => by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hvac v (funext h)
   let ζ : ∀ v, κ → Fv F v := fun v => if v ∈ T0 then (hex v).choose else 0
   have hζ1 : ∀ v, v ∉ T0 → vac v (ζ v) = 1 := by

@@ -11,51 +11,6 @@ public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValue
 public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfIsDiscreteValuationRing
 public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsC
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
 import Std.Tactic.BVDecide.Normalize.Prop
@@ -303,16 +258,6 @@ variable {Z : Model Xo c β} {k : Type} [Field k] {m d : ℕ} {ξ : Sp (ChartRin
 
 end IsToricChart
 
-def IsArcBase (O' : Type) [CommRing O'] [IsDomain O'] (ϖ : O') : Prop :=
-  (IsField O' ∧ ϖ = 1) ∨ (IsDiscreteValuationRing O' ∧ Irreducible ϖ ∧ IsAdicComplete (Ideal.span {ϖ}) O')
-
-def IsArcChart (Y : Model Xo c β) {O' : Type} [CommRing O'] [IsDomain O'] {b : O →+* O'} (a : ArcIn D l β O' b) (ϖ : O')
-    (χ : Sp (PowerSeries O') ⟶ Y.X) : Prop :=
-  χ ≫ Y.s = spMap (PowerSeries.C (R := O')) ≫ spMap b ∧
-  (∀ x : Sp (PowerSeries O'), χ x ∈ abLocus Y.t.G ↔ PowerSeries.X ∉ x.asIdeal) ∧
-  (∀ x : Sp (PowerSeries O'), PowerSeries.C ϖ * PowerSeries.X ∉ x.asIdeal → χ x ∈ Set.range Y.j) ∧
-  Y.HasArcData a (Ideal.span {PowerSeries.X}) (PowerSeries.C (R := O')) PowerSeries.X χ
-
 end Charts
 
 section Model
@@ -326,34 +271,15 @@ structure TorModel (Y : Model Xo c β) where
 
   b : Z.X ⟶ Y.X
 
-  b_s : b ≫ Y.s = Z.s
-
-  j_b : Z.j ≫ b = Y.j
-
   pull : SABMap Z.t Y.t b
-
-  pull_univ : ∀ (T : Scheme.{0}) (g₁ : T ⟶ Z.oF.t.G.left) (g₂ : T ⟶ Y.oF.t.G.left),
-    g₁ ≫ Z.m0.toSABMap.φ = g₂ ≫ Y.m0.toSABMap.φ → g₁ ≫ Z.oF.t.G.hom = g₂ ≫ Y.oF.t.G.hom →
-      g₁ ≫ Z.m.φ ≫ pull.φ = g₂ ≫ Y.m.φ
 
   smooth : SmoothOfRelativeDimension D.dim (genStr Z)
 
   snc : FinalTheorems.Snc (genBdIdeal Z)
 
-  toric : ∀ x ∈ genBd Z, HasToricChart Z x
-
-  lifts : ∀ (O' : Type) [CommRing O'] [IsDomain O'] [CharZero O'] (b' : O →+* O') (ϖ : O') (a : ArcIn D l β O' b')
-    (χ : Sp (PowerSeries O') ⟶ Y.X), IsArcBase O' ϖ → IsArcChart Y a ϖ χ → ∃ χ'' : Sp (PowerSeries O') ⟶ Z.X, χ'' ≫ b = χ
-
   BD : EffCartierData Z.X
 
-  BD_supp : ∀ x ∈ BD.idealSheaf.support, x ∉ abLocus Z.t.G
-
-  BD_pos : ∀ x ∈ genBd Z, genι Z x ∈ BD.idealSheaf.support
-
   m0 : ℕ
-
-  torModel_multiplicity_pos : 0 < m0
 
 theorem isProper_toroidalModel_structureMap (Y : Model Xo c β) : IsProper Y.s := by
   obtain ⟨N, i, hi, e⟩ := Y.proj

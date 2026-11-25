@@ -48,7 +48,6 @@ section -- clump:auto
 @[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Mem.R3.Tr GlobalTheory.LayerMove
 
 noncomputable section
@@ -70,7 +69,6 @@ section -- clump:auto
 
 section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Mem.R3.Tr GlobalTheory.LayerMove
 noncomputable section
 namespace UpperTheory.One.M
@@ -105,17 +103,7 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
         (ptV := (by with_unfolding_all exact (a.gal.av.ptV :))))
       (au := @_root_.Formalism.L2.AUTiedAlt.mk (_) (_) (_)
         (cls := (by with_unfolding_all exact (a.gal.au.cls :)))
-        (surj := (by with_unfolding_all exact (a.gal.au.surj :)))
-        (iso := (by with_unfolding_all exact (a.gal.au.iso :)))
-        (mult := (by with_unfolding_all exact (a.gal.au.mult :)))
-        (sph := (by with_unfolding_all exact (a.gal.au.sph :)))
-        (sat := (by with_unfolding_all exact (a.gal.au.sat :)))
-        (clsWt := (by with_unfolding_all exact (a.gal.au.clsWt :)))
-        (surjWt := (by with_unfolding_all exact (a.gal.au.surjWt :)))
-        (isoWt := (by with_unfolding_all exact (a.gal.au.isoWt :)))
-        (wt := (by with_unfolding_all exact (a.gal.au.wt :)))
-        (infW := (by with_unfolding_all exact (a.gal.au.infW :)))
-        (emb := (by with_unfolding_all exact (a.gal.au.emb :))))
+        (clsWt := (by with_unfolding_all exact (a.gal.au.clsWt :))))
       (rational := (by with_unfolding_all exact (a.gal.rational :)))
       (tup := (by with_unfolding_all exact (a.gal.tup :)))
       (level := @_root_.Formalism.L2.LevelTied.mk (_) (_) (_)
@@ -313,7 +301,6 @@ def mvAll_alt {D : D7} (m : Mv D) {C : NChoice D} (a : _root_.GlobalTheory.Heigh
       (psi_is := (by with_unfolding_all exact (a.tp.psi_is :)))
       (psi_un := (by with_unfolding_all exact (a.tp.psi_un :))))
     (plB := (by with_unfolding_all exact (a.plB :)))
-    (plκ := (by with_unfolding_all exact (a.plκ :)))
 end UpperTheory.One.M
 end
 end

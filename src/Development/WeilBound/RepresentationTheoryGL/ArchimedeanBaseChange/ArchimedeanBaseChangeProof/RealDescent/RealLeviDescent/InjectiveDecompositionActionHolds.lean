@@ -9,53 +9,10 @@ public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.Eigenspa
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HarishChandraDecompositionLevi
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveUnipotentOfRestriction
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanishingKernelLeviReal
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Bool
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairMultiplicityTopCycle, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActionUnipotentRadicalReal, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BoundarySquareLeviReal, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InjectiveRestrictionOfBdsqVanish, Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.InjectiveDecompositionActionHolds
@@ -76,11 +33,6 @@ namespace GlobalTheory.CompanionTheory.PairMult.TopCycQ
 
 variable {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
 
-theorem annq_app (l : Lt n) (x : Cq n V) (B : Finset (Lt n)) :
-    annq l x B = if l ∈ B then 0 else sgL l B • x (insert l B) := rfl
-
-theorem creq_app (l : Lt n) (x : Cq n V) (B : Finset (Lt n)) :
-    creq l x B = if l ∈ B then sgL l B • x (B.erase l) else 0 := rfl
 
 theorem mem_omQ (lev : Fin n → ℕ) (l : Lt n) :
     l ∈ omQ lev ↔ l.1 = true ∧ lev l.2.1.1 < lev l.2.1.2 := by
@@ -122,12 +74,12 @@ theorem topCyc : TopCyc := by
     refine Finset.sum_eq_zero fun t _ => Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ =>
       Finset.sum_eq_zero fun k _ => ?_
     split_ifs with ht
-    · rw [Module.End.mul_apply, Module.End.mul_apply, creq_app]
+    · rw [Module.End.mul_apply, Module.End.mul_apply, GlobalTheory.CompanionTheory.PairMult.COU.cre_apply]
       split_ifs with hk
-      · rw [annq_app]
+      · rw [GlobalTheory.CompanionTheory.PairMult.COU.ann_apply]
         split_ifs with h1
         · exact smul_zero _
-        · rw [annq_app]
+        · rw [GlobalTheory.CompanionTheory.PairMult.COU.ann_apply]
           split_ifs with h2
           · simp
           · rw [topq, Pi.single_eq_of_ne (insert_ne_omQ lev s t i j k ht A), smul_zero, smul_zero, smul_zero]
@@ -135,7 +87,7 @@ theorem topCyc : TopCyc := by
     · rfl
   · intro l _
     show Tl E1 E2 l (annq l (topq lev v) A) = 0
-    rw [annq_app]
+    rw [GlobalTheory.CompanionTheory.PairMult.COU.ann_apply]
     split_ifs with hl
     · exact map_zero _
     · by_cases e : insert l A = omQ lev
@@ -1592,8 +1544,6 @@ namespace PositivityTheory.RgBcC.RealD
 
 theorem injective_decomposition_action_holds : InjectiveDecompositionAction :=
   injective_decomposition_action_of _root_.GlobalTheory.CompanionTheory.KPChains.bdSqL _root_.GlobalTheory.CompanionTheory.KostL.vanKL _root_.GlobalTheory.CompanionTheory.InjRL.injRL_of _root_.GlobalTheory.CompanionTheory.LvChain.injUU_of_injRL (hcdecL_of _root_.GlobalTheory.CompanionTheory.RealHCLv.hcdecLv) _root_.GlobalTheory.CompanionTheory.PairBridge.actUU
-
-theorem hc_decomposition_levi_holds : HCdecLv := _root_.GlobalTheory.CompanionTheory.RealHCLv.hcdecLv
 
 end PositivityTheory.RgBcC.RealD
 end -- clump:auto

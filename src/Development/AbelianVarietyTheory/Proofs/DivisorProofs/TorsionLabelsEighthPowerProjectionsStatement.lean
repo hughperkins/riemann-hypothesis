@@ -92,11 +92,9 @@ theorem mem_smul_of_forall_char_pow_eq_one
     ∃ z : X, d = k • z := by
   classical
   let b := Module.Free.chooseBasis ℤ X
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   have hex : ∃ i, ¬ (k : ℤ) ∣ b.repr d i := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     apply hne (∑ i, (b.repr d i / k) • b i)
     apply b.repr.injective
     ext j
@@ -242,7 +240,6 @@ section -- clump:auto
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 
 end -- clump:auto
 end -- clump:auto
@@ -414,7 +411,6 @@ open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM
 open scoped CategoryTheory.Obj
 open GlobalTheory.Poinc GlobalTheory.Poinc.Eq8 Formalism.L2.Pj
 open scoped TensorProduct
-attribute [local instance] Over.cartesianMonoidalCategory
 open Classical
 
 end -- clump:auto

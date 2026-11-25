@@ -3,52 +3,8 @@ module
 public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
 public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
 public import Development.AbelianVarietyTheory.Definitions.Foundations.SgC
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 
@@ -284,19 +240,5 @@ theorem IsTopLift.inv_mul_mem_geo {X : Tower Ω ε} {M : ℕ} {σ : Ω ≃ₐ[�
   rw [AlgEquiv.mul_apply, h2, ← this, ← h1, ← AlgEquiv.mul_apply, inv_mul_cancel, AlgEquiv.one_apply]
 
 def topT (l s N : ℕ) : ℕ := (((l : ZMod N) ^ s)⁻¹).val
-
-def topU (X : Tower Ω ε) (l s N : ℕ) (x : ZMod N) (c : ℕ) : X.K :=
-  siegel X c ![1 / (l : ℚ) ^ s, (x.val : ℚ) * (topT l s N : ℚ) / N]
-
-def topV (X : Tower Ω ε) (l s N : ℕ) (d : ℕ) : X.K :=
-  siegel X d ![0, 1 / (l : ℚ) ^ s + (topT l s N : ℚ) / N]
-
-def wkTop (X : Tower Ω ε) (l n r N : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω ≃ₐ[ℚ] Ω) : X.K :=
-  ((topW (K := topL X (l ^ (r + n) * N)) (topZeta X (l ^ (r + n) * N) l n)
-    (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-    (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d))
-    (topEta X (l ^ (r + n) * N) (topChar X (l ^ (r + n) * N) l n (topU X l (r + n) N x c))
-      (topChar X (l ^ (r + n) * N) l n (topV X l (r + n) N d)))
-    (topLift X (l ^ (r + n) * N) σ)⁻¹ : topL X (l ^ (r + n) * N)) : X.K)
 
 end GlobalTheory.K4

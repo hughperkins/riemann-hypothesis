@@ -26,59 +26,8 @@ public import Mathlib.MeasureTheory.Function.LocallyIntegrable
 public import Mathlib.Analysis.Calculus.Deriv.ZPow
 public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IdThmA
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Linter.Style
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFactsA
 import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiCasA
-import Std.Tactic.BVDecide.Normalize.Prop
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IdThmB, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InfRightA, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ByParts, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DerivG, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiM, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiPart, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TauPart, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LowMinusUpExpand, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InfRight, ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsMInfNhd
@@ -332,8 +281,6 @@ open scoped ComplexOrder ContDiff ENNReal
 namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
@@ -888,8 +835,7 @@ private theorem lead_add_smul_mul_of_isLowerTri {X z : Matrix (Fin n) (Fin n) �
     refine Fintype.sum_of_injective e (Fin.castLE_injective hi) _ _ ?_ (fun r => rfl)
     intro c hc
     have hc' : (i : ℕ) + 1 ≤ c := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact hc ⟨⟨c, hlt⟩, Fin.ext rfl⟩
     have hlt : e p < c := by
       show (p : ℕ) < c
@@ -932,8 +878,7 @@ private theorem lead_add_smul_mul_of_isUpperTri {X z : Matrix (Fin n) (Fin n) �
     refine Fintype.sum_of_injective e (Fin.castLE_injective hi) _ _ ?_ (fun r => rfl)
     intro c hc
     have hc' : (i : ℕ) + 1 ≤ c := by
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       exact hc ⟨⟨c, hlt⟩, Fin.ext rfl⟩
     have hlt : e q < c := by
       show (q : ℕ) < c
@@ -1207,8 +1152,6 @@ namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 variable {n : ℕ}
 
 variable {ε : Fin n → Bool} {lam : Fin n → ℝ}
@@ -1480,8 +1423,6 @@ open scoped ComplexOrder ContDiff ENNReal
 namespace ReciprocityTheory.ChartRestriction.DS.S7
 
 open ReciprocityTheory.ChartRestriction.DS
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 

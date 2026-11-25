@@ -1,6 +1,5 @@
 module
 
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMonicAevalEqZero
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
 public import Mathlib.Algebra.Polynomial.Derivative
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
@@ -24,6 +23,7 @@ public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwiste
 public import Formalism.SatakeDualWeyl.Statement
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemGLintIffMatrixImageStandardLatticeEq
 public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSquareOneAddFourMul
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMonicAevalEqZero
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -845,12 +845,7 @@ namespace GlobalTheory.LatOrb
 theorem herm_mulVec_eq_adj {K : Type} [Field K] (σ : K →+* K)
     {n : ℕ} (x : Matrix (Fin n) (Fin n) K) (y m : Fin n → K) :
     herm σ y (x *ᵥ m) = herm σ ((x.map σ)ᵀ *ᵥ y) m := by
-
-  simp only [herm, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.transpose_apply,
-  Matrix.map_apply, Finset.sum_mul, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
-  ring
+  apply _root_.GlobalTheory.LatOrb.herm_mulVec_right <;> assumption
 
 theorem matLat_adj_mul_eq_of_selfDual : ∀ {O K : Type} [CommRing O] [Field K] [Algebra O K] (σ : K →+* K),
     (∀ x, σ (σ x) = x) → ∀ (n : ℕ) (x : Matrix (Fin n) (Fin n) K), IsUnit x →
@@ -1011,13 +1006,6 @@ open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep 
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
-theorem _root_.GlobalTheory.T.integral_conj_set_localUnitary_eq_doubleCoset : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E),
-    (∀ x, cj w (cj w x) = x) → (∀ x, Valued.v (cj w x) = Valued.v x) →
-    ∀ P₀ : (w.adicCompletionIntegers E)[X], IsCoprime P₀ (derivative P₀) →
-    ∀ γ : UL n w, γ.1.val.charpoly = P₀.map (algebraMap (w.adicCompletionIntegers E) (w.adicCompletion E)) →
-    ∀ g₁ g₂ : UL n w, g₁⁻¹ * γ * g₁ ∈ KL n w → g₂⁻¹ * γ * g₂ ∈ KL n w →
-    ∃ t ∈ twCent (MonoidHom.id (UL n w)) γ, ∃ k ∈ KL n w, g₂ = t * g₁ * k := by
-  exact @GlobalTheory.BCT.OrbitT.orbit_main
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralConjSetLocalUnitaryEqDoubleCosetStatement =====

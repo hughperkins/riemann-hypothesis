@@ -25,7 +25,13 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeedOrbKVani
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriDoubleCosetTorusNilpotent
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagPairs
 public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
-public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TyFact
+public import Mathlib.NumberTheory.NumberField.CMField
+public import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.InvTMemSim
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PIntConj
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocComm
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PLocMem
 import Mathlib.Algebra.Order.Floor.Extended
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
@@ -654,8 +660,7 @@ namespace UpperTheory.Gal.W2.Seed
 
 theorem pConvSupp : ConvSupp := by
   intro X _ K f f' g h
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply h
   unfold conv
   apply finsum_eq_zero_of_forall_eq_zero

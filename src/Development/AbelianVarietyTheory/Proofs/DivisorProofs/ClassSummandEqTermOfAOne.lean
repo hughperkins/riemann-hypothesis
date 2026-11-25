@@ -293,7 +293,7 @@ theorem classes_finite : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p), G.a = 1 �
   obtain ⟨hdeg₀, hsep₀⟩ := hreg y₀ a₀.1.1 (left_ne_zero_of_mul ha₀) ⟨a₀.2.1, a₀.2.2, hfix₀⟩
   obtain ⟨hy₀, -⟩ := y₀.prop
   obtain ⟨S, hS⟩ := _root_.GlobalTheory.CxRegLoc.local_class_scalar_norm_sep p G L f hf β x t hx hβ y₀ hsep₀ hdeg₀
-  obtain ⟨A, hA⟩ := GlobalTheory.T.finite_fixed_unit_classes_centralizer_regular p G β hβ ((y₀ : G.Cˣ × ℚˣ).1 : G.Cˣ) (((y₀ : G.Cˣ × ℚˣ).2 : ℚˣ) : ℚ) hy₀ hsep₀ hdeg₀ S
+  obtain ⟨A, hA⟩ := GlobalTheory.LKCx.ClsReg.finite_fixed_classes_regular p G β hβ ((y₀ : G.Cˣ × ℚˣ).1 : G.Cˣ) (((y₀ : G.Cˣ × ℚˣ).2 : ℚˣ) : ℚ) hy₀ hsep₀ hdeg₀ S
   have key : ∀ y : grp G β, minpoly G.F (((y : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C) = P → ∀ g : G.GAf,
       f (g⁻¹ * toAfF G β x t hx y * g) ≠ 0 → ∃ a' ∈ A, ∃ b : Bool, ∃ (c : G.Cˣ) (r : ℚˣ) (e : G.Cˣ),
         (((y : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C) = c * (((y₀ : G.Cˣ × ℚˣ).1 : G.Cˣ) : G.C) * ((c⁻¹ : G.Cˣ) : G.C) ∧
@@ -786,15 +786,12 @@ theorem charpoly_conj_tmul (C : Type) [Ring C] [Algebra ℚ C] [FiniteDimensiona
     [Algebra ℚ A] (y : C) (u : (A ⊗[ℚ] C)ˣ) :
     LinearMap.charpoly (LinearMap.mulLeft A ((u : A ⊗[ℚ] C) * ((1 : A) ⊗ₜ[ℚ] y) * ((u⁻¹ : (A ⊗[ℚ] C)ˣ) : A ⊗[ℚ] C))) =
       (LinearMap.charpoly (LinearMap.mulLeft ℚ y)).map (algebraMap ℚ A) := by
-  let e : (A ⊗[ℚ] C) ≃ₗ[A] (A ⊗[ℚ] C) :=
-    { LinearMap.mulLeft A (u : A ⊗[ℚ] C) with
-      invFun := fun z => ((u⁻¹ : (A ⊗[ℚ] C)ˣ) : A ⊗[ℚ] C) * z
-      left_inv := fun z => by simp [← mul_assoc]
-      right_inv := fun z => by simp [← mul_assoc] }
   have h1 : LinearMap.mulLeft A ((u : A ⊗[ℚ] C) * ((1 : A) ⊗ₜ[ℚ] y) * ((u⁻¹ : (A ⊗[ℚ] C)ˣ) : A ⊗[ℚ] C)) =
-      e.conj (LinearMap.mulLeft A ((1 : A) ⊗ₜ[ℚ] y)) := by
-    ext z
-    simp [e, LinearEquiv.conj_apply, mul_assoc]
+      (u.mulLeftLinearEquiv A (A ⊗[ℚ] C)).conj (LinearMap.mulLeft A ((1 : A) ⊗ₜ[ℚ] y)) := by
+    refine LinearMap.ext fun z => ?_
+    change (↑u * ((1 : A) ⊗ₜ[ℚ] y) * ↑(u⁻¹)) * z =
+      ↑u * (((1 : A) ⊗ₜ[ℚ] y) * (↑(u⁻¹) * z))
+    simp only [mul_assoc]
   have h2 : LinearMap.mulLeft A ((1 : A) ⊗ₜ[ℚ] y) = (LinearMap.mulLeft ℚ y).baseChange A := by
     ext c
     simp [Algebra.TensorProduct.tmul_mul_tmul]
@@ -1118,8 +1115,7 @@ theorem valued_snd_eq_one {p : ℕ} [Fact p.Prime] (G : HTGroup p) (K : Subgroup
     | succ n ih => rw [pow_succ, hmul, ih, pow_succ]
   have hle : ∀ a ∈ K, F a ≤ 1 := by
     intro a ha
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt C hlt
     have h1 := hC (a ^ n) (K.pow_mem ha n)
     rw [Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)] at h1

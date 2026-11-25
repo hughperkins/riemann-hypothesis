@@ -20,56 +20,11 @@ public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedDeterminedB
 public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
 public import Development.WeilBound.ThetaLifts.LeviDeterminants.ActsEx
 public import Development.WeilBound.ThetaLifts.LocalTheory.AdmissiblePureTensorSchwartz
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
 import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
 import Development.WeilBound.ThetaLifts.TowerModels.LeviAd
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
 import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
@@ -335,16 +290,6 @@ theorem kAt_eq (K : Subgroup (UA σ X.J)) (v : Pl F) : kAt K (evFin F v) = K ⊓
 theorem kAt_mem {K : Subgroup (UA σ X.J)} {v : Pl F} (k : kAt K (evFin F v)) : k.1 ∈ UAt σ X (evFin F v) :=
   ((kAt_eq K v).le k.2).2
 
-theorem kAt_compact {K : Subgroup (UA σ X.J)} (hK : IsCompact (K : Set (UA σ X.J))) (v : Pl F) : CompactSpace (kAt K (evFin F v)) := by
-  refine isCompact_iff_compactSpace.1 ?_
-  rw [kAt_eq, Subgroup.coe_inf]
-  refine hK.inter_right ?_
-  have : (uSub σ X v : Set (UA σ X.J)) = ⋂ u : AF F, ⋂ _ : evFin F v u = 0, {g | u • (mat g - 1) = 0} := by
-    ext g; simp only [Set.mem_iInter]; rfl
-  rw [this]
-  exact isClosed_iInter fun u => isClosed_iInter fun _ =>
-    isClosed_eq (((PositivityTheory.ThK.kc_cont_mat X.J).sub continuous_const).const_smul u) continuous_const
-
 end US
 
 section Part
@@ -533,7 +478,7 @@ theorem kInv (hB : B.IsGood σ) (hY : Y.IsHerm σ B r s) (hH : H.IsAdapted σ B 
   haveI : BorelSpace (UA σ Y.J) := ⟨rfl⟩
   haveI : BorelSpace (UA σ Y₁.J) := ⟨rfl⟩
   haveI : BorelSpace (AE F E)ˣ := ⟨rfl⟩
-  haveI := US.kAt_compact hI.1 v
+  haveI := PositivityTheory.ThKG.Loc.Cone.Fin.kAt_compact hI.1 v
   obtain ⟨hG, act, ht, htc, ht1, htK, htP⟩ := htEx hB hY hH hI hpar.emb hu hL
   have ht0 : ∀ t : (AE F E)ˣ, absE F E t ≠ 0 := fun t => ((Group.isUnit t).map (absE F E)).ne_zero
   have ha := idem_mul_self v

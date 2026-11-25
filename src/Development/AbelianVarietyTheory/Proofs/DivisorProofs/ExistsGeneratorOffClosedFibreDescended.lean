@@ -50,7 +50,6 @@ import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.Mum
 
 noncomputable section
@@ -95,7 +94,7 @@ theorem exists_section (R : Type) [CommRing R] [IsLocalRing R] [IsNoetherianRing
   have hU : (U : Set (G ⊗ X).left).Nonempty := by
     refine ⟨genericPoint (G ⊗ X).left, Set.mem_iInter.2 fun j => ?_⟩
     exact ((genericPoint_spec (G ⊗ X).left).mem_open_set_iff ((w j).left ⁻¹ᵁ O).isOpen).2 (by simpa using hw j)
-  obtain ⟨a, aΩ, ha, h1, h2, h3⟩ := GlobalTheory.T.smoothGroup_sections_dense_in_fibres R hR G hG.smooth (η[G]).left (Over.w η[G]) Ω x hx hirr U hU
+  obtain ⟨a, aΩ, ha, h1, h2, h3⟩ := _root_.GlobalTheory.DenseSec.dense_sections R hR G hG.smooth (η[G]).left (Over.w η[G]) Ω x hx hirr U hU
   let a' : 𝟙_ (Over (Sp R)) ⟶ G := Over.homMk a ha
   let u : X ⟶ G := toUnit X ≫ a'
   have hu : (lift u (𝟙 X)).left = aΩ := by

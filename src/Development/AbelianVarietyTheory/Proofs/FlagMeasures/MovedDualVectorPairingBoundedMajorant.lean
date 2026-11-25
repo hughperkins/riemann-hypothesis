@@ -53,6 +53,7 @@ import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CommonStabilizerSetEqRangeNormalForm
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormLeadingMinorMonomial, Development.AbelianVarietyTheory.Proofs.FlagMeasures.MovedDualVectorPairingBoundedMajorant
@@ -136,8 +137,7 @@ theorem norm_leading_minor_monomial {j l : ℕ} (hl : l ≤ j) (Z : Matrix (Fin 
     rw [hi]
   · intro σ _ hσ
     obtain ⟨i, hi⟩ : ∃ i, w' (σ i) ≠ i := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       exact hσ (Equiv.ext fun i => w'.eq_symm_apply.2 (hne i))
     apply mul_eq_zero_of_right
     apply Finset.prod_eq_zero (Finset.mem_univ i)
@@ -153,8 +153,7 @@ theorem blockAnti_perm_partialProd : ∀ (j : ℕ) (β : Fin j → ℕ) (Z : Mat
 
   have hrow : ∀ a, ∃ b, Z a b ≠ 0 := by
     intro a
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     exact hdet (Matrix.det_eq_zero_of_row_eq_zero a hne)
   choose f hf using hrow
   have huniq : ∀ a b, Z a b ≠ 0 → b = f a := fun a b hab =>
@@ -326,14 +325,7 @@ lemma esI_inj (k r : ℕ) : Function.Injective (esI k r) := by
 
 lemma XstJ_eq {k r j : ℕ} {v : Fin (2 * r + k + 1) → ℂ} (hv : v ∈ XstJ k r j) (i : Fin (2 * r + k + 1))
     (hi : ∀ c : Fin r, c.val < j → i ≠ esI k r c) : v i = 0 := by
-  unfold XstJ at hv
-  induction hv using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨c, rfl⟩ := hx
-    exact Pi.single_eq_of_ne (hi c.1 c.2) _
-  | zero => rfl
-  | add x y _ _ hx hy => simp [hx, hy]
-  | smul c x _ hx => simp [hx]
+  apply _root_.GlobalTheory.Amp.CommonStab.xst_coord <;> assumption
 
 lemma pluck_flag {k r n : ℕ} (hn : n ≤ r) (z : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (x : Mat k r)
     (hx : x ∈ GG k r) (R : ℝ) (hR : Sg k r z x ≤ R) (y : Fin n → Fin (2 * r + k + 1) → ℂ)
@@ -432,8 +424,7 @@ lemma sEl_pair (k r j : ℕ) (β : Fin r → ℕ) (q : PSec k r j × (UToff β �
 
 lemma upperOff_ne {r : ℕ} {β : Fin r → ℕ} (hβ : Monotone β) (x : UToff β → ℂ) (a b : Fin r)
     (h : upperOff β x a b ≠ 0) : a = b ∨ β a < β b := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   apply h
   unfold upperOff upper
   by_cases h1 : a < b

@@ -128,7 +128,6 @@ section -- clump:auto
 open NumberField
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CM
-attribute [local instance] Over.cartesianMonoidalCategory
 
 noncomputable section
 namespace GlobalTheory.DivisibleLinear
@@ -766,8 +765,7 @@ theorem UpperTheory.exists_nsmul_mem_sum_image_lattice_of_surjective_mod :
   haveI : Countable ΛB := TopologicalSpace.separableSpace_iff_countable.mp inferInstance
   have hΦs : ∀ u, ∃ v, Φ v = u := by
     intro u
-    by_contra hu
-    push_neg at hu
+    by_contra! hu
     choose v hv using fun t : ℝ => hsurj (t • u)
     let f : ℝ → ΛB := fun t => ⟨t • u - Φ (v t), by rw [hΦapp]; exact hv t⟩
     have hf : Function.Injective f := by
@@ -1415,23 +1413,7 @@ theorem exists_linear_pow_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
     GlobalTheory.Serre.IsLinearHom A.t.act B.t.act G → ∀ m : ℕ, 0 < m →
     (∀ x : Over.mk (spMap (σ.comp (algebraMap (𝓞 K) K))) ⟶ A.t.G, x ^ m = 1 → x ≫ G = 1) →
     ∃ F : A.t.G ⟶ B.t.G, GlobalTheory.Serre.IsLinearHom A.t.act B.t.act F ∧ F ^ m = G := by
-  intro E _ _ _ H K _ _ σ A B G hG m hm hker
-  have hGm := hG.isMonHom
-  obtain ⟨_, hfl, hsu, -⟩ := GlobalTheory.abelianSchemeLaws_all.1.mulN (Sp (𝓞 K)) A.pol m hm
-  have : Flat (ReciprocityTheory.ChartRestriction.G.Out.mulA A.t.G m).left := hfl
-  have : Surjective (ReciprocityTheory.ChartRestriction.G.Out.mulA A.t.G m).left := hsu
-  have hc : IsCommMonObj A.t.G := A.ab.comm
-  have hcB : IsCommMonObj B.t.G := B.ab.comm
-  have hall := _root_.GlobalTheory.TorsionKill.kill_torsion E H K σ A B G hGm m hm hker
-  obtain ⟨F, hF⟩ := GlobalTheory.DivisibleHom.exists_factor (A := A.t.G) m G hall
-  have hFm : IsMonHom (ReciprocityTheory.ChartRestriction.G.Out.mulA A.t.G m ≫ F) := hF ▸ hGm
-  have : IsMonHom F := GlobalTheory.DivisibleHom.isMonHom_of_factor m F
-  refine ⟨F, ⟨this, fun c => ?_⟩, by rw [← hF, GlobalTheory.DivisibleHom.mulA_comp]⟩
-  have := A.t.act.hom c
-  have := B.t.act.hom c
-  apply GlobalTheory.DivisibleHom.cancel_of_flat_surjective (ReciprocityTheory.ChartRestriction.G.Out.mulA A.t.G m)
-  rw [← Category.assoc, GlobalTheory.DivisibleHom.mulA_comp, ← GlobalTheory.DivisibleHom.comp_mulA, Category.assoc, hF, hG.comm,
-    ← Category.assoc, hF]
+  apply _root_.GlobalTheory.DivisibleLinear.exists_linear_pow_eq <;> assumption
 
 theorem gen : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E),
     GlobalTheory.IndefiniteRowSideFullHecke.EigenvectorLieDegree.IsHostField H → ∀ (K : Type) [Field K] [NumberField K] (ρ : 𝓞 K) (σ₁ : K →+* ℂ) (p : ℕ)

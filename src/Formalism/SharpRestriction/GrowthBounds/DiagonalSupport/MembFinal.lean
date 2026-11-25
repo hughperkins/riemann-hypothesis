@@ -15,43 +15,6 @@ public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupport
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
 public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembVB
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
 import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
 import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.DvdOfAdd
@@ -60,18 +23,7 @@ import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValuationOneEqZero
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.Algebra.Module.StablyFree.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
 import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ValLamOfSubset
-import Mathlib.Tactic.TypeStar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ThresholdGeOddPosition, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembXXb, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SumMulSumProd, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecIdentity, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.HomCompRename, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDegF, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembLabF, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ProjectionMemPartialSpan, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwistSliceCoeff, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembershipOfThreeParts, Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembFinal
@@ -112,8 +64,7 @@ theorem exists_posU (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
     unfold posU llPos
     rw [if_pos (by omega), List.getD_eq_getElem _ _ hu, hux]
   · have key : ∃ i, i < r ∧ Fr.fr j i = x := by
-      by_contra hne
-      push_neg at hne
+      by_contra! hne
       have hall : ∀ i, i < r → Fr.fr j i < x := by
         intro i
         induction i with
@@ -121,8 +72,7 @@ theorem exists_posU (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j : ℤ) (N : ℕ)
         | succ k ih =>
           intro hk
           have h1 := ih (by omega)
-          by_contra h2
-          push_neg at h2
+          by_contra! h2
           have h3 : x < Fr.fr j (k + 1) := lt_of_le_of_ne h2 (fun h' => hne (k + 1) hk h'.symm)
           exact hV.2.2.2.2.2.1 j k x hk h1 h3 hxT
       have h4 := hall (r - 1) (by omega)
@@ -220,8 +170,7 @@ variable {O : Type} [CommRing O] {r K : ℕ}
 
 theorem exists_of_rename {σ τ : Type} (f : σ → τ) (A : MvPolynomial σ O) (a : τ →₀ ℕ) (ha : a ∈ (rename f A).support) :
     ∃ u ∈ A.support, Finsupp.mapDomain f u = a := by
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   have h0 : (rename f A).coeff a = 0 := MvPolynomial.coeff_rename_eq_zero f A a (fun u hu => by
     by_contra hu0
     exact hc u (MvPolynomial.mem_support_iff.mpr hu0) hu)
@@ -1195,8 +1144,7 @@ theorem labO_apply (hinj : Function.Injective fun x : TL J nL r => posOf n' (pos
 theorem labO_support (rho : TL J nL r × Fin (r + K) → ℕ) (v : Fin n' × Fin (r + K))
     (hv : v ∈ (labO Fr K nL rho).support) : ∃ x : TL J nL r, v.1 = posOf n' (posTL Fr x) := by
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   apply Finsupp.mem_support_iff.mp hv
   simp only [labO, Finsupp.finsetSum_apply, Finsupp.single_apply]
   apply Finset.sum_eq_zero

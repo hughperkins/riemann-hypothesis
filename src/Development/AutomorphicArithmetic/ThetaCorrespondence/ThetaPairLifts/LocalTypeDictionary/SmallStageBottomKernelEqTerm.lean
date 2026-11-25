@@ -144,7 +144,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -369,7 +368,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -390,7 +388,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -467,7 +464,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -574,7 +570,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -708,8 +703,7 @@ theorem ratio_local {D : D7} (hI : GlobalTheory.NormSum.Inp D) {δ t0 : ℂ} (hC
       (pullB D (tor0 D ⊤ δ) b₁ (GL3Theta.th0 (lamOf D ⊤ δ) t0)) z)) := by
     rw [he₂, hpull, GlobalTheory.RatEquiv.Iop_smul, hIμ]
   obtain ⟨z, hz⟩ : ∃ z, e₁ z ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hne (funext h)
   have hz' := hz
   rw [he₁] at hz'
@@ -819,7 +813,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -957,7 +950,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -1320,7 +1312,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -1347,7 +1338,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -1371,7 +1361,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 
@@ -1662,7 +1651,7 @@ theorem reads_datum (hI : GlobalTheory.NormSum.Inp D) {large₂ : SizeData₂ D}
     · exact mul_zero _
   obtain ⟨⟨Tm, hTm⟩, hall⟩ := hX.is.snd s
   have hf := hall Tm hTm
-  obtain ⟨ζ₁, z1, r1⟩ := GlobalTheory.T.level_indicator_reads_norm_power_unit_vector W.ψ W.θ A' WW hS hT δ hc hset _ _ hLS hLT hSd hTd _ _ (X.c s) he sb0 κ P'.e0 X.vac' P'.vac.1 hv
+  obtain ⟨ζ₁, z1, r1⟩ := _root_.GlobalTheory.SkewLevel.reads_level W.ψ W.θ A' WW hS hT δ hc hset _ _ hLS hLT hSd hTd _ _ (X.c s) he sb0 κ P'.e0 X.vac' P'.vac.1 hv
     hX.is.isVac'.2.lat Tm hTm
   obtain ⟨ζ₂, z2, r2⟩ := _root_.GlobalTheory.BotSmallTransl.reads_transl W.ψ W.θ A' WW hS hT δ hc hset _ _ hLS hLT hSd hTd _ _ (X.c s) he sb0 κ P'.e0 X.vac' P'.vac.1 hv
     hX.is.isVac'.2.lat Tm hTm _ A.rank r1
@@ -1749,7 +1738,6 @@ open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTh
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
 open GlobalTheory.NormSum (Pair Tup)
 open Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.BotSmallDict GlobalTheory.NormExact
 open scoped Pointwise
 noncomputable section

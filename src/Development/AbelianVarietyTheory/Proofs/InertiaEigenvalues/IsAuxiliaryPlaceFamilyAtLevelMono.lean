@@ -263,8 +263,7 @@ theorem _root_.GlobalTheory.exists_low_coeff_not_dvd_of_congr_mul : ∀ (O : Typ
     rw [(IsDiscreteValuationRing.irreducible_iff_uniformizer ϖ).1 hϖ,
       Ideal.mem_span_singleton] at hmax
     exact hmax
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hDg : ∀ i ≤ (v + 1) * m₀, ϖ ^ (v + 1) ∣ PowerSeries.coeff i (D * g) := by
     intro i hi
     have h1 := dvd_trans (pow_dvd_pow ϖ hv) (hf i (hi.trans hM))
@@ -1115,9 +1114,6 @@ theorem conj_conj (H : Host R) (x : H.E) : H.conj (H.conj x) = x := by
   refine h1.trans ?_
   show starRingEnd ℂ (H.φ₀ (H.conj x)) = _
   rw [h2, Complex.conj_conj]
-
-theorem conj_int (H : Host R) (x : 𝓞 H.E) : ∃ y : 𝓞 H.E, (y : H.E) = H.conj (x : H.E) :=
-  ⟨⟨H.conj (x : H.E), (x.isIntegral_coe).map (H.conj.toAlgHom.restrictScalars ℤ)⟩, rfl⟩
 
 end Places
 

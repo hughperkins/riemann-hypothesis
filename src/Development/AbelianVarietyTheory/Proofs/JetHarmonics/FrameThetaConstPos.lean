@@ -87,9 +87,6 @@ def ExtraBounds (X : Data E r) (ps : Frame X.Ψ r → ℝ) (a : ℝ) : Prop :=
         8 * Real.pi * (1 - 2 * η) * a * ⨅ τ, X.tt ξ x τ) ∧
     ∃ C : ℝ, ∀ x ∈ X.dom, ps x ≤ C + A * Real.log (1 + 1 / X.la1 x)
 
-def lowIdx (D T : ℕ) : Finset (Fin D → ℕ) :=
-  (Fintype.piFinset fun _ : Fin D => Finset.range T).filter fun al => ∑ i, al i + D < T
-
 theorem nonempty_cmType (X : Data E r) : Nonempty X.Ψ := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   by_cases h : τ ∈ X.Ψ
@@ -379,8 +376,7 @@ open NumberField Topology in
 open scoped ContDiff in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
 theorem _root_.GlobalTheory.ThetaRecordCompare.two_le_r {X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r} (hn : 2 ≤ _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.nd X) : 2 ≤ r := by
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hempty : IsEmpty (_root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.Ent X) := by
     unfold _root_.ReciprocityTheory.ChartRestriction.G.AR.Inst.Ent
     refine ⟨fun ⟨_, ⟨p, hp⟩⟩ => ?_⟩

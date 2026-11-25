@@ -28,34 +28,20 @@ public import Formalism.LocalToGlobal.Columns.BrpStarLatLattice
 public import Formalism.LocalToGlobal.Columns.CoefficientsModP
 public import Formalism.LocalToGlobal.GlobalTheory.GL4.CoeffMemOfIntSpanAt
 public import Formalism.LocalToGlobal.Columns.FockNormSubstitutionBound
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import Formalism.HermitianLattices.StatementLat
 import Formalism.LocalToGlobal.GlobalTheory.HLatOps
 import Formalism.LocalToGlobal.LatticeGeometry.OperatorNormFibers.StExtInv
 import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
 import Formalism.GL3MeanSquares.ConcavityEquidistribution
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameHermSharpB
 import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
 import Formalism.HarderNarasimhan.ShiftInvariance
-import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.TypeStar
-import Mathlib.RingTheory.PiTensorProduct
 import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
 import Formalism.LocalToGlobal.Columns.LocWLemmas
 import Formalism.LocalToGlobal.Columns.StdLatUnimodular
-import Mathlib.RingTheory.Coalgebra.IsFrobenius
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.TotallySplit
 import Formalism.LocalToGlobal.Columns.PolyFnLemmas
 import Formalism.LocalToGlobal.GlobalTheory.GL4.PZBasis
 import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.LatticeGeometry.OperatorNormFibers.PExtInvMuB, Formalism.LocalToGlobal.Columns.MaxSlopeSummandOfFock, Formalism.LocalToGlobal.Columns.MultiFactorialEqTripleProd, Formalism.LocalToGlobal.GlobalTheory.GL4.FockNExtCNu, Formalism.LocalToGlobal.Columns.MaxSlopeOrthogonalNegLog, Formalism.LocalToGlobal.GlobalTheory.GL4.MuMaxLeMon, Formalism.LocalToGlobal.GlobalTheory.GL4.ShortAtMeanLog, Formalism.LocalToGlobal.GlobalTheory.GL4.ThirdLinkOfArchimedean, Formalism.LocalToGlobal.Columns.BrpColLatOneSpan, Formalism.LocalToGlobal.Columns.TwistedLocalisationComparable, Formalism.LocalToGlobal.GlobalTheory.GL4.CfMemTwId, Formalism.LocalToGlobal.GlobalTheory.GL4.NfAllSelfEq, Formalism.LocalToGlobal.GlobalTheory.GL4.PacketOfFrameDegree
@@ -654,8 +640,6 @@ theorem two_nPl (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] : 2 * 
   unfold nPl
   ring
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 private lemma sum_log_le_card_mul_log_mean_of_pos {ι : Type*} [Fintype ι] (S : ι → ℝ) (hS : ∀ i, 0 < S i)
     (hn : 0 < (Fintype.card ι : ℝ)) :
     ∑ i, Real.log (S i) ≤ (Fintype.card ι : ℝ) * Real.log ((∑ i, S i) / Fintype.card ι) := by
@@ -755,8 +739,6 @@ namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Formalism.MainNotions.flipTwoThree Formalism.L2.DIV Formalism.L2.GlobalTheoryTheory.HLatOps Formalism.L2.Col
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 def ClassMap (D : D7) : Prop :=
   ∀ u (CV : ColVal D u) (c : (D.mem u).C.cls 0), (∃ y : Fin (D.R.N 0) → (D.sp.X 0).V, Formalism.MainNotions.flipTwoThree.ShortAt D u c y) →
     ∃ (φ : ((D.fm u).lat 0).V →ₗ[D.what₂.LL] (MonI ((D.fm u).lam 0) → D.what₂.LL))
@@ -813,8 +795,6 @@ end Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Formalism.MainNotions.flipTwoThree Formalism.L2.DIV Formalism.L2.GlobalTheoryTheory.HLatOps Formalism.L2.Col
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem shortAt_pos (D : D7) (u : D.what₂.Word) (c : (D.mem u).C.cls 0) (y : Fin (D.R.N 0) → (D.sp.X 0).V)
     (hy : Formalism.MainNotions.flipTwoThree.ShortAt D u c y) (w : InfinitePlace D.host.E) (a : Fin (D.R.N 0)) :
@@ -1451,8 +1431,6 @@ namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Formalism.MainNotions.flipTwoThree Formalism.L2.DIV Formalism.L2.GlobalTheoryTheory.HLatOps Formalism.L2.Col Formalism.BasicNotions.SkeletonIndexLemmas
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 section Int2
 
 variable {D : D7} {u : D.what₂.Word} (CV : ColVal D u)
@@ -1546,8 +1524,6 @@ noncomputable section
 namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Formalism.MainNotions.flipTwoThree Formalism.L2.DIV Formalism.L2.GlobalTheoryTheory.HLatOps Formalism.L2.Col Formalism.BasicNotions.SkeletonIndexLemmas
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 section SlopeTestRemainingChoices
 
@@ -1815,8 +1791,6 @@ noncomputable section
 namespace Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.HN Formalism.MainNotions.flipTwoThree Formalism.L2.DIV Formalism.L2.GlobalTheoryTheory.HLatOps Formalism.L2.Col Formalism.BasicNotions.SkeletonIndexLemmas
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 def QFrameDeg (D : D7) : Prop :=
   ∀ u (CV : ColVal D u) c τ,

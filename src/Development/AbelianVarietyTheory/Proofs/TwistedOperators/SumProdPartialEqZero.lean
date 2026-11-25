@@ -45,7 +45,6 @@ import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -88,8 +87,7 @@ theorem sum_prod_map_eq_zero (s : Finset δ) (a : δ → ℂ) (F : δ → ∀ i,
   · obtain ⟨x⟩ := hX
     simpa using sum_prod_partial_eq_zero T s a F h Finset.univ x y
   · have hi : ∃ i, IsEmpty (X i) := by
-      by_contra hn
-      push_neg at hn
+      by_contra! hn
       exact hX ⟨fun i => Classical.choice (hn i)⟩
     obtain ⟨i, hi⟩ := hi
     have h0 : ∀ f : X i → ℂ, f = 0 := fun f => funext fun z => hi.elim z

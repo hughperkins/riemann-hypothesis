@@ -72,8 +72,6 @@ namespace Formalism.L2.SG.Pf.Carrier.CarPinVt
 
 open Formalism.L2.SG.RealObj
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 def GNonNeg (u u' : D.what₂.Word) : Prop :=
@@ -236,8 +234,6 @@ namespace Formalism.L2.SG.Pf.Carrier.CarPinVt
 open Formalism.L2.SG.RealObj Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf
   Formalism.L2.SG.Pf.CarrierT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D)
 
 theorem exists_nonneg_ptG_lptOf_eq_mul (v : InfinitePlace X.B.I.F) (κ : ℂ) (hκ : star κ = -κ) (TT : ℝ)
@@ -309,8 +305,7 @@ theorem rZero_carrierInT (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃
         (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE) (Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE)
         (Tw (D := D) u * Tw (D := D) u') (by rw [hcl]; simp)
       rw [Formalism.L2.SG.Pf.CarrierTop.zx_sc, hGd, hZ1] at hv1
-      by_contra hpos
-      push_neg at hpos
+      by_contra! hpos
       have hrd := Formalism.MainNotions.LocalModelPeriodLattices.rdE_pos D
       have hne : (∏ i : Fin D.R.rS, Formalism.L2.SG.Pf.CarrierTop.cS D.R.rS D.host.rdE (Fin.castLE (Nat.le_succ D.R.rS) i)) ≠ 0 :=
         Finset.prod_ne_zero_iff.mpr fun i _ => by
@@ -320,8 +315,7 @@ theorem rZero_carrierInT (u u' : D.what₂.Word) (e : InfinitePlace D.host.E ≃
         pow_pos (mul_pos (norm_pos_iff.mpr hne) (norm_pos_iff.mpr hne)) 2
       have := mul_pos hc hpos
       linarith
-    · by_contra hall
-      push_neg at hall
+    · by_contra! hall
       obtain ⟨γ, hγ, -⟩ := hPRE w (fun v => by have := hall v; unfold Gv; exact this)
       exact hrep ⟨γ, hγ⟩
   refine ⟨(tauE X e).symm v, Or.inr ?_⟩
@@ -403,7 +397,7 @@ namespace Formalism.L2.SG.Pf.CarrierT
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Choice
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} (C : Choice X θ)
 
@@ -816,7 +810,7 @@ namespace Formalism.L2.SG.Pf.CarrierXAll
 
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 variable {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} (C : Choice X θ)
 
@@ -985,7 +979,7 @@ namespace Formalism.L2.SG.Pf.CarrierXAll
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Carrier.CarPinVt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 theorem cut_len {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} {u u' : D.what₂.Word} (I : CarrierIn X u u') (v : Fin I.nf) :
     (sOf I).cutHi v - (sOf I).cutLo v = I.G.Del / 2 - 5 / 2 := by
@@ -1172,7 +1166,7 @@ namespace Formalism.L2.SG.Pf.CarrierXAll
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Carrier.CarPinVt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 theorem host_v (D : D7) : D.host.v = Formalism.FourierDecayAlt.S6.rd D.host.E / 2 := by
   unfold Formalism.BasicNotions.Host.v Formalism.BasicNotions.Host.rdE Formalism.FourierDecayAlt.S6.rd
@@ -1198,7 +1192,7 @@ def XLeafAt {D : D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D) {θ : ℝ} 
   ∀ (Θ : ∀ j : Fin (nfE D), Formalism.FourierDecayAlt.Top.TopLift D.R.k D.R.rS (X.Vloc u (tauE X e j)) (X.Vloc u' (tauE X e j)))
     (TP : ∀ j : Fin (nfE D), Formalism.FourierDecayAlt.Top.TypeProj (parE e u u' de de' j) (towersOf X C u u' e j).base.π
       (towersOf X C u u' e j).base.z (m0E X C u u' e j *ᵥ nuE X C u' e i0' j)) (A₀ : ℝ),
-    Formalism.L2.SG.Pf.Carrier.JointPin.PinCov (CarrierOf (ITc X C u u' e he hv CA de de' l (gridT e l) (grid1T e l) (fcT X C e u u' a b ξ ξ' cc) cutStd i0' Θ TP A₀) (modelsOf (ITc X C u u' e he hv CA de de' l (gridT e l) (grid1T e l) (fcT X C e u u' a b ξ ξ' cc) cutStd i0' Θ TP A₀)))
+    Formalism.L2.SG.Pf.Carrier.JointPin.PinCov (CarrierOf (ITc X C u u' e he hv CA de de' l (gridT e l) (grid1T e l) (fcT X C e u u' a b ξ ξ' cc) cutStd i0' Θ TP A₀))
 
 end Formalism.L2.SG.Pf.CarrierXAll
 
@@ -1210,7 +1204,7 @@ namespace Formalism.L2.SG.Pf.CarrierXAll
 open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Built Formalism.L2.SG.LocWSOf Formalism.L2.SG.Pf.CarrierT Formalism.L2.SG.RealObj
 open Formalism.L2.SG.Pf.Carrier.CarPinVt
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 def Cd : ℝ := exists_Cc_data.choose
 
@@ -1386,7 +1380,7 @@ open Formalism.L2.SG.Pf.Carrier Formalism.L2.SG.Pf.BaseOf Formalism.L2.SG.Pf.Bui
 open Formalism.FourierDecayAlt Formalism.L2.SG.HidaSetting Formalism.L2.SG.Full Formalism.L2.SG.PackageTie2 Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups
 open Formalism.L2.SG.AdBridge Formalism.L2.SG.DataInst Formalism.L2.SG.SpectralTiesReal
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar instCM
+attribute [local instance] instCM
 
 theorem polys (k r : ℕ) :
     (k : ℝ) * ((4 * Formalism.FourierDecayAlt.C.Kst * (r + 1) : ℕ) : ℝ) * ((r : ℝ) + 1) ^ 2 + ((4 * Formalism.FourierDecayAlt.C.Kst * (r + 1) : ℕ) : ℝ) ^ 2 * ((r : ℝ) + 1) ^ 2 +

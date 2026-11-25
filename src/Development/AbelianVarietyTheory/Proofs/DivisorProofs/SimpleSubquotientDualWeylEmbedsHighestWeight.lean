@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeylLatticeExactExponentBlockCut
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChange
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjector
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
@@ -422,13 +423,7 @@ theorem proj_rowAct (a b : Fin N) (hab : a ≠ b) (k : ℕ) (w : Fin N → ℕ) 
 
 theorem rowW_le_total (d : Fin N × Fin N →₀ ℕ) (c : Fin N) :
     Finsupp.weight (rowW N N) d c ≤ ∑ s, Finsupp.weight (colW N N) d s := by
-  classical
-  simp only [Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply, Pi.smul_apply, rowW, colW, smul_eq_mul]
-  rw [Finset.sum_comm]
-  refine Finset.sum_le_sum fun v _ => ?_
-  rw [← Finset.mul_sum]
-  simp [Pi.single_apply]
-  split_ifs <;> simp
+  apply _root_.GlobalTheory.HighWt.rowWeight_le_colSum <;> assumption
 
 def box (ν : Fin N → ℕ) : Finset (Fin N → ℕ) :=
   Fintype.piFinset fun _ : Fin N => Finset.range (∑ s, ν s + 1)
@@ -738,8 +733,7 @@ theorem lduHom_coeff_smul_injective : ∀ (O : Type) [CommRing O] (N : ℕ) (M :
   · intro m _
     rw [← one_smul O (c m), Subsingleton.elim (1 : O) 0, zero_smul]
   classical
-  by_contra hne
-  push_neg at hne
+  by_contra! hne
   obtain ⟨m1, hm1, hc1⟩ := hne
   have hT : (s.filter fun m => c m ≠ 0).Nonempty := ⟨m1, Finset.mem_filter.2 ⟨hm1, hc1⟩⟩
   obtain ⟨m0, hm0, hmax⟩ := Finset.exists_max_image _ (fun m => (ord N).toSyn (leadExp N m)) hT
@@ -1274,16 +1268,7 @@ namespace GlobalTheory.DualWeylDeg
 
 theorem weight_colW_apply {N : ℕ} (m : Fin N × Fin N →₀ ℕ) (t : Fin N) :
     (Finsupp.weight (colW N N) m) t = ∑ a : Fin N, m (a, t) := by
-  classical
-  rw [Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
-  simp only [Finset.sum_apply, Pi.smul_apply, colW, smul_eq_mul]
-  rw [Fintype.sum_prod_type]
-  simp only [Pi.single_apply]
-  rw [Finset.sum_comm]
-  rw [Finset.sum_eq_single t]
-  · simp
-  · intro b _ hb; simp; intro h; exact absurd h.symm hb
-  · simp
+  apply _root_.GlobalTheory.LeviCut.weight_colW_apply <;> assumption
 
 theorem totalDegree_le_of_mem_dualWeyl : ∀ (O : Type) [CommRing O] (N : ℕ) (ν : Fin N → ℕ)
     (f : MvPolynomial (Fin N × Fin N) O), f ∈ dualWeyl O N N ν → f.totalDegree ≤ ∑ a, ν a := by
@@ -1314,30 +1299,6 @@ noncomputable section
 open MvPolynomial Formalism.GradedWeylDivisibility
 
 namespace GlobalTheory.GenCoef
-
-theorem rowSubst_diagonal_of_parts : ∀ (O : Type) [CommRing O] (N : ℕ) (R : Type) [CommRing R] [Algebra O R] (d : Fin N → R) (D : ℕ)
-    (f : MvPolynomial (Fin N × Fin N) O), f.totalDegree ≤ D →
-    rowSubst O N R (Matrix.diagonal d) f = ∑ w ∈ Fintype.piFinset (fun _ : Fin N => Finset.range (D + 1)),
-      (∏ a, d a ^ w a) • MvPolynomial.map (algebraMap O R) (weightedHomogeneousComponent (rowW N N) w f) := _root_.GlobalTheory.DiagRowSubst.rowSubst_diagonal_eq_sum_components
-
-theorem rowDiv_mem_of_parts : ∀ (O : Type) [CommRing O] (N : ℕ) (ν : Fin N → ℕ) (a b : Fin N), a ≠ b → ∀ k : ℕ,
-    ∃ p ∈ dwAlg O N ν, ∀ f : dualWeyl O N N ν,
-      (p f : MvPolynomial (Fin N × Fin N) O) = rowDiv O a b k (f : MvPolynomial (Fin N × Fin N) O) := _root_.GlobalTheory.GenCoef.rowDiv_mem_dwAlg
-
-theorem totalDegree_le_of_mem_of_parts : ∀ (O : Type) [CommRing O] (N : ℕ) (ν : Fin N → ℕ) (f : MvPolynomial (Fin N × Fin N) O),
-    f ∈ dualWeyl O N N ν → f.totalDegree ≤ ∑ a, ν a := _root_.GlobalTheory.DualWeylDeg.totalDegree_le_of_mem_dualWeyl
-
-theorem lduHom_pure_of_parts : ∀ (O : Type) [CommRing O] (N : ℕ) (M : Type) [AddCommGroup M] [Module O M]
-    (s : Finset (Fin N × Fin N →₀ ℕ)) (c : (Fin N × Fin N →₀ ℕ) → M),
-    (∀ n, ∑ m ∈ s, (lduHom O N (monomial m 1)).coeff n • c m = 0) → ∀ m ∈ s, c m = 0 := _root_.GlobalTheory.GenCoef.lduHom_coeff_smul_injective
-
-theorem rowSubst_eq_sum_genSub_of_parts : ∀ (O : Type) [CommRing O] (N : ℕ) (R : Type) [CommRing R] [Algebra O R]
-    (Y : Matrix (Fin N) (Fin N) R) (f : MvPolynomial (Fin N × Fin N) O),
-    rowSubst O N R Y f = ∑ m ∈ (GlobalTheory.HighWt.genSub O N f).support, (m.prod fun v k => Y v.1 v.2 ^ k) •
-      MvPolynomial.map (algebraMap O R) ((GlobalTheory.HighWt.genSub O N f).coeff m) := _root_.GlobalTheory.GenCoef.RowSubstSum.main
-
-theorem genSub_coeff_le_of_parts : ∀ (O : Type) [CommRing O] (N : ℕ) (D : ℕ) (f : MvPolynomial (Fin N × Fin N) O), f.totalDegree ≤ D →
-    ∀ m, (GlobalTheory.HighWt.genSub O N f).coeff m ≠ 0 → ∀ v, m v ≤ D := _root_.GlobalTheory.GenSubDeg.genSub_coeff_le
 
 end GlobalTheory.GenCoef
 
@@ -1707,8 +1668,7 @@ theorem jointWt_bounds : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteVal
   have hmem : a0 ∈ alg O N lam := Algebra.subset_adjoin (Or.inr ⟨τ, w τ, ha0⟩)
   have hex : ∃ x : ∀ τ, dualWeyl O N N (res N (lam τ)),
       weightedHomogeneousComponent (rowW N N) (w τ) (x τ : MvPolynomial (Fin N × Fin N) O) ≠ 0 := by
-    by_contra hne
-    push_neg at hne
+    by_contra! hne
     have ha0z : a0 = 0 := by
       apply PiTensorProduct.ext
       apply MultilinearMap.ext

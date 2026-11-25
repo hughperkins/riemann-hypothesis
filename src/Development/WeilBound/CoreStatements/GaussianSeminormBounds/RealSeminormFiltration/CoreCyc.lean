@@ -1,53 +1,6 @@
 module
 
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Rat
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 
@@ -195,23 +148,16 @@ theorem cas_comm {M : Type} [AddCommGroup M] [Module ℂ M] {ρ : Ix r s → Ix 
       · by_cases h : a = c
         · subst h; simp [hcd]
         · simp [h, Ne.symm h]
-    · have t1 : (if b = c then (if sameBlock a d then ρ a d * ρ d b else 0) else 0) = 0 := by
+    · have h0 : ∀ (P Q : Prop) [Decidable P] [Decidable Q] (X : Module.End ℂ M),
+          (P → Q → False) → (if P then (if Q then X else 0) else 0) = 0 := fun P Q _ _ _ h => by
         split_ifs with h1 h2
-        · subst h1; exact absurd (sb_trans (sb_symm hab) h2) hcd
+        · exact absurd h2 (h h1)
         all_goals rfl
-      have t2 : (if a = d then (if sameBlock c a then ρ c b * ρ a c else 0) else 0) = 0 := by
-        split_ifs with h1 h2
-        · subst h1; exact absurd h2 hcd
-        all_goals rfl
-      have t3 : (if b = d then (if sameBlock c a then ρ c b * ρ a c else 0) else 0) = 0 := by
-        split_ifs with h1 h2
-        · subst h1; exact absurd (sb_trans h2 hab) hcd
-        all_goals rfl
-      have t4 : (if a = c then (if sameBlock a d then ρ a d * ρ d b else 0) else 0) = 0 := by
-        split_ifs with h1 h2
-        · subst h1; exact absurd h2 hcd
-        all_goals rfl
-      rw [t1, t2, t3, t4, if_neg hcd]
+      rw [if_neg hcd,
+        h0 (b = c) (sameBlock a d) _ fun h1 h2 => hcd (h1 ▸ sb_trans (sb_symm hab) h2),
+        h0 (a = d) (sameBlock c a) _ fun h1 h2 => hcd (h1 ▸ h2),
+        h0 (b = d) (sameBlock c a) _ fun h1 h2 => hcd (h1 ▸ sb_trans h2 hab),
+        h0 (a = c) (sameBlock a d) _ fun h1 h2 => hcd (h1 ▸ h2)]
       simp
   have h0 : ρ a b * casK ρ - casK ρ * ρ a b = 0 := by
     unfold casK

@@ -10,45 +10,7 @@ import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.Cayley
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.MatrixFormFourfoldBlockFirstBlockEmb
 import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.Th0CharMulOpUTh0HalfPeriodEq
 import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.TypeStar
-import Mathlib.Topology.Sheaves.Init
 
 @[expose] public section
 
@@ -63,26 +25,8 @@ open Formalism.L2.Th1.F (cmTheta)
 
 theorem selfDual_img {V W : Type*} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] (H : Sesq V) (H' : Sesq W)
     (g : V ≃ₗ[ℂ] W) (hg : IsIsom H H' (g : V →ₗ[ℂ] W)) (Λ : AddSubgroup V) (h : IsSelfDual H Λ) :
-    IsSelfDual H' (imgLat (g : V →ₗ[ℂ] W) Λ) := by
-  apply le_antisymm
-  · intro x hx
-    refine ⟨g.symm x, ?_, g.apply_symm_apply x⟩
-    rw [← h]
-    intro y hy
-    obtain ⟨m, hm⟩ := hx (g y) ⟨y, hy, rfl⟩
-    refine ⟨m, ?_⟩
-    rw [← hm]
-    have := hg (g.symm x) y
-    simp only [LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply] at this
-    simp only [altE, this]
-  · rintro _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩
-    rw [← h] at hx
-    obtain ⟨m, hm⟩ := hx y hy
-    refine ⟨m, ?_⟩
-    rw [← hm]
-    have := hg x y
-    simp only [altE]
-    exact congrArg Complex.im this
+    IsSelfDual H' (imgLat (g : V →ₗ[ℂ] W) Λ) :=
+  by apply _root_.GlobalTheory.FourthRootStd.selfDual_image <;> assumption
 
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ}
 

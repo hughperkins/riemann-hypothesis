@@ -365,8 +365,7 @@ theorem UpperTheory.exists_principal_units_retraction_localField :
     have hunit : IsUnit ((Nat.card 𝓀[K] - 1 : ℕ) : ℤ_[l]) := by
       rw [PadicInt.isUnit_iff]
       apply le_antisymm (PadicInt.norm_le_one _)
-      by_contra hlt
-      push_neg at hlt
+      by_contra! hlt
       have h : l ∣ Fintype.card 𝓀[K] - 1 := by simpa using hlt
       rw [← Nat.card_eq_fintype_card] at h
       exact (hl.coprime_iff_not_dvd.mp hcop.symm) h
@@ -820,19 +819,6 @@ private theorem as_ext {M A B : Type} [CommGroup M] [TopologicalSpace M] [CommGr
   haveI := hnb x
   exact (hUc U).mem_of_tendsto (hF x) hev
 
-private theorem as_cont {M B : Type} [Group M] [TopologicalSpace M] [IsTopologicalGroup M] [Group B]
-    [TopologicalSpace B] [IsTopologicalGroup B] (f : M →* B) (hf : IsOpen (f.ker : Set M)) : Continuous f := by
-  refine continuous_iff_continuousAt.2 fun x => ?_
-  have hn : (fun y => x⁻¹ * y) ⁻¹' (f.ker : Set M) ∈ 𝓝 x := by
-    apply (continuous_const.mul continuous_id).continuousAt.preimage_mem_nhds
-    simpa using hf.mem_nhds (one_mem f.ker)
-  have hx : ∀ᶠ y in 𝓝 x, f x = f y := by
-    filter_upwards [hn] with y hy
-    have hy' : f (x⁻¹ * y) = 1 := hy
-    rw [map_mul, map_inv, inv_mul_eq_one] at hy'
-    exact hy'
-  exact continuousAt_const.congr hx
-
 open GroundTheory.LocalField.Abstract in
 private theorem as_ker {M A : Type} [CommGroup M] [TopologicalSpace M] [CommGroup A] [TopologicalSpace A]
     [IsTopologicalGroup A] [CompactSpace A] [T2Space A] (θ : M →* A) (hc : Continuous θ) (hd : DenseRange θ)
@@ -921,11 +907,11 @@ private theorem as_core {l : ℕ} [Fact l.Prime] {d : ℕ} {M A : Type} [CommGro
   obtain ⟨π, hπc, hπθ⟩ := as_ext θ hd hE p hp
   let va : M →* Multiplicative ℤ_[l] := (AddMonoidHom.toMultiplicative (Int.castAddHom ℤ_[l])).comp v
   have hva : Continuous va := by
-    refine as_cont va (Subgroup.isOpen_mono (fun y hy => ?_) hv')
+    refine GlobalTheory.HeckeGal.continuous_of_isOpen_ker' va (Subgroup.isOpen_mono (fun y hy => ?_) hv')
     rw [MonoidHom.mem_ker] at hy ⊢
     simp [va, hy]
   obtain ⟨a, hac, haθ⟩ := as_ext θ hd hE va hva
-  have htc : Continuous t := as_cont t ht
+  have htc : Continuous t := GlobalTheory.HeckeGal.continuous_of_isOpen_ker' t ht
   obtain ⟨mM, hmc, hmθ⟩ := as_ext θ hd hE t htc
   have hθl : ∀ x : ↥(CommGroup.primaryComponent M l),
       (θ.comp (CommGroup.primaryComponent M l).subtype) x ∈ CommGroup.primaryComponent A l := by

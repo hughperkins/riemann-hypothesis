@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffOneSubstOfConstantCoeffEqZero
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
 public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
 public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.IsogenyFormulaInstance
@@ -190,21 +191,7 @@ open PowerSeries GlobalTheory.Honda Formalism.L2.Th1.CM
 namespace GlobalTheory
 
 theorem omegaK_quadratic : ∀ d : ℕ, d % 4 = 3 → omegaK d ^ 2 - omegaK d + (((d + 1) / 4 : ℕ) : ℂ) = 0 := by
-  intro d hd
-  have h4 : 4 ∣ d + 1 := by omega
-  obtain ⟨k, hk⟩ := h4
-  have hk' : (d + 1) / 4 = k := by omega
-  rw [hk']
-  have hdk : (d : ℂ) = 4 * k - 1 := by
-    have : ((d + 1 : ℕ) : ℂ) = ((4 * k : ℕ) : ℂ) := by rw [hk]
-    push_cast at this
-    linear_combination this
-  have hs : ((Real.sqrt d : ℝ) : ℂ) ^ 2 = (d : ℂ) := by
-    rw [← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg _)]
-    simp
-  unfold omegaK
-  have hI : Complex.I ^ 2 = -1 := Complex.I_sq
-  linear_combination (-(1:ℂ)/4) * hs + ((Real.sqrt d : ℝ) : ℂ) ^ 2 / 4 * hI - (1/4 : ℂ) * hdk
+  first | exact _root_.ReciprocityTheory.ChartRestriction.L1.omegaK_quad | exact @_root_.ReciprocityTheory.ChartRestriction.L1.omegaK_quad | apply _root_.ReciprocityTheory.ChartRestriction.L1.omegaK_quad <;> assumption
 end GlobalTheory
 end -- clump:auto
 end -- clump:auto
@@ -226,8 +213,7 @@ theorem norm_eq_one_of_quad_root {l : ℕ} [Fact l.Prime] (x : ℂ_[l]) (N : ℕ
     exact (Nat.Prime.coprime_iff_not_dvd Fact.out).mpr hN
   have hle : ∀ y : ℂ_[l], y ^ 2 - y + (N : ℂ_[l]) = 0 → ‖y‖ ≤ 1 := by
     intro y hy
-    by_contra h
-    push_neg at h
+    by_contra! h
     have h1 : y ^ 2 = y - N := by linear_combination hy
     have h2 : ‖y - (N : ℂ_[l])‖ ≤ max ‖y‖ ‖(N : ℂ_[l])‖ := by
       rw [sub_eq_add_neg, ← norm_neg (N : ℂ_[l])]
@@ -433,8 +419,7 @@ theorem htform_constantCoeff_subst (A v : K⟦X⟧) (h0 : constantCoeff v = 0) :
 
 theorem htform_unit_coeff_le : ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (A v : K⟦X⟧) (e e' : K) (M : ℕ) (Dp Np : Polynomial K), CoefLe 1 A → constantCoeff A = 1 → CoefLe 1 v → constantCoeff v = 0 → ‖e‖ ≤ 1 → ‖e'‖ ≤ 1 → Np.Monic → Np.natDegree = M + 1 → (∀ i, ‖Np.coeff i‖ ≤ 1) → Dp.natDegree ≤ M → ‖Dp.eval e'‖ = 1 → (A.subst v - C e * v ^ 2) * (∑ i ∈ Finset.range (M + 1), C (Dp.coeff i) * A ^ i * X ^ (2 * (M - i))) * X ^ 2 = v ^ 2 * ∑ i ∈ Finset.range (M + 2), C (Np.coeff i) * A ^ i * X ^ (2 * (M + 1 - i)) → ∃ n, n ≤ M + 1 ∧ ‖coeff n v‖ = 1 := by
   intro K _ _ _ A v e e' M Dp Np hA hA0 hv hv0 he he' _ _ hNc hDdeg hDe heq
-  by_contra hcon
-  push_neg at hcon
+  by_contra! hcon
   have hvs : HtSmallTo (M + 2) v := ⟨hv, fun n hn => lt_of_le_of_ne (hv n) (hcon n (by omega))⟩
   have hA' : HtSmallTo 0 A := (htSmallTo_zero_iff A).2 hA
   have hB : HtSmallTo 0 (A.subst v - C e * v ^ 2) :=
@@ -815,17 +800,11 @@ theorem chord_norm_le_one {K : Type*} [NormedField K] [IsUltrametricDist K] {a b
     · exact (mul_le_of h2.le hk₀).trans (by linarith)
     · exact (mul_le_of (mul_le_of h2.le hB1) ((norm_neg A).le.trans hA1)).trans (by linarith)
   rw [← hN, norm_mul, norm_mul, norm_mul, norm_mul, h2, hab] at hn
-  by_contra hc
-  push_neg at hc
+  by_contra! hc
   nlinarith
 
 theorem norm_two_of_ne {p : ℕ} [Fact p.Prime] (hp : p ≠ 2) : ‖(2 : ℂ_[p])‖ = 1 := by
-  have h : ‖((2 : ℕ) : ℚ_[p])‖ = 1 := by
-    rw [Padic.norm_natCast_eq_one_iff]
-    exact (Nat.coprime_primes Fact.out Nat.prime_two).2 hp
-  have e : (2 : ℂ_[p]) = algebraMap ℚ_[p] ℂ_[p] ((2 : ℕ) : ℚ_[p]) := by
-    rw [map_natCast]; norm_num
-  rw [e, norm_algebraMap', h]
+  apply _root_.GlobalTheory.Klein.padicComplex_norm_two_eq_one_of_ne_two <;> assumption
 
 variable {p : ℕ} [Fact p.Prime]
 
@@ -1637,32 +1616,6 @@ namespace GlobalTheory.Honda.KurUnr
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K]
 
-theorem norm_pow_sub_pow_le {y z : K} (hy : ‖y‖ ≤ 1) (hz : ‖z‖ ≤ 1) (i : ℕ) :
-    ‖y ^ i - z ^ i‖ ≤ ‖y - z‖ := by
-  induction i with
-  | zero => simp
-  | succ i ih =>
-    have e : y ^ (i + 1) - z ^ (i + 1) = y * (y ^ i - z ^ i) + (y - z) * z ^ i := by ring
-    rw [e]
-    refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
-    · rw [norm_mul]
-      calc ‖y‖ * ‖y ^ i - z ^ i‖ ≤ 1 * ‖y - z‖ :=
-            mul_le_mul hy ih (norm_nonneg _) zero_le_one
-        _ = ‖y - z‖ := one_mul _
-    · rw [norm_mul, norm_pow]
-      calc ‖y - z‖ * ‖z‖ ^ i ≤ ‖y - z‖ * 1 :=
-            mul_le_mul_of_nonneg_left (pow_le_one₀ (norm_nonneg _) hz) (norm_nonneg _)
-        _ = ‖y - z‖ := mul_one _
-
-theorem norm_eval_sub_eval_le (f : Polynomial K) (hf : ∀ n, ‖f.coeff n‖ ≤ 1) {y z : K}
-    (hy : ‖y‖ ≤ 1) (hz : ‖z‖ ≤ 1) : ‖f.eval y - f.eval z‖ ≤ ‖y - z‖ := by
-  rw [Polynomial.eval_eq_sum_range y, Polynomial.eval_eq_sum_range z, ← Finset.sum_sub_distrib]
-  refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg _) fun i _ => ?_
-  rw [← mul_sub, norm_mul]
-  calc ‖f.coeff i‖ * ‖y ^ i - z ^ i‖ ≤ 1 * ‖y - z‖ :=
-        mul_le_mul (hf i) (norm_pow_sub_pow_le hy hz i) (norm_nonneg _) zero_le_one
-    _ = ‖y - z‖ := one_mul _
-
 theorem norm_root_le_one (f : Polynomial K) (hm : f.Monic) (hf : ∀ n, ‖f.coeff n‖ ≤ 1) {z : K}
     (hz : f.eval z = 0) : ‖z‖ ≤ 1 := by
   apply GlobalTheory.NormEvalSubBound.norm_le_one_of_root <;> assumption
@@ -1705,8 +1658,7 @@ theorem unr_of_unrOK (l : ℕ) (σ : K →+* K) (h : Formalism.InvariantFactorPa
     obtain ⟨k, hk⟩ := hval x hx0
     rw [hnl, hk]
     have hkneg : k ≤ -1 := by
-      by_contra hk1
-      push_neg at hk1
+      by_contra! hk1
       have : (1 : ℝ) ≤ (l : ℝ) ^ k := one_le_zpow₀ hl1.le (by omega)
       rw [← hk] at this
       linarith
@@ -1742,7 +1694,7 @@ theorem GlobalTheory.Honda.kur_resAlg_unr : ∀ (l : ℕ) [Fact l.Prime], 2 < l 
     exact (Polynomial.eval₂_hom (MaximalUnramifiedExtension l).subtype ⟨y, hyK⟩).symm
   change ‖((f.eval ⟨y, hyK⟩ : MaximalUnramifiedExtension l) : ℂ_[l])‖ < 1
   rw [hev, ← sub_zero (g.eval y), ← hz]
-  calc ‖g.eval y - g.eval z‖ ≤ ‖y - z‖ := norm_eval_sub_eval_le g hgc hy1 hz1
+  calc ‖g.eval y - g.eval z‖ ≤ ‖y - z‖ := GlobalTheory.NormEvalSubBound.norm_eval_sub_le g hgc hy1 hz1
     _ = ‖z - y‖ := norm_sub_rev _ _
     _ < 1 := hzy
 end -- clump:auto
@@ -1792,8 +1744,7 @@ theorem norm_natCast_eq_one {K : Type} [NormedField K] [IsUltrametricDist K] (l 
     exact this
   have hle : ‖(n : K)‖ ≤ 1 := IsUltrametricDist.norm_natCast_le_one K n
   refine le_antisymm hle ?_
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have ha : ‖(n.gcdA l : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K _
   have hb' : ‖(n.gcdB l : K)‖ ≤ 1 := IsUltrametricDist.norm_intCast_le_one K _
   have e1 : ‖(n : K) * (n.gcdA l : K)‖ < 1 := by

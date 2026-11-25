@@ -1,58 +1,12 @@
 module
 
+import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasGl
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.KroneckerOneRightSwap
 public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLie
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.ExistsMonomialWeight
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.FockOperatorsKernel
 public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.RedOps
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.TotallySplit
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
 
 @[expose] public section
@@ -145,28 +99,8 @@ theorem isPC_Eab {m n : ℕ} {a b : Ix m n} (h : ¬ sameBlock a b) : IsPC (Eab a
 alias sb_iff := _root_.PI.FockOneDegW.Core.side_sb
 
 theorem isPC_brk {m n : ℕ} {a b : Ix m n} (h : sameBlock a b) {Z : Mat m n} (hZ : IsPC Z) :
-    IsPC (Eab a b * Z - Z * Eab a b) := by
-  intro x y hxy
-  rw [sb_iff] at h hxy
-  have hZ' : ∀ u v : Ix m n, u.isLeft = v.isLeft → Z u v = 0 :=
-    fun u v huv => hZ u v ((sb_iff u v).2 huv)
-  have h1 : ∀ k, Eab a b x k * Z k y = 0 := by
-    intro k
-    simp only [Eab, Matrix.single_apply]
-    split_ifs with hh
-    · obtain ⟨rfl, rfl⟩ := hh
-      rw [one_mul]
-      exact hZ' _ _ (h.symm.trans hxy)
-    · rw [zero_mul]
-  have h2 : ∀ k, Z x k * Eab a b k y = 0 := by
-    intro k
-    simp only [Eab, Matrix.single_apply]
-    split_ifs with hh
-    · obtain ⟨rfl, rfl⟩ := hh
-      rw [mul_one]
-      exact hZ' _ _ (hxy.trans h.symm)
-    · rw [mul_zero]
-  simp only [Matrix.sub_apply, Matrix.mul_apply, h1, h2, Finset.sum_const_zero, sub_zero]
+    IsPC (Eab a b * Z - Z * Eab a b) :=
+  _root_.PositivityTheory.KReal.CasGl.pc_ad h hZ
 
 variable {p q r s : ℕ}
 

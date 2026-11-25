@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AbelianVarietyTheory.Definitions.LatticeFrames.MiStarOfMid
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitPointWeilCharConductorOneOfUnits
 
 @[expose] public section
 
@@ -61,16 +62,7 @@ section Local
 variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 theorem splitPlace_polarisationDatum_inv_integral (p : SplitPt D k) (hU : p.UnitAA) : p.pr (incA D D.host.xi0⁻¹) ∈ 𝒪[k] := by
-  obtain ⟨η, hη, h0, h⟩ := exists_idem p
-  have hm : (pairA D.host.F 0 η ⊗ₜ[D.host.F] (1 : D.host.E) : AE D) ∈ intAt D (· = p.v) := by
-    refine ⟨⟨?_, ?_⟩, AddSubgroup.subset_closure ⟨η, hη, 1, rfl⟩⟩
-    · change (0 : Ainf D.host.F) ⊗ₜ[D.host.F] (1 : D.host.E) = 0
-      exact TensorProduct.zero_tmul _ _
-    · refine Ideal.mem_iInf.2 fun w => ?_
-      change evalV D.host.F w.1 η ⊗ₜ[D.host.F] (1 : D.host.E) = 0
-      rw [h0 w.1 w.2, TensorProduct.zero_tmul]
-  have := pr_int p (hU.1 _ hm).2.2
-  rwa [map_mul, pr_pair_tmul p h, map_one, map_one, mul_one] at this
+  apply _root_.GlobalTheory.SplitWeilChar.splitPlace_polarisationDatum_inv_integral <;> assumption
 
 theorem hasConductor_of_mul {χ ψk : AddChar k Circle} {ξ : k} (hv : valuation k ξ = 1) (he : ∀ x, ψk x = χ (ξ * x))
     (h : HasConductor χ 1) : HasConductor ψk 1 := by
@@ -184,25 +176,5 @@ theorem isUnif_of (P : HeightOneSpectrum (𝓞 K)) (ι : K →+* k) (hint : ∀ 
   exact K1 a hx
 
 end Unif
-
-theorem cond_unif : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX} (W : RealPack ex) (u : D.what₂.Word), PkHyp W → ∀ (a : XGeo D) (PP : Pl D.host.E), PP ∈ (pk W).Pg ∨ QAll W PP → ∀ l : LocX a (pk W).βX PP, (∃ ψk : AddChar l.k Circle, (ofSplit l.q).IsChar (pk W).ψ ψk ∧ HasConductor ψk 1) ∧ (∃ ν : Measure l.k, IsUnitVol ν) ∧ (QAll W PP → ∃ ϖ : l.kˣ, GlobalTheory.IndefiniteRowSideFullHecke.FramePositiveSum.IsUnif ϖ ∧ GlobalTheory.SymBridge.IsCompl PP (Formalism.L2.Col.qOf PP) (l.q.pr.comp (incA D)) ϖ) := by
-  intro D L hT Gi Gl Kc Yd cX ex W u hW a PP hPP l
-  have hstd : IsStdChar D (pk W).ψ (-1) := W.Q.stdChar
-  refine ⟨?_, GlobalTheory.SplitWeil.exists_isUnitVol l.k, fun hQ => ?_⟩
-  · obtain ⟨⟨ψk, hψk⟩, -, hxi, -⟩ := GlobalTheory.LocChar.weil_char_split D l.k (ofSplit l.q) (pk W).ψ hstd
-    exact ⟨ψk, hψk, hasConductor_weil l.q l.unit _ hstd ψk hψk hxi⟩
-  · obtain ⟨t, ht⟩ := hQ
-    obtain ⟨⟨p, -, hcard, hp2, -⟩, -⟩ := W.Q.charW.base.lev.Q_pl t PP ht
-    have hqp : Formalism.L2.Col.qOf PP = p := by
-      rw [← hcard]
-      unfold Formalism.L2.Col.qOf
-      rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
-    have hq2 : ((Formalism.L2.Col.qOf PP : ℕ) : 𝓞 D.host.E) ∉ PP.asIdeal ^ 2 := by rw [hqp]; exact hp2
-    obtain ⟨k', _, _, _, _, q', hqe, -, hint', hd'⟩ := GlobalTheory.LocMod.SplitCompl.exists_place D PP l.q.e l.idem
-    have hint : ∀ x, (l.q.pr.comp (incA D)) x ∈ 𝒪[l.k] ↔ Formalism.L2.Col.IntAt PP x := fun x =>
-      (int_transfer l.q q' hqe.symm (incA D x)).trans (hint' x)
-    have hd := dense_transfer l.q q' hqe.symm hd'
-    obtain ⟨ϖ, hu, hϖ⟩ := isUnif_of PP _ hint hd hq2
-    exact ⟨ϖ, hu, ⟨hint, hd, rfl, hϖ⟩⟩
 
 end GlobalTheory.WeilCondUnif

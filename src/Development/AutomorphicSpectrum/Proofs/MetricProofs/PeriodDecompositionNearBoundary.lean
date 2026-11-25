@@ -18,57 +18,12 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositive
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MemChartWOfContinuousPeriod
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogPeriodLimit
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.FubiniLevi
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.StPuncturedExpOrder
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Tactic.Lemma
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticUnipotentShape
 import GroundTheory.HeightsAndTheta.Heights.Regularisation.PosSemidefOfIntQuadNonneg
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenComponentAppendIndependentSpan, Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenComponentSpanRelIndexCriterion, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsContinuousChangeOfFrame, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsFamilyInIdealOfIsOFamily, Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetImEqZero, Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetMulNormSqDet, Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetPosOfSemidefiniteTransversal, Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodDecompositionNearBoundary
@@ -410,56 +365,6 @@ private lemma solve_eq {g m : ℕ} (A : Matrix (Fin g) (Fin m) ℂ) (C : Matrix 
   rw [Matrix.mul_assoc, ← Matrix.mul_assoc Aᴴ, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hu,
     Matrix.one_mul]
 
-open scoped ComplexOrder in
-private lemma gram_det_ne {g m : ℕ} (M : Fin m → Fin g → ℂ) (h : LinearIndependent ℂ M) :
-    ((colMat M)ᴴ * colMat M).det ≠ 0 := by
-  have hinj : Function.Injective (colMat M).mulVec := by
-    intro x y hxy
-    have hz : ∑ i, (x - y) i • M i = 0 := by
-      funext a
-      have h1 : (colMat M *ᵥ (x - y)) a = 0 := by
-        rw [Matrix.mulVec_sub, hxy, sub_self]; rfl
-      simpa [Matrix.mulVec, dotProduct, colMat, mul_comm, Finset.sum_apply] using h1
-    funext i
-    exact sub_eq_zero.1 (Fintype.linearIndependent_iff.1 h _ hz i)
-  have hinj2 : Function.Injective ((colMat M)ᴴ * colMat M).mulVec := by
-    intro x y hxy
-    apply hinj
-    have h0 : ((colMat M)ᴴ * colMat M) *ᵥ (x - y) = 0 := by
-      rw [Matrix.mulVec_sub, hxy, sub_self]
-    have h1 := (Matrix.conjTranspose_mul_self_mulVec_eq_zero _ _).1 h0
-    rw [Matrix.mulVec_sub] at h1
-    exact sub_eq_zero.1 h1
-  have := (Matrix.mulVec_injective_iff_isUnit).1 hinj2
-  exact ((Matrix.isUnit_iff_isUnit_det _).1 this).ne_zero
-
-private lemma cat_mul {X : Type} [TopologicalSpace X] {x : X} {l k r : ℕ}
-    {A : X → Matrix (Fin l) (Fin k) ℂ} {B : X → Matrix (Fin k) (Fin r) ℂ}
-    (hA : ContinuousAt A x) (hB : ContinuousAt B x) : ContinuousAt (fun z => A z * B z) x := by
-  have c : Continuous (fun p : Matrix (Fin l) (Fin k) ℂ × Matrix (Fin k) (Fin r) ℂ => p.1 * p.2) :=
-    continuous_fst.matrix_mul continuous_snd
-  exact c.continuousAt.comp (hA.prodMk hB)
-
-private lemma cat_conj {X : Type} [TopologicalSpace X] {x : X} {l k : ℕ}
-    {A : X → Matrix (Fin l) (Fin k) ℂ} (hA : ContinuousAt A x) :
-    ContinuousAt (fun z => (A z)ᴴ) x := by
-  have c : Continuous (fun N : Matrix (Fin l) (Fin k) ℂ => Nᴴ) :=
-    continuous_id.matrix_conjTranspose
-  exact c.continuousAt.comp hA
-
-private lemma cat_det {X : Type} [TopologicalSpace X] {x : X} {k : ℕ}
-    {A : X → Matrix (Fin k) (Fin k) ℂ} (hA : ContinuousAt A x) :
-    ContinuousAt (fun z => (A z).det) x := by
-  have c : Continuous (fun N : Matrix (Fin k) (Fin k) ℂ => N.det) := continuous_id.matrix_det
-  exact c.continuousAt.comp hA
-
-private lemma cat_adj {X : Type} [TopologicalSpace X] {x : X} {k : ℕ}
-    {A : X → Matrix (Fin k) (Fin k) ℂ} (hA : ContinuousAt A x) :
-    ContinuousAt (fun z => (A z).adjugate) x := by
-  have c : Continuous (fun N : Matrix (Fin k) (Fin k) ℂ => N.adjugate) :=
-    continuous_id.matrix_adjugate
-  exact c.continuousAt.comp hA
-
 private lemma colMat_continuousAt {n g m : ℕ} (M : (Fin n → ℂ) → Fin m → Fin g → ℂ)
     (h : ∀ i, ContinuousAt (fun z => M z i) 0) : ContinuousAt (fun z => colMat (M z)) 0 := by
   refine continuousAt_pi.2 fun a => continuousAt_pi.2 fun i => ?_
@@ -473,16 +378,24 @@ theorem coeff_continuous (n g m : ℕ) (M f : (Fin n → ℂ) → Fin m → Fin 
     ∃ T : (Fin n → ℂ) → Matrix (Fin m) (Fin m) ℂ, ContinuousAt T 0 ∧ T 0 = T₀ ∧
       ∀ᶠ z in 𝓝 (0 : Fin n → ℂ), ∀ i, f z i = ∑ j, T z j i • M z j := by
   have hA : ContinuousAt (fun z => colMat (M z)) 0 := colMat_continuousAt M hM
-  have hF : ContinuousAt (fun z => colMat (f z)) 0 := colMat_continuousAt f hf
+  have hAc : ContinuousAt (fun z => (colMat (M z))ᴴ) 0 :=
+    continuous_id.matrix_conjTranspose.continuousAt.comp hA
   have hG : ContinuousAt (fun z => (colMat (M z))ᴴ * colMat (M z)) 0 :=
-    cat_mul (cat_conj hA) hA
-  have hdet : ContinuousAt (fun z => ((colMat (M z))ᴴ * colMat (M z)).det) 0 := cat_det hG
-  have hd0 := gram_det_ne (M 0) hli
+    (continuous_fst.matrix_mul continuous_snd).continuousAt.comp (hAc.prodMk hA)
+  have hdet : ContinuousAt (fun z => ((colMat (M z))ᴴ * colMat (M z)).det) 0 :=
+    continuous_id.matrix_det.continuousAt.comp hG
+  open scoped ComplexOrder in
+  have hd0 : ((colMat (M 0))ᴴ * colMat (M 0)).det ≠ 0 :=
+    ((Matrix.isUnit_iff_isUnit_det _).1
+      (Matrix.PosDef.conjTranspose_mul_self (colMat (M 0))
+        ((Matrix.mulVec_injective_iff (M := colMat (M 0))).2 hli)).isUnit).ne_zero
   have hinv : ContinuousAt (fun z => ((colMat (M z))ᴴ * colMat (M z))⁻¹) 0 := by
     simp only [Matrix.inv_def, Ring.inverse_eq_inv']
-    exact (hdet.inv₀ hd0).smul (cat_adj hG)
+    exact (hdet.inv₀ hd0).smul (continuous_id.matrix_adjugate.continuousAt.comp hG)
   refine ⟨fun z => ((colMat (M z))ᴴ * colMat (M z))⁻¹ * (colMat (M z))ᴴ * colMat (f z),
-    cat_mul (cat_mul hinv (cat_conj hA)) hF, ?_, ?_⟩
+    (continuous_fst.matrix_mul continuous_snd).continuousAt.comp
+      (((continuous_fst.matrix_mul continuous_snd).continuousAt.comp
+        (hinv.prodMk hAc)).prodMk (colMat_continuousAt f hf)), ?_, ?_⟩
   · show ((colMat (M 0))ᴴ * colMat (M 0))⁻¹ * (colMat (M 0))ᴴ * colMat (f 0) = T₀
     rw [colMat_eq_mul (M 0) (f 0) T₀ h0]
     exact solve_eq _ _ hd0
@@ -965,7 +878,7 @@ theorem limit_of_data : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
           exact congrArg Subtype.val hdx
         exact hx0 ((smul_eq_zero.1 hzx).resolve_left (by exact_mod_cast hd.ne'))
       have hyfam : IsNzFamily I r (fun a' => (y a' : Λ)) := ⟨hr, hyI, hyli, hidx0⟩
-      obtain ⟨heq, hpos, _⟩ := (GlobalTheory.CompanionTheory.Relay.isotropic_sublattice_covolume_positive
+      obtain ⟨heq, hpos, _⟩ := (_root_.LevelTowerAlt.isotropic_submodule_nonzero_family
         E g Λ Ψ R σ I hσ hiso hbot).2 r _ hyfam
       exact ⟨heq, hpos⟩
   obtain ⟨hnz, hnzpos⟩ := hnz_data

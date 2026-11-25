@@ -14,8 +14,6 @@ public import Mathlib.RingTheory.MvPowerSeries.Rename
 section -- clump:auto
 @[expose] public section
 
-set_option autoImplicit false
-
 noncomputable section
 
 namespace Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -50,8 +48,6 @@ end -- clump:auto
 -- clump-header: {"m": "Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffPolyAdd", "h": "module\n\npublic import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart\npublic import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.KillAdd\npublic import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndEnc\npublic import Mathlib.RingTheory.MvPowerSeries.Rename\npublic import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndEncPf\nimport Mathlib.Algebra.Order.Floor.Extended\nimport Mathlib.Algebra.Order.Floor.Semifield\nimport Mathlib.Algebra.Order.Interval.Basic\nimport Mathlib.Analysis.Complex.UpperHalfPlane.Basic\nimport Mathlib.Analysis.Normed.Algebra.GelfandRadius\nimport Mathlib.Analysis.SpecialFunctions.Bernstein\nimport Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp\nimport Mathlib.Combinatorics.Enumerative.DyckWord\nimport Mathlib.Combinatorics.SimpleGraph.Triangle.Removal\nimport Mathlib.Data.NNRat.Floor\nimport Mathlib.Geometry.Euclidean.Volume.Basic\nimport Mathlib.NumberTheory.Chebyshev\nimport Mathlib.NumberTheory.Height.NumberField\nimport Mathlib.NumberTheory.Height.Projectivization\nimport Mathlib.NumberTheory.LucasLehmer\nimport Mathlib.NumberTheory.SelbergSieve\nimport Mathlib.RingTheory.Radical.NatInt\nimport Mathlib.RingTheory.WittVector.IsPoly\nimport Mathlib.Tactic.Basify\nimport Mathlib.Tactic.ENatToNat\nimport Mathlib.Tactic.Echelon.Zsqrtd\nimport Mathlib.Tactic.Inclusion.Extension.Core.Core\nimport Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp\nimport Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic\nimport Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses\nimport Mathlib.Tactic.Linter.Style\nimport Mathlib.Tactic.NormNum.Irrational\nimport Mathlib.Tactic.NormNum.IsCoprime\nimport Mathlib.Tactic.NormNum.IsSquare\nimport Mathlib.Tactic.NormNum.LegendreSymbol\nimport Mathlib.Tactic.NormNum.ModEq\nimport Mathlib.Tactic.NormNum.NatFib\nimport Mathlib.Tactic.NormNum.NatLog\nimport Mathlib.Tactic.NormNum.NatSqrt\nimport Mathlib.Tactic.NormNum.Ordinal\nimport Mathlib.Tactic.NormNum.Parity\nimport Mathlib.Tactic.NormNum.Prime\nimport Mathlib.Tactic.NormNum.RealSqrt\nimport Mathlib.Tactic.Polynomial.Basic\nimport Mathlib.Tactic.ReduceModChar\n\n"}
 section -- clump:auto
 @[expose] public section
-
-set_option autoImplicit false
 
 noncomputable section
 
@@ -309,21 +305,6 @@ theorem colEmb_inj {n d : ℕ} (b : Fin n) : Function.Injective (fun p : Fin 1 �
 def colPart {n d : ℕ} (b : Fin n) (M : Fin n × Fin d →₀ ℕ) : Fin 1 × Fin d →₀ ℕ :=
   Finsupp.comapDomain (fun p : Fin 1 × Fin d => ((b, p.2) : Fin n × Fin d)) M (colEmb_inj b).injOn
 
-private theorem coeff_rename_mapDomain_lemma {σ τ R : Type} (f : σ → τ) [Filter.TendstoCofinite f]
-    [CommSemiring R] (hf : Function.Injective f) (p : MvPowerSeries σ R) (x : σ →₀ ℕ) :
-    coeff (Finsupp.mapDomain f x) (rename f p) = coeff x p := by
-  classical
-  rw [MvPowerSeries.coeff_rename]
-  rw [Finset.sum_eq_single x]
-  · intro y hy hne
-    exfalso
-    simp only [Set.Finite.mem_toFinset] at hy
-    exact hne (Finsupp.mapDomain_injective hf hy)
-  · intro h
-    exfalso
-    apply h
-    simp
-
 theorem coeff_prod_cols {S : Type} [CommRing S] {n d : ℕ} (g : Fin n → MvPowerSeries (Fin 1 × Fin d) S)
     (M : Fin n × Fin d →₀ ℕ) :
     coeff M (∏ b, rename (fun p : Fin 1 × Fin d => ((b, p.2) : Fin n × Fin d)) (g b)) =
@@ -349,7 +330,9 @@ theorem coeff_prod_cols {S : Type} [CommRing S] {n d : ℕ} (g : Fin n → MvPow
   rw [Finset.sum_eq_single (Finsupp.equivFunOnFinite.symm Mb)]
   · refine Finset.prod_congr rfl fun b _ => ?_
     rw [Finsupp.coe_equivFunOnFinite_symm]
-    exact coeff_rename_mapDomain_lemma _ (colEmb_inj b) _ _
+    dsimp only [Mb, ι]
+    simpa only [Finsupp.embDomain_eq_mapDomain, Function.Embedding.coeFn_mk] using
+      MvPowerSeries.coeff_embDomain_rename ⟨fun p => (b, p.2), colEmb_inj b⟩ (g b) (colPart b M)
   · intro l hl hne
     by_contra hprod
     apply hne

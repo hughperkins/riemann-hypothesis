@@ -102,8 +102,7 @@ theorem piTensor_isSubquotient_jac_degZero : ∀ (k : Type) [Field k] [Valuative
     rw [Ne, Submodule.Quotient.mk_eq_zero, hK, Submodule.mem_bot]; exact hv
   obtain ⟨φ, hφ⟩ : ∃ φ : Module.Dual ℂ (Jacquet π (unipRad k e)),
       φ (Submodule.Quotient.mk v) ≠ 0 := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hx ((Module.forall_dual_apply_eq_zero_iff ℂ _).1 h)
   let L : Jacquet π (unipRad k e) →ₗ[ℂ] PiTensorProduct ℂ X :=
     (PiTensorProduct.isEmptyEquiv (Fin 0)).symm.toLinearMap ∘ₗ φ
@@ -273,12 +272,6 @@ theorem stage : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [
     (∀ a, IsSubquotient (piTensor (ρ' a)) (jac (e' a) (ρ a))) →
     ∃ E : (Σ c : Fin (∑ a, t a), Fin (d' (finSigmaFinEquiv.symm c).1 (finSigmaFinEquiv.symm c).2)) ≃ Fin n,
       IsSubquotient (piTensor fun c => ρ' (finSigmaFinEquiv.symm c).1 (finSigmaFinEquiv.symm c).2) (jac E π) := _root_.GlobalTheory.JacStages.isSubquotient_jac_refine
-
-theorem degZero : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (N : ℕ), N = 0 → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] [Nontrivial V]
-    (π : Representation ℂ (GL (Fin N) k) V) (d : Fin 0 → ℕ) (X : Fin 0 → Type) [∀ a, AddCommGroup (X a)]
-    [∀ a, Module ℂ (X a)] (ρ : ∀ a, Representation ℂ (GL (Fin (d a)) k) (X a)) (e : (Σ a, Fin (d a)) ≃ Fin N),
-    IsSubquotient (piTensor ρ) (jac e π) := _root_.GlobalTheory.piTensor_isSubquotient_jac_degZero
 
 theorem oneBlock : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V)

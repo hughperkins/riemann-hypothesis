@@ -28,61 +28,13 @@ public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LogInteg
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.UniformizerDivisorCycleNumber
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PNumericalSegre
 public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumsVanishAtPlaces
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
 import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberZeroOfHorizontal
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.Linter.HaveILetI
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentIntegralClosure
-import Mathlib.NumberTheory.Height.NumberField
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.RingTheory.PiTensorProduct
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
-import Mathlib.Algebra.Order.Star.Int
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DegreeEqCardToMultiset, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FinitePlacesModelFamily, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagM3PadicGlobal, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsometricFamilyIntersectionEq, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalPairPowerSumValue, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocPairValLinear, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalPairValueLinear, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FibreComponentDivisorProperties, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalPairPowerSumVanish, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumTermDiscreteValuation, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LogIntegralEqGenericIntersection, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootModelGeometricGenericNumber, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ExistsMixedDifferenceExpansion, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumMixedExpansion, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootPowerSumMixedExpansion, Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PowerSumHeightChangeModel
@@ -942,10 +894,10 @@ theorem val_psumExpansion_mul : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDisc
         ((cycEval (fun W => classNum (Sum.elim (T.x ∘ e) (T.x' ∘ e)) (psumExpansion r k a) L W)
           (ratDiv P (T.f (e a)) (T.g (e a))) : ℤ) : ℝ) := by
     intro i L
-    rw [(_root_.GlobalTheory.CompanionTheory.Ar.Num.cycNum_linear O K ι (σ ⊕ σ) (ratDiv P (T.f i) (T.g i)) (Sum.elim T.x T.x') L).2.2.1]
+    rw [(_root_.BaseChangeColon.cycNum_linear_in_polynomial O K ι (σ ⊕ σ) (ratDiv P (T.f i) (T.g i)) (Sum.elim T.x T.x') L).2.2.1]
     refine Finset.sum_congr rfl fun a ha => ?_
     obtain rfl : e a = i := (Finset.mem_filter.mp ha).2
-    rw [_root_.GlobalTheory.CompanionTheory.Ar.Num.numbers_rename.1 O K ι (Fin r ⊕ Fin r) (σ ⊕ σ) (Sum.map e e) _ (Sum.elim T.x T.x') _ L, hcomp]
+    rw [_root_.BaseChangeColon.cycNum_rename_variables.1 O K ι (Fin r ⊕ Fin r) (σ ⊕ σ) (Sum.map e e) _ (Sum.elim T.x T.x') _ L, hcomp]
     exact (cycNum_int_and_comb O K ι (Fin r ⊕ Fin r) (Sum.elim (T.x ∘ e) (T.x' ∘ e)) L).1 _
       (hfin _ _) _
   have hck : ∀ L : List (K → ℤ), (((T.comp e).ck P k L : ℤ) : ℝ) =
@@ -956,7 +908,7 @@ theorem val_psumExpansion_mul : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDisc
     rw [Finset.sum_fiberwise]
     simp only [LocPair.ck, pairNum, LocPair.comp, Function.comp_apply, Int.cast_sum]
   unfold LocPair.val
-  simp only [_root_.GlobalTheory.CompanionTheory.Ar.Num.cycNum_mul O K ι (σ ⊕ σ), List.append_nil, hterm]
+  simp only [_root_.BaseChangeColon.cycNum_mul_expansion O K ι (σ ⊕ σ), List.append_nil, hterm]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [← Finset.mul_sum, hck]
@@ -1151,10 +1103,7 @@ theorem length_toNat_ne_zero {S : Type} [CommRing S] [IsNoetherianRing S] {J W :
 theorem facts_of_divCycle_ne_zero {K : Type} {ι : K → Type} {R : Type} [CommRing R]
     {P W : Ideal (MRing ι R)} {f : MRing ι R} (h : divCycle P f W ≠ 0) :
     W ∈ (P ⊔ Ideal.span {f}).minimalPrimes ∧ IsRelevant W := by
-  by_contra hc
-  apply h
-  unfold divCycle
-  rw [dite_eq_right hc]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.Num.Places.mem_of_divCycle_ne_zero <;> assumption
 
 theorem fibre_comp : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O), Irreducible ϖ → ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι O)) (d : ℕ), IsModelOver P d → (∀ W, IsFibreComp P W ↔ divCycle P (C ϖ) W ≠ 0) ∧ (∀ (a : K → ℕ) (f : MRing ι O), IsMultiHomog f a → f ∉ P → ∀ W, divCycle P f W ≠ 0 → (C ϖ : MRing ι O) ∈ W → IsFibreComp P W) ∧ ∀ (b : K → ℤ) (f g : MRing ι O), IsVerticalDivisor P ϖ b f g → ∀ W, ratDiv P f g W ≠ 0 → IsFibreComp P W := by
   intro O _ _ _ ϖ hϖ K _ _ ι _ P d hP
@@ -1247,7 +1196,7 @@ theorem val_psum_mul_eq_zero : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscr
       (P ⊔ (IsLocalRing.maximalIdeal O).map (C : O →+* MRing ι O))).subset ?_
     intro W hW
     exact (hZc W hW).1
-  rw [_root_.GlobalTheory.CompanionTheory.Ar.Num.cycNum_mul O K ι (σ ⊕ σ) (ratDiv P (T.f i) (T.g i)) (Sum.elim T.x T.x') _ (Gs i) []]
+  rw [_root_.BaseChangeColon.cycNum_mul_expansion O K ι (σ ⊕ σ) (ratDiv P (T.f i) (T.g i)) (Sum.elim T.x T.x') _ (Gs i) []]
   refine Finset.sum_eq_zero fun μ hμ => ?_
   have hlen : ((classList (Sum.elim T.x T.x') μ ++ []).length) + k = d := by
     rw [List.append_nil, classList_length_of_mem_support _ (hGs i) hμ]
@@ -1255,7 +1204,7 @@ theorem val_psum_mul_eq_zero : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscr
   have hcomp : Sum.elim T.x T.x' ∘ (Sum.inr ∘ e) = T.x' ∘ e := by
     funext a
     simp
-  rw [sum_X_inr_pow_eq, (_root_.GlobalTheory.CompanionTheory.Ar.Num.numbers_rename).1 O K ι (Fin r) (σ ⊕ σ) (Sum.inr ∘ e), hcomp,
+  rw [sum_X_inr_pow_eq, (_root_.BaseChangeColon.cycNum_rename_variables).1 O K ι (Fin r) (σ ⊕ σ) (Sum.inr ∘ e), hcomp,
     (cycNum_int_and_comb O K ι (Fin r) (T.x' ∘ e) (classList (Sum.elim T.x T.x') μ ++ [])).1
       (ratDiv P (T.f i) (T.g i)) hfin (psum (Fin r) ℤ k)]
   have hzero : cycEval (fun W => classNum (T.x' ∘ e) (psum (Fin r) ℤ k)
@@ -1305,7 +1254,7 @@ theorem GlobalTheory.CompanionTheory.Ar.Num.power_sum_term_dvr : ∀ (O : Type) 
     rw [_root_.GlobalTheory.CompanionTheory.Ar.Num.val_psumExpansion_mul O K ι (Ψ × Fin N) T P N k (fun a => (τ, a)) (rename Sum.inl Q),
       support_rename_of_injective Sum.inl_injective,
       Finset.sum_image (Finsupp.mapDomain_injective Sum.inl_injective).injOn,
-      _root_.GlobalTheory.CompanionTheory.Ar.Num.cycNum_mul O K ι (Ψ × Fin N) (divCycle P (C (p : O))) T.x (bracket j φ p k τ) Q []]
+      _root_.BaseChangeColon.cycNum_mul_expansion O K ι (Ψ × Fin N) (divCycle P (C (p : O))) T.x (bracket j φ p k τ) Q []]
     refine Finset.sum_congr rfl fun μ hμ => ?_
     have hcl : classList (Sum.elim T.x T.x') (Finsupp.mapDomain Sum.inl μ) = classList T.x μ := by
       have hm : Finsupp.toMultiset (Finsupp.mapDomain (Sum.inl : Ψ × Fin N → (Ψ × Fin N) ⊕ (Ψ × Fin N)) μ) =
@@ -1625,8 +1574,7 @@ theorem exists_monomial_mixExpansion {σ : Type} [Fintype σ] (d : ℕ) :
   | succ d ih =>
     intro s hs
     obtain ⟨i, hi⟩ : ∃ i, s i ≠ 0 := by
-      by_contra h
-      push_neg at h
+      by_contra! h
       have h0 : s = 0 := Finsupp.ext h
       simp [h0] at hs
     have hle : Finsupp.single i 1 ≤ s := by

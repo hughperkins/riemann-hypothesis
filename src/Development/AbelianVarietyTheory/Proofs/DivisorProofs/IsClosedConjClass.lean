@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedEigenvaluesClasses
 public import Mathlib.Topology.Algebra.Group.Defs
 public import Mathlib.Topology.Separation.Hausdorff
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactModNormOneKernelInvolution
@@ -608,8 +609,7 @@ theorem minpoly_eq_of_aeval_of_linearIndependent {L A : Type} [Field L] [Ring A]
   have hi : IsIntegral L y := ⟨p, hm, by rwa [← aeval_def]⟩
   have hdvd : minpoly L y ∣ p := minpoly.dvd L y hy
   have hle : p.natDegree ≤ (minpoly L y).natDegree := by
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     have hsum := aeval_eq_sum_range' hlt y
     rw [minpoly.aeval, ← Fin.sum_univ_eq_sum_range (fun i => (minpoly L y).coeff i • y ^ i)] at hsum
     have hc := hind (fun i => (minpoly L y).coeff i) hsum.symm
@@ -625,17 +625,7 @@ theorem minpoly_eq_of_aeval_of_linearIndependent {L A : Type} [Field L] [Ring A]
 theorem minpoly_one_tmul {F B : Type} [Field F] [Ring B] [Algebra F B] [FiniteDimensional F B]
     (K : Type) [Field K] [Algebra F K] (y : B) :
     minpoly K ((1 : K) ⊗ₜ[F] y) = (minpoly F y).map (algebraMap F K) := by
-  set z : K ⊗[F] B := (1 : K) ⊗ₜ[F] y with hz
-  have hzi : IsIntegral K z := IsIntegral.of_finite K z
-  have hyi : IsIntegral F y := IsIntegral.of_finite F y
-  have hzr : z = Algebra.TensorProduct.includeRight y := rfl
-  have hdvd : minpoly K z ∣ (minpoly F y).map (algebraMap F K) := by
-    apply minpoly.dvd
-    rw [aeval_map_algebraMap, hzr, aeval_algHom_apply, minpoly.aeval, map_zero]
-  have hge := GlobalTheory.CentSep.natDegree_minpoly_le_baseChange K y hzi
-  have := eq_leadingCoeff_mul_of_monic_of_dvd_of_natDegree_le (minpoly.monic hzi) hdvd
-    (by rw [natDegree_map]; exact hge)
-  rw [this, ((minpoly.monic hyi).map _).leadingCoeff, C_1, one_mul]
+  apply _root_.GlobalTheory.GlobEig.minpoly_one_tmul <;> assumption
 
 theorem exists_unit_conj_baseChange : ∀ (S F B : Type) [Field S] [CharZero S] [Field F] [Algebra ℚ F]
     [FiniteDimensional ℚ F] [Ring B]

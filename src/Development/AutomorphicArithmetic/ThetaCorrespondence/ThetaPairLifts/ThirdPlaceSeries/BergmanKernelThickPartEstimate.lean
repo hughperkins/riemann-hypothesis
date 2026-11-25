@@ -449,15 +449,13 @@ theorem deep_cong_chart_sep : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   rw [hcard] at hM
   have hP4 : 1 ≤ P ^ 4 := one_le_pow₀ hP1
   have hla : 0 < X.firstMinimumSq x := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have := mul_nonpos_of_nonneg_of_nonpos (Nat.cast_nonneg M) h
     nlinarith
   obtain ⟨v, hvΛ, hli, φ, hφ, hvs⟩ := exists_short X x hdom hsd hla
   by_contra hne
   obtain ⟨i, hi⟩ : ∃ i, (γ : Matrix (Fin r) (Fin r) E) *ᵥ v i ≠ v i := by
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply hne
     have hcv : Fintype.card (Fin (2 * fdeg E * r)) = finrank ℚ (Fin r → E) := by
       rw [Fintype.card_fin, Module.finrank_pi_fintype, ShortVectors.finrank_eq]
@@ -814,17 +812,6 @@ theorem ball_injects : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
   subst hγ'1
   rw [FundSetPf.lact_one] at he'
   exact (U.X k).Γ_free γ hγ _ hwd b' hb' he'
-
-theorem modelWt_shape : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
-    (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (σ : c.F →+* ℂ) (r : ℕ) (U : Unf Xo c σ r),
-    GoodEmb c σ → IsUnf U → 1 ≤ Dw.p → 1 ≤ Dw.q → ∀ (u1 : GlobalTheory.AllWt.Weight Dw) (g : ℝ),
-    (∀ τ (a b : Fin (Dw.p + Dw.q)), (b : ℕ) = a + 1 → g ≤ (u1 τ a : ℝ) - u1 τ b) → ∀ k : U.Comp,
-    (∀ τ (a b : Fin r), (b : ℕ) = a + 1 → (b : ℕ) ≠ (U.X k).p0 →
-      g ≤ (modelWt U (wtOf Dw u1 0) k τ a : ℝ) - modelWt U (wtOf Dw u1 0) k τ b) ∧
-    (∀ τ (a b : Fin r), (a : ℕ) = 0 → (b : ℕ) = r - 1 →
-      g ≤ (modelWt U (wtOf Dw u1 0) k τ b : ℝ) - modelWt U (wtOf Dw u1 0) k τ a) ∧
-    (∑ τ, ∑ a, |(modelWt U (wtOf Dw u1 0) k τ a : ℝ)|) = l1 u1 ∧
-    (U.X k).Ψ.card = Nat.card (Psi H) := _root_.GlobalTheory.ModelWtGap.model_weight_gap_l1_card
 
 theorem orth_transfer : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r)
     (la : Wt X.Ψ r) (y : Frame X.Ψ r), y ∈ X.dom → ∃ x, IsOrth X x ∧ X.firstMinimumSq x = X.firstMinimumSq y ∧

@@ -1,5 +1,6 @@
 module
 
+import ReciprocityTheory.DualLattices.ValuationDetLeOneOfEntriesIntegral
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.RingTheory.Valuation.Integers
 public import ReciprocityTheory.DualLattices.TensorSpan
@@ -21,64 +22,15 @@ public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.Polar
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PolarisedAugmentationTheorem
 public import Mathlib.RingTheory.AdicCompletion.RingHom
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PtEqOneOfGZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
 import ReciprocityTheory.DualLattices.CotangentSurjective
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.CategoryTheory.Action.Concrete
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import ReciprocityTheory.DualLattices.CharTableIsUnit
 import ReciprocityTheory.DualLattices.FourierMapSmulLambdaWeight
 import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
 import ReciprocityTheory.DualLattices.PrimeHopfOrderOfAddEquiv
 import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
-import Mathlib.Algebra.AffineMonoid.UniqueSums
-import Mathlib.Algebra.Order.Star.Int
 import ReciprocityTheory.DualLattices.IsLocalOfIntegers
 import ReciprocityTheory.DualLattices.MemAugIdeal
 import ReciprocityTheory.DualLattices.ProdDvdOfIso
@@ -127,22 +79,8 @@ variable {C : Type} [Field C] {R : Type} [CommRing R] [Algebra R C]
 
 theorem translate_mem (AA : HopfOrder (C := C) R N) (y : N) {g : N → C} (hg : g ∈ AA.carrier) :
     (fun x => g (x + y)) ∈ AA.carrier := by
-  have key : ∀ F ∈ tensorSpan R AA.carrier, (fun x => F (x, y)) ∈ AA.carrier := by
-    intro F hF
-    induction hF using Submodule.span_induction with
-    | mem F hF =>
-      obtain ⟨a, ha, b, hb, rfl⟩ := hF
-      obtain ⟨r, hr⟩ := AA.le_int hb y
-      have h : (fun x => a x * b y) = r • a := by
-        funext x
-        simp [Algebra.smul_def, hr, mul_comm]
-      show (fun x => a x * b y) ∈ AA.carrier
-      rw [h]
-      exact AA.carrier.smul_mem r ha
-    | zero => exact AA.carrier.zero_mem
-    | add F G _ _ hF hG => exact AA.carrier.add_mem hF hG
-    | smul c F _ hF => exact AA.carrier.smul_mem c hF
-  exact key _ (AA.comul g hg)
+  intros
+  apply _root_.ReciprocityTheory.PGsh.L2.hopfOrder_translate_mem <;> assumption
 
 def nearZero (v : Valuation C NNReal) (AA : HopfOrder (C := C) R N) : AddSubgroup N where
   carrier := {x | ∀ g ∈ AA.carrier, v (g x - g 0) < 1}
@@ -163,8 +101,7 @@ def nearZero (v : Valuation C NNReal) (AA : HopfOrder (C := C) R N) : AddSubgrou
 theorem exists_sep {v : Valuation C NNReal} (hv : v.Integers R) (AA : HopfOrder (C := C) R N)
     {y : N} (hy : y ∉ nearZero v AA) : ∃ h ∈ AA.carrier, h y = 0 ∧ v (h 0) = 1 := by
   have hy' : ∃ g ∈ AA.carrier, ¬ v (g y - g 0) < 1 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hy fun g hg => hcon g hg
   obtain ⟨g, hg, hn⟩ := hy'
   obtain ⟨r, hr⟩ := AA.le_int hg y
@@ -413,8 +350,7 @@ theorem ord_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClos
   have hcoset : ∀ y : N, (fun x => Set.indicator (K : Set N) (1 : N → C) (x + y)) ∈ AA.carrier :=
     fun y => translate_mem AA y (indicator_mem hv AA)
   have hKne : ∃ k ∈ K, k ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     have hint : intFun R N ≤ AA.carrier := by
       rw [intFun_eq_span, Submodule.span_le]
       rintro _ ⟨j, rfl⟩
@@ -909,8 +845,7 @@ private theorem coeff_prod_lt (S : Multiset C) (hS : ∀ r ∈ S, 1 < v r) :
 theorem exists_root_of_isUnit_coeff [IsAlgClosed C] {R : Type} [CommRing R] [Algebra R C]
     (hv : v.Integers R) (f : R[X]) {d : ℕ} (hd : 0 < d) (hu : IsUnit (f.coeff d)) :
     ∃ x : R, (f.map (algebraMap R C)).eval (algebraMap R C x) = 0 := by
-  by_contra hno
-  push_neg at hno
+  by_contra! hno
   set g := f.map (algebraMap R C) with hg
   have hgd : v (g.coeff d) = 1 := by
     rw [hg, Polynomial.coeff_map]
@@ -982,8 +917,7 @@ theorem exists_ordinary (p : ℕ) [Fact p.Prime] {R : Type} [CommRing R] [IsLoca
     have := congrArg (eval 0) h
     simp at this
   obtain ⟨τ, hτ⟩ : ∃ τ, (c * (X * (Polynomial.C 432 * X + 1))).eval τ ≠ 0 := by
-    by_contra hno
-    push_neg at hno
+    by_contra! hno
     exact mul_ne_zero hc hq (Polynomial.funext fun x => by simpa using hno x)
   rw [eval_mul] at hτ
   have hτ1 := left_ne_zero_of_mul hτ
@@ -1171,8 +1105,7 @@ theorem exists_far {p : ℕ} {C : Type} [Field C] [Algebra R C] {v : Valuation C
       pt_zero hpt]
     exact MonObj.comp_one _
   obtain ⟨a, ha⟩ : ∃ a, (Algebra.ofId R k) (φ t a) ≠ (Algebra.ofId R k) (φ 0 a) := by
-    by_contra hcon
-    push_neg at hcon
+    by_contra! hcon
     exact hne (AlgHom.ext hcon)
   refine ⟨t, fun x => algebraMap R C (φ x a), ⟨a, fun x ψ h => ?_⟩, ?_⟩
   · rw [hφu x ψ h]

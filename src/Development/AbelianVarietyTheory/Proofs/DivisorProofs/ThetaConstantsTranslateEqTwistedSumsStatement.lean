@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaConstantsTorusTranslatesTwistedSumsStatement
 public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTraitsOnOfHasTraitsP
 public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNumberFieldQkPointsComplexDegeneration
 public import Development.AbelianVarietyTheory.Definitions.Divisors.TwistAtEach
@@ -367,8 +368,6 @@ open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM
 open scoped CategoryTheory.Obj
 open GlobalTheory.UT ReciprocityTheory.ChartRestriction.G.DVR GlobalTheory.ZH GlobalTheory.Poinc
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 namespace GlobalTheory.GSep.MemberModel
 
 variable {I : Type} {X₁ : GSet} {z₁ : X₁.M.Z} {act : I → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)}
@@ -524,7 +523,7 @@ theorem twist_resid : ∀ (I : Type) (X₁ : GlobalTheory.GSep.GSet) (z₁ : X�
     intro a mu h
     by_cases h0 : mu = 0
     · subst h0
-      have ha : a ∈ X₁.S.HH X₁.M z₁ := (GlobalTheory.T.mem_dividingLabels_iff_class_zero I X₁ z₁ act x₀ hx₀ V ev Y t δ 𝔪 a).2 h
+      have ha : a ∈ X₁.S.HH X₁.M z₁ := (_root_.GlobalTheory.GSep.mem_HH_iff_yy_zero I X₁ z₁ act x₀ hx₀ V ev Y t δ 𝔪 a).2 h
       have h1 : eStd X₁.S.g _ τ a = 0 := hτ a ha
       simp only [wt', if_pos rfl, h1, smul_zero]
     · simp only [wt', if_neg h0]
@@ -676,30 +675,7 @@ theorem affine_zero {G : Type} [AddCommGroup G] {M : ℕ} (hM : Odd M) (S : Set 
     (hne : S.Nonempty) (κ : ZMod M) (h : AddSubgroup.closure S →+ ZMod M)
     (hz : ∀ s (hs : s ∈ S), κ + h ⟨s, AddSubgroup.subset_closure hs⟩ = 0) :
     ∀ a (ha : a ∈ AddSubgroup.closure S), κ + h ⟨a, ha⟩ = 0 := by
-  obtain ⟨s₀, hs₀⟩ := hne
-  have h1 := hz s₀ hs₀
-  have h2 := hz (-s₀) (hS s₀ hs₀)
-  have hneg : (⟨-s₀, AddSubgroup.subset_closure (hS s₀ hs₀)⟩ : AddSubgroup.closure S) =
-      -⟨s₀, AddSubgroup.subset_closure hs₀⟩ := rfl
-  rw [hneg, map_neg] at h2
-  have h2κ : (2 : ZMod M) * κ = 0 := by linear_combination h1 + h2
-  have hcop : Nat.Coprime 2 M := (Nat.coprime_two_left).2 hM
-  have hκ : κ = 0 := by
-    have hu : IsUnit (2 : ZMod M) := by
-      have := (ZMod.unitOfCoprime 2 hcop).isUnit
-      rwa [ZMod.coe_unitOfCoprime, Nat.cast_ofNat] at this
-    exact hu.mul_right_eq_zero.1 h2κ
-  subst hκ
-  intro a ha
-  rw [zero_add]
-  refine AddSubgroup.closure_induction (p := fun x hx => h ⟨x, hx⟩ = 0) (fun x hx => ?_) ?_
-    (fun x y hx hy h1 h2 => ?_) (fun x hx h1 => ?_) ha
-  · simpa using hz x hx
-  · exact map_zero h
-  · have : (⟨x + y, add_mem hx hy⟩ : AddSubgroup.closure S) = ⟨x, hx⟩ + ⟨y, hy⟩ := rfl
-    rw [this, map_add (f := _), h1, h2, add_zero]
-  · have : (⟨-x, neg_mem hx⟩ : AddSubgroup.closure S) = -⟨x, hx⟩ := rfl
-    rw [this, map_neg, h1, neg_zero]
+  apply _root_.GlobalTheory.Poinc.Sep.TwistIndep.affine_zero <;> assumption
 
 end GlobalTheory.GSep.TwistIndep
 
@@ -817,7 +793,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.AnForm.R GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.Poinc.Sep
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT ReciprocityTheory.ChartRestriction.G.DVR
 
 noncomputable section
@@ -869,7 +844,6 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.AnForm.R GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.Poinc.Sep
-attribute [local instance] Over.cartesianMonoidalCategory
 open GlobalTheory.UT ReciprocityTheory.ChartRestriction.G.DVR
 
 end -- clump:auto

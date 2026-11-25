@@ -699,8 +699,7 @@ theorem glue : LateralTheory.E.FinEtSectionPf.Glue := by
     refine hidem.eq_zero_of_isNilpotent ((nilpotent_iff_mem_prime).2 fun J hJ => ?_)
     obtain ⟨q, hq⟩ := hsurj ⟨J, hJ⟩
     have : ∃ j, e j ∉ q.asIdeal := by
-      by_contra hall
-      push_neg at hall
+      by_contra! hall
       exact q.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 (he.complete ▸ Ideal.sum_mem _ fun j _ => hall j))
     obtain ⟨j, hj⟩ := this
     have hq' : q ∈ Set.range (PrimeSpectrum.comap (algebraMap C (Localization.Away (e j)))) := by
@@ -739,8 +738,6 @@ theorem glue : LateralTheory.E.FinEtSectionPf.Glue := by
   simp only [RingHom.toMonoidHom_eq_coe, OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe,
     MonoidHom.coe_coe, RingHom.coe_comp, Function.comp_apply, hΦ]
   simp
-
-theorem Glue_of (_hL : LateralTheory.E.t_E1Cut.EtLift) (_hA : LateralTheory.E.t_E1Cut.EtAIC) : LateralTheory.E.FinEtSectionPf.Glue := glue
 
 end LateralTheory.E.Gluing₂
 end -- clump:auto
@@ -1625,8 +1622,7 @@ theorem cover_mem {S : Type} [CommRing S] (f g : S) (hfg : Ideal.span {f, g} = �
   refine (Scheme.ofArrows_mem_precoverage_iff (P := @Etale) (f := ι f g)).2 ⟨fun pt => ?_, fun b => inferInstance⟩
   let p : PrimeSpectrum S := pt
   have hp : f ∉ p.asIdeal ∨ g ∉ p.asIdeal := by
-    by_contra hc
-    push_neg at hc
+    by_contra! hc
     have : Ideal.span {f, g} ≤ p.asIdeal := by
       rw [Ideal.span_le]; intro z hz
       rcases hz with rfl | hz

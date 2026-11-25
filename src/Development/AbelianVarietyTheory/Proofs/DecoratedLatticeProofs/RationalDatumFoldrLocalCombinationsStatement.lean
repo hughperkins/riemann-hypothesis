@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
 public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
 public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FourModel
 public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteRepsHalfStandardHomModNsmul
@@ -84,7 +85,6 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.Glob
 
 noncomputable section
 namespace GlobalTheory.LocMod.StdTheta
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Formalism.IndefR.Fin
 
 variable {D : D7}
@@ -128,26 +128,10 @@ theorem half_inf_half {e : AE D} (he : e * cA D e = 0) (S T : HSp D) {u : WO S T
 
 theorem half_div' (S T : HSp D) {e : AE D} {k : ℕ} (hk : 0 < k) {s : WO S T} (hs : IsHalf e s) :
     ∃ t, IsHalf e t ∧ k • t = s := by
-  refine ⟨s.map (fun a => algebraMap D.host.F (AE D) (k : D.host.F)⁻¹ * a), fun i j => ?_, ?_⟩
-  · simp only [Matrix.map_apply]
-    rw [mul_left_comm, hs i j]
-  · ext i j
-    rw [Matrix.smul_apply, Matrix.map_apply, nsmul_eq_mul, ← mul_assoc]
-    have h1 : (k : AE D) * algebraMap D.host.F (AE D) (k : D.host.F)⁻¹ = 1 := by
-      rw [show (k : AE D) = algebraMap D.host.F (AE D) (k : D.host.F) by simp, ← map_mul,
-        mul_inv_cancel₀ (Nat.cast_ne_zero.2 hk.ne'), map_one]
-    rw [h1, one_mul]
+  first | exact _root_.Formalism.IndefR.Fin.half_div | exact @_root_.Formalism.IndefR.Fin.half_div | apply _root_.Formalism.IndefR.Fin.half_div <;> assumption
 
 theorem nsmul_eq_zero' (S T : HSp D) {k : ℕ} (hk : 0 < k) {t : WO S T} (h : k • t = 0) : t = 0 := by
-  have hu : IsUnit (k : AE D) := by
-    have e1 : (k : AE D) = algebraMap D.host.F (AE D) (k : D.host.F) := by simp
-    rw [e1]
-    exact (IsUnit.mk0 _ (Nat.cast_ne_zero.2 hk.ne')).map _
-  ext i j
-  have := congrFun (congrFun h i) j
-  rw [Matrix.smul_apply, nsmul_eq_mul, Matrix.zero_apply] at this
-  rw [Matrix.zero_apply]
-  exact (hu.mul_right_eq_zero).1 this
+  first | exact _root_.GlobalTheory.AnnConjHalf.nsmul_eq_zero_WO | exact @_root_.GlobalTheory.AnnConjHalf.nsmul_eq_zero_WO | apply _root_.GlobalTheory.AnnConjHalf.nsmul_eq_zero_WO <;> assumption
 
 theorem finite_qt' {W : Type*} [AddCommGroup W] {H : AddSubgroup W} {k : ℕ} (R : Finset W)
     (hR : ∀ u ∈ H, ∃ r ∈ R, ∃ v ∈ H, u = r + k • v) : Finite (Four.Qt k H) := by
@@ -379,7 +363,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.StepData GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.AdForm ValuativeRel
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LocMod
 
@@ -485,7 +468,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 namespace GlobalTheory.LocComb
@@ -591,7 +573,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.L2.Forms MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.QPl GlobalTheory.QTw GlobalTheory.AdForm GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Fam
 open scoped TensorProduct Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.rationalDatum_foldr_local_combinations : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D) (P₀ Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (n : ℕ) (PPn : Fin n → Formalism.L2.DIV.Pl D.host.E), Function.Injective PPn → (∀ PP, PP ∈ Q ↔ ∃ i, PPn i = PP) → Disjoint P₀ Q → ∀ (c : Fin n → WO S T →₀ ℂ) (Ξl : Fin n → Matrix (Fin T.rank) (Fin S.rank) D.host.E → ℂ), (∀ i, GlobalTheory.LocMod.IsLocFac D ψ S T (PPn i) (c i) (Ξl i)) → ∀ (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)), IsSelfDualC S ΛS → IsSelfDualC T ΛT → (ΛS : Set (Fin S.rank → D.host.E)) = intVec D S.rank → (ΛT : Set (Fin T.rank → D.host.E)) = intVec D T.rank → ∀ (Ξ : Matrix (Fin T.rank) (Fin S.rank) D.host.E → ℂ) (f₀ f : WO S T → ℂ), IsThetaFunO ψ S T f₀ → IsLatVac (heisO ψ S T) (stdHom S T) f₀ → (∀ e₀, IsIdemSum e₀ P₀ → IsRatDatum ψ S T e₀ Ξ f₀ f) → ∀ e, IsIdemSum e (P₀ ∪ Q) → IsRatDatum ψ S T e (fun γ => Ξ γ * ∏ i, Ξl i γ) f₀ ((List.finRange n).foldr (fun i g => comb ψ S T (c i) g) f) := by
   first | exact @GlobalTheory.LocComb.ratDatum_foldr_comb

@@ -471,8 +471,7 @@ theorem GlobalTheory.CompletionEmbed.exists_finite_padicInt_domain :
     have h3 := (injective_iff_map_eq_zero _).mp (algebraMap_injective C) _ h
     exact hp0 (IsNilpotent.eq_zero ⟨n, h3⟩)
   obtain ⟨Q, hQ, hpQ⟩ : ∃ Q : Ideal A, Q.IsPrime ∧ (p : A) ∉ Q := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     exact hnil (nilpotent_iff_mem_prime.mpr h)
   haveI := hQ
   refine ⟨A ⧸ Q, inferInstance, inferInstance, inferInstance, ?_,
@@ -523,10 +522,6 @@ theorem isTorsionFree_of_injective {R S : Type} [CommRing R] [CommRing S] [IsDom
     [IsDomain S] [Algebra R S] (h : Function.Injective (algebraMap R S)) :
     Module.IsTorsionFree R S :=
   Module.isTorsionFree_iff_algebraMap_injective.mpr h
-
-theorem norm_algebraMap_le (a : ℤ_[p]) : ‖algebraMap ℤ_[p] (PadicAlgCl p) a‖ ≤ 1 := by
-  rw [IsScalarTower.algebraMap_apply ℤ_[p] ℚ_[p] (PadicAlgCl p), PadicAlgCl.norm_extends]
-  simpa using PadicInt.norm_le_one a
 
 theorem norm_le_one_of_isIntegral (x : PadicAlgCl p) (hx : IsIntegral ℤ_[p] x) : ‖x‖ ≤ 1 := by
   apply GlobalTheory.PadicNormCastBounds.norm_le_one_of_isIntegral <;> assumption
@@ -917,8 +912,7 @@ theorem norm_le_of_mem_iInf_map_smallIdeal : ∀ (o Ω : Type) [CommRing o] [Fie
     | smul c a _ ha =>
       rw [smul_eq_mul, map_mul, norm_mul]
       exact (mul_le_of_le_one_left (norm_nonneg _) (hψ1 c)).trans ha
-  by_contra hlt
-  push_neg at hlt
+  by_contra! hlt
   have hpos : 0 < ‖ψ G‖ := lt_of_le_of_lt (norm_nonneg _) hlt
   obtain ⟨N, hNlt⟩ := exists_pow_lt_of_lt_one hpos hρ1
   have h1 := hN N G (Submodule.mem_iInf _ |>.1 hG N)

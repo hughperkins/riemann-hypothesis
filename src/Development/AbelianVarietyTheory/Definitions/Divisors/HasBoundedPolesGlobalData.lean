@@ -6,46 +6,6 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpen
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOnEqZeroOfEqOne
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndepBaseChange
 public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
 public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
 
 @[expose] public section
@@ -80,14 +40,6 @@ theorem LinSys.ofSec_comb {k : Type} [Field k] (S : LinSys k) (O : S.Y.Opens) (u
 namespace HermSys
 
 variable (T : HermSys F)
-
-def weight (hb : T.BasePointFree) (hh : T.Hermitian) (σ : F →+* ℂ) : Weight T.str σ T.L :=
-  Weight.fsBasis T.str σ T.isLB T.b hb (T.A σ) (hh σ)
-
-theorem weight_φ (hb : T.BasePointFree) (hh : T.Hermitian) (σ : F →+* ℂ) (i : T.L.ι) (y : CxPts T.str σ) :
-    (T.weight hb hh σ).φ i y = Real.log (archSize (T.A σ) (fun j => secVal T.str σ (T.b j) i y) ^ 2) := by
-  rw [archSize, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
-  exact Weight.fsBasis_φ _ _ _ _ _ _ _
 
 abbrev withBundle (L : LB T.Y) (hL : L.IsLB) {N n : ℕ} (b : Fin N → L.Sec) (w : Matrix (Fin N) (Fin n) F)
     (A : (F →+* ℂ) → Matrix (Fin N) (Fin N) ℂ) : HermSys F :=
@@ -200,12 +152,6 @@ theorem one_le_n : 1 ≤ G.n := by
 
 abbrev second : HermSys F := G.withBundle G.L₂ G.isLB₂ G.b₂ G.w₂ G.A₂
 
-def φ (σ : F →+* ℂ) : Weight G.str σ G.L := G.weight G.geom.alg.bpf G.herm σ
-
-def φ₂ (σ : F →+* ℂ) : Weight G.str σ G.L₂ := G.second.weight G.alg₂.bpf G.herm₂ σ
-
-def φTw (m : ℤ) (σ : F →+* ℂ) : Weight G.str σ (tw G.L₂ G.L m) := (G.φ₂ σ).tens ((G.φ σ).zpow m)
-
 abbrev adj (j : ℕ) : LB G.Y := tw (tens G.K.bundle G.LA) G.L j
 
 abbrev adj₂ (j : ℕ) : LB G.Y := tw (tens G.K.bundle G.L₂) G.L (j + G.D)
@@ -287,12 +233,6 @@ def IsGood.sym {a j l : ℕ} (h : j + a = l) (V : Submodule F (G.Sec l)) :
     Fil (G.ideal s) a V →ₗ[F] SymTarget G.str G.L₂ G.isLB (G.sec s) a j :=
   Vanishing.sym G.K G.isLB G.isLBA G.isLB₂ (G.sec s) hs.etale G.e hs.suppIn_e hs.inU
     ((Nat.cast_add j a).symm.trans (congrArg _ h)) V
-
-def weightOn (s : Fin G.D → Fin G.N → F) (j : ℕ) (σ : F →+* ℂ) :
-    Weight ((G.ideal s).subschemeι ≫ G.str) σ ((tw G.L₂ G.L j).pull (G.ideal s).subschemeι) :=
-  (G.φTw j σ).pull _ rfl
-
-def IsGood.normOn (j : ℕ) : HermFam F (G.SecOn s j) := pointHerm hs.finite hs.etale (weightOn s j)
 
 variable (G) (E : Type) [Field E] [NumberField E] [Algebra F E]
 

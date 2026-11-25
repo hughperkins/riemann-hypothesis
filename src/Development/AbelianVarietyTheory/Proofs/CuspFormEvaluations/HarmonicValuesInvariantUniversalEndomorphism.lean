@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
 public import Formalism.LocalToGlobal.ProjectiveLattices.IsLevMove
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
 public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPrim
@@ -64,7 +65,6 @@ noncomputable section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
-attribute [local instance] Over.cartesianMonoidalCategory
 
 namespace GlobalTheory.ChartPush
 
@@ -298,7 +298,7 @@ end Val
 
 section Chart
 
-open GlobalTheory.FrameAdjSeries
+open Formalism.MainNotions.ModuliIntegralCharts.H1.GermB GlobalTheory.FrameAdjSeries
 
 variable {S : Type} [CommRing S] {x0 : Sp S ⟶ X} {x0' : Sp S ⟶ X'}
 

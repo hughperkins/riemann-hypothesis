@@ -49,6 +49,7 @@ import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
 import Formalism.LocalToGlobal.BesselHermitianTheta.NoncompactGapAtLeastRange
 import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
 import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.T2SpaceIsNonarchimedeanLocalFieldSingleBlock
 
 @[expose] public section
 
@@ -58,25 +59,14 @@ open scoped TensorProduct InnerProductSpace ComplexConjugate
 open GlobalTheory.ChainOnto GlobalTheory.ChainTw
 open GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting (SplitProj IsProjAt IsIdemOf LiftsChar rdA grpCo frCo gAt)
 open GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection (Blocks parahoric datum)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.ParabIndex
 
 theorem card_GL_real (κ : Type) [Field κ] [Finite κ] (m : ℕ) :
     (Nat.card (GL (Fin m) κ) : ℝ)
       = (Nat.card κ : ℝ) ^ (m * m) * ∏ i ∈ Finset.Ioc 0 m, (1 - ((Nat.card κ : ℝ) ^ i)⁻¹) := by
-  letI := Fintype.ofFinite κ
-  rw [GlobalTheory.Mem.card_GL_eq_pow_mul_qE κ m, Nat.card_eq_fintype_card, Formalism.MainNotions.ZetaProductPairs.qE]
-  congr 1
-  have h : Finset.Icc 1 m = Finset.Ioc 0 m := by
-    ext i; simp only [Finset.mem_Icc, Finset.mem_Ioc]; omega
-  rw [h]
-  refine Finset.prod_congr rfl fun i _ => ?_
-  rw [_root_.zpow_neg, zpow_natCast]
+  apply _root_.GlobalTheory.SingleBlock.card_GL_real <;> assumption
 
 variable {κ : Type} [Field κ]
-
-theorem val_mk' {ι : Type} [Fintype ι] [DecidableEq ι] (A : Matrix ι ι κ) (h : IsUnit A.det) :
-    ((Matrix.GeneralLinearGroup.mk'' A h : GL ι κ) : Matrix ι ι κ) = A := rfl
 
 def toSum {r s : ℕ} (g : GL (Fin (r + s)) κ) : Matrix (Fin r ⊕ Fin s) (Fin r ⊕ Fin s) κ :=
   Matrix.reindex finSumFinEquiv.symm finSumFinEquiv.symm (g : Matrix (Fin (r + s)) (Fin (r + s)) κ)

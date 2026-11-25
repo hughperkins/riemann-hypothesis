@@ -1,5 +1,6 @@
 module
 
+import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
 public import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
 public import Formalism.SatakeDualWeyl.StatementE
 public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
@@ -282,24 +283,8 @@ open Matrix
 
 theorem mem_GLint_of_entries {L : Type} [Field L] {ι : Type} [Fintype ι] [DecidableEq ι] {O : Subring L}
     {x : GL ι L} (h1 : ∀ i j, x.1 i j ∈ O) (h2 : ∀ i j, (x⁻¹).1 i j ∈ O) : x ∈ Formalism.UG.GLint ι O := by
-  unfold Formalism.UG.GLint Formalism.UG.bc
-  have hinj : Function.Injective (O.subtype.mapMatrix : Matrix ι ι O →+* Matrix ι ι L) := fun A B h => by
-    ext i j
-    exact congrFun (congrFun h i) j
-  have hA : O.subtype.mapMatrix (Matrix.of fun i j => (⟨x.1 i j, h1 i j⟩ : O)) = x.1 := by
-    ext i j
-    rfl
-  have hB : O.subtype.mapMatrix (Matrix.of fun i j => (⟨(x⁻¹).1 i j, h2 i j⟩ : O)) = (x⁻¹).1 := by
-    ext i j
-    rfl
-  refine ⟨⟨Matrix.of fun i j => (⟨x.1 i j, h1 i j⟩ : O), Matrix.of fun i j => (⟨(x⁻¹).1 i j, h2 i j⟩ : O), ?_, ?_⟩, ?_⟩
-  · apply hinj
-    rw [map_mul, map_one, hA, hB]
-    exact Units.mul_inv x
-  · apply hinj
-    rw [map_mul, map_one, hA, hB]
-    exact Units.inv_mul x
-  · exact Units.ext hA
+  intros
+  apply _root_.Formalism.UG.P.cartan_mem_of_entries <;> assumption
 
 theorem exists_kappa {L : Type} [Field L] {O : Subring L} {n : ℕ} {ϖ : L} (h0 : ϖ ≠ 0) (hϖO : ϖ ∈ O)
     (d : Fin n → ℤ) (t k₁ k₂ : GL (Fin n) L) (ht : t.1 = Matrix.diagonal (fun i => ϖ ^ d i))
@@ -633,7 +618,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU Gl
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift (FinPl RealMat Lat IsFockVec IsSphOff HidaSetting volQ)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (ip delta swSec sZero IsKFinVec ThetaClause SectionClause CoefClause)
 open GlobalTheory.Mem.Th (CptF)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Core.Rk.IP
 open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt)
 open GlobalTheory.LFun (locChar IsSplitChart IsInertChart KGL UnrAt)
@@ -684,7 +668,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU Gl
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift (FinPl RealMat Lat IsFockVec IsSphOff HidaSetting volQ)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (ip delta swSec sZero IsKFinVec ThetaClause SectionClause CoefClause)
 open GlobalTheory.Mem.Th (CptF)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Core.Rk.IP
 open Formalism.UG (IsUnifV qV IsUnramInv GU KU IsInertAt)
 open GlobalTheory.LFun (locChar IsSplitChart IsInertChart KGL UnrAt)
@@ -924,7 +907,6 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU Gl
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift (FinPl RealMat Lat IsFockVec IsSphOff HidaSetting volQ)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (ip delta swSec sZero IsKFinVec ThetaClause SectionClause CoefClause)
 open GlobalTheory.Mem.Th (CptF)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.Core.Rk.IP
 
 open Formalism.UG (IsUnifV qV)

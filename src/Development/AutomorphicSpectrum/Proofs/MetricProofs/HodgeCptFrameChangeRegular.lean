@@ -11,59 +11,12 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieComp
 public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameCoeffsRegularInChart
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsNonzeroXbOfLeftInverse
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.ENatToNat
 import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Topology.Sheaves.Presheaf
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.MetricProofs.CauchyBinetSumPositionedMinors, Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsComponentInChartRegular, Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalFrameOfTwistGeneration, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProduct, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorExpansionOfScaledProductStatement, Development.AutomorphicSpectrum.Proofs.MetricProofs.MinorRatioRegularOfMatrixIdentity, Development.AutomorphicSpectrum.Proofs.MetricProofs.ProdXbPowEqXcOfPow, Development.AutomorphicSpectrum.Proofs.MetricProofs.TMatBlockDiagDetFactors, Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeCptFrameChangeRegular
@@ -389,14 +342,7 @@ theorem pos_cover (b : Fin (p + q)) : (∃ a, b = omEmb p q a) ∨ ∃ a, b = wE
 
 theorem aExt_posOf (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (s : Ψ ⊕ Ψ) (j : Fin (n s))
     (l : Fin (rk Ψ p q s)) : aExt C s j (posOf p q s l) = C s j l := by
-  have hi := (BlockEmbeddings.posOf_strictMono (p := p) (q := q) s).injective
-  simp only [aExt]
-  rw [Finset.sum_eq_single l]
-  · rw [if_pos rfl]
-  · intro b _ hb
-    rw [if_neg fun e => hb (hi e)]
-  · intro h
-    exact absurd (Finset.mem_univ _) h
+  apply _root_.GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm.Inv.aExt_posOf <;> assumption
 
 theorem aExt_off (C : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (s : Ψ ⊕ Ψ) (j : Fin (n s))
     (b : Fin (p + q)) (hb : ¬ ∃ l, posOf p q s l = b) : aExt C s j b = 0 :=
@@ -548,13 +494,8 @@ theorem minor_isUnit_of_leftInverse : ∀ {Ω : Type} [Field Ω] {n r : ℕ} (R 
     have h := hrel J₀
     rw [h0, mul_zero] at h
     exact mul_ne_zero hz hT h
-  have hCR : (C.submatrix J₀ id).det ∈ R := by
-    let M : Matrix (Fin r) (Fin r) R := Matrix.of fun i j => ⟨C (J₀ i) j, hC _ _⟩
-    have hM : R.subtype.mapMatrix M = C.submatrix J₀ id := by
-      ext i j
-      rfl
-    rw [← hM, ← RingHom.map_det]
-    exact SetLike.coe_mem M.det
+  have hCR : (C.submatrix J₀ id).det ∈ R :=
+    det_mem_subring R (C.submatrix J₀ id) fun _ _ => hC _ _
   have hratio : ∀ J : Fin r → Fin n, (C.submatrix J id).det =
       (C.submatrix J₀ id).det * ((A.submatrix J id).det / (A.submatrix J₀ id).det) := by
     intro J

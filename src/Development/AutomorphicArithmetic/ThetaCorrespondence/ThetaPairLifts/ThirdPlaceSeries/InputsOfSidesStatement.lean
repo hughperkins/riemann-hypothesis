@@ -147,7 +147,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.admT4_of_roots_in_field : ∀ (D : D7) (ρ : Setup D.ntw) (hρ : ρ.Good) (rd : Rds D.nexp ρ), FullTie hρ rd → (∀ (k : Fin 2) (z : ℂ), z ^ (D.host.g k * (D.host.g k - 1)) = 1 → z ∈ (Formalism.L2.Host.embLL0 D).fieldRange) → ∀ E : IntegralHeckeForms.XD D, IntegralHeckeForms.admT4 D.nexp E := by
   first | exact @GlobalTheory.TwInputs.admT4_of_full_compatibility
@@ -185,7 +184,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie
 open Formalism.IndefR.Links
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.AdmAll
 
@@ -351,7 +349,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie
 open Formalism.IndefR.Links
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open Classical
 
 noncomputable section
@@ -548,71 +545,8 @@ open Formalism.MainNotions.S Formalism.IndefR.Mult Formalism.IndefR.Lev GlobalTh
 variable {D : D7}
 
 theorem hatSelfDual_of {V : HSp D} {Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)} (h : IsSelfDualC V Λ) :
-    HatSelfDual D.sp.cm.sig V.gram Λ := by
-  obtain ⟨-, -, -, -, hcc, -, -, hG, hdet, -⟩ := GlobalTheory.Member.latHat_eq_hat_and_gram D V
-  have h1 : ∀ s ∈ Formalism.L2.Herm.intAf D.host.F D.host.E,
-      Formalism.UG.sigR D.sp.cm.sig (Formalism.L2.Herm.Af D.host.F) s ∈ Formalism.L2.Herm.intAf D.host.F D.host.E :=
-    fun _ h => sigR_int h
-  have h2 : ∀ z, z ∈ GlobalTheory.AdLat.hat1 D.host.F
-      ((1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) : Set D.host.E) ↔
-      swp D.host.F D.host.E z ∈ Formalism.L2.Herm.intAf D.host.F D.host.E := by
-    intro z
-    rw [← GlobalTheory.LatDual.integralTensorAdeles_eq_adelicCompletion_one]
-    exact GlobalTheory.IdemSupport.mem_intAE_iff z
-  have h3 : ∀ x, D.sp.cm.sig x = GlobalTheory.Member.cF D x := fun _ => rfl
-  have hmem : ∀ v : Fin V.rank → D.host.E, (∀ y ∈ Λ, (∑ a, ∑ b, v a * V.gram.transpose a b * GlobalTheory.Member.cF D (y b)) ∈
-      (1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)) ↔ v ∈ Λ := by
-    intro v
-    rw [h.2 v]
-    refine forall₂_congr fun y _ => ?_
-    rw [FractionalIdeal.mem_one_iff]
-    have e : ∑ a, ∑ b, v a * V.gram.transpose a b * GlobalTheory.Member.cF D (y b) = ∑ i, ∑ j, star (y i) * V.gram i j * v j := by
-      rw [Finset.sum_comm]
-      refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-      rw [Matrix.transpose_apply]
-      change v j * V.gram i j * star (y i) = _
-      ring
-    rw [e]
-  have hsp : Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) = ⊤ := by
-    apply top_unique
-    intro y _
-    let pairing (x z : Fin V.rank → D.host.E) :=
-      ∑ a, ∑ b, star (x a) * V.gram a b * z b
-    obtain ⟨s, hgen⟩ := h.1.fg
-    obtain ⟨d, hdint⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s (pairing · y)
-    have hd0 : (d : 𝓞 D.host.E) ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp d.property
-    have hdE : (d : 𝓞 D.host.E) • y ∈ Λ := by
-      apply (h.2 _).2
-      intro x hx
-      show IsLocalization.IsInteger (𝓞 D.host.E) (pairing x ((d : 𝓞 D.host.E) • y))
-      have hscale (z : Fin V.rank → D.host.E) :
-          pairing z ((d : 𝓞 D.host.E) • y) = (d : 𝓞 D.host.E) • pairing z y := by
-        simp only [pairing, Pi.smul_apply, Algebra.smul_def, Finset.sum_mul,
-          mul_assoc, mul_left_comm, mul_comm]
-      rw [hscale]
-      refine Submodule.span_induction
-        (p := fun z _ => IsLocalization.IsInteger (𝓞 D.host.E) ((d : 𝓞 D.host.E) • pairing z y))
-        ?_ ?_ ?_ ?_ (hgen.symm ▸ hx)
-      · intro z hz
-        exact hdint z hz
-      · simp [pairing, IsLocalization.isInteger_zero]
-      · intro z z' _ _ hz hz'
-        convert IsLocalization.isInteger_add hz hz' using 1
-        simp only [pairing, Pi.add_apply, star_add, add_mul, Finset.sum_add_distrib, smul_add]
-      · intro a z _ hz
-        have ha : IsLocalization.IsInteger (𝓞 D.host.E) (star (a : D.host.E)) := by
-          refine ⟨⟨star (a : D.host.E), ?_⟩, rfl⟩
-          exact a.2.map (starRingEnd D.host.E).toIntAlgHom
-        convert IsLocalization.isInteger_mul ha hz using 1
-        simp only [pairing, Pi.smul_apply, Algebra.smul_def, star_mul', Finset.mul_sum, Finset.sum_mul,
-          mul_assoc, mul_left_comm, mul_comm]
-    have hspan := Submodule.subset_span (R := D.host.E) hdE
-    have hn : ((d : 𝓞 D.host.E) : D.host.E) ≠ 0 := by exact_mod_cast hd0
-    have hy := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
-      (((d : 𝓞 D.host.E) : D.host.E)⁻¹) hspan
-    rwa [← IsScalarTower.algebraMap_smul D.host.E (d : 𝓞 D.host.E) y,
-      smul_smul, inv_mul_cancel₀ hn, one_smul] at hy
-  exact hatL_selfDual_gen (GlobalTheory.Member.cF D) D.sp.cm.sig h3 V.gram Λ h.1.fg hsp hcc hG hdet hmem h1 h2
+    HatSelfDual D.sp.cm.sig V.gram Λ :=
+  by apply _root_.GlobalTheory.IntHalfLat.hatSelfDual; assumption
 
 end LocalLift
 
@@ -763,7 +697,6 @@ noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie
 open Formalism.IndefR.Links
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SpecSpan
 
@@ -1001,7 +934,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie
 open Formalism.IndefR.Links
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx)
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -1058,7 +990,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
 
@@ -1113,7 +1044,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.TwistTypeDet
 
@@ -1174,7 +1104,6 @@ section -- clump:auto
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.XiTypeProof
 
@@ -1540,7 +1469,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.TwGalInputs
 theorem galois_inputs_alt : GlobalTheory.Published.ChebotarevDegreeOne → GlobalTheory.Published.GlobalArtinReciprocity → GlobalTheory.IndefiniteRowSideFullHecke.ClassZetaValuationBounds.ToricDenominator → ∀ (D : D7) (G : _root_.GlobalTheory.TwInputs.GalSideAlt D), _root_.UpperTheory.GalS.GalHodgeN D G.wd → BlochKatoReduction.adm1 (BlochKatoReduction.bk0 D) ∧ BlochKatoReduction.adm2 D ∧ BlochKatoReduction.adm8 D ∧ AllGood D.nexp ∧ D.nexp.sig_all ∧ (∃ N0, BlochKatoReduction.adm9 D N0) ∧ BlochKatoReduction.adm10 D ∧ ∀ i, D.ntw.NonzeroIndexPlace i → BlochKatoReduction.Gen.SetHyp (BlochKatoReduction.bk0 D) i := by
   intro hC hArt hTor D G hGH
-  have h2 : BlochKatoReduction.adm2 D := _root_.GlobalTheory.TripleAdm.adm2_of_isTriple_wildOne D G.triple (GlobalTheory.T.full_degree_label_forces_trivial_wild_inertia D G.wd G.lab)
+  have h2 : BlochKatoReduction.adm2 D := _root_.GlobalTheory.TripleAdm.adm2_of_isTriple_wildOne D G.triple (_root_.GlobalTheory.WildFull.main D G.wd G.lab)
   have hF : GlobalTheory.TypeLeaf.FrobDense D :=
     GlobalTheory.SplitFrobDense.frobDense D (GlobalTheory.Published.chebotarevDegreeOne_iff_cheb.1 hC)
   have hg := _root_.GlobalTheory.TripleLocal.adm1_adm8_selfDual_noJump_of_isTriple G.chr hF hGH h2 G.triple
@@ -1566,7 +1495,6 @@ section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwSys GlobalTheory.TwAll GlobalTheory.SupLaw GlobalTheory.LiftLeaf
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open scoped TensorProduct
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.TwInputs
 theorem exists_inputs_of_hkSup_galHodge : GlobalTheory.Published.ChebotarevDegreeOne → GlobalTheory.Published.GlobalArtinReciprocity → GlobalTheory.IndefiniteRowSideFullHecke.ClassZetaValuationBounds.ToricDenominator →
     ∀ (D : D7) (X : RealSide D) (E : IntegralHeckeForms.XD D) (Y : SerSide X E), ∀ G : _root_.GlobalTheory.TwInputs.GalSideAlt D,
@@ -1599,7 +1527,7 @@ theorem exists_inputs_of_hkSup_galHodge : GlobalTheory.Published.ChebotarevDegre
     ⟨fun i j b g => (Y.Z.tie i j b).U_eq g, fun i j b u hu => (Y.Z.tie i j b).psiU_eq u hu⟩
   have hXi : XiType Y.Z.rd := GlobalTheory.XiTypeProof.xiType D Y.Z.ρ Y.Z.good Y.Z.rd hL.faithful hL.act hLevel
   have hSupLaws : SupG D ∧ SupFull D ∧ SupHk D ∧ CommG D ∧ HkComm D := by
-    obtain ⟨h1, h2⟩ := GlobalTheory.T.twistedFormSupLattice_full_groupStable_of_eq_rational D X.Γ X.Pl0 X.I0 X.T X.A3 X.core.Q.c.F X.R X.cG Y.S Y.YS Y.sup X.integral
+    obtain ⟨h1, h2⟩ := _root_.GlobalTheory.SupEq.supG_supFull_of_eq D X.Γ X.Pl0 X.I0 X.T X.A3 X.core.Q.c.F X.R X.cG Y.S Y.YS Y.sup X.integral
     obtain ⟨h3, h4⟩ := GlobalTheory.HkSupComm.supHk_commG D X.Γ X.Pl0 X.I0 X.T X.A3 X.core X.R X.cG Y.S Y.YS Y.H Y.sup X.char.lev X.char.allPl
       (fun i => (X.integral i).2.1) hSup Y.reads (fun i b P h _ => hUnit i b P h)
     have hC : GlobalTheory.ExportPin.Model.Covered X.R := GlobalTheory.ExportPin.Model.covered_of_allPlaces X.R X.char.lev X.char.allPl
@@ -1628,7 +1556,7 @@ theorem exists_inputs_of_hkSup_galHodge : GlobalTheory.Published.ChebotarevDegre
       a10 := a10
       univChar := Y.Z.univ
       off := Y.off
-      rel := GlobalTheory.T.universalTwistedSeriesDistribution_of_compatibility D Y.Z.ρ Y.Z.good Y.Z.rd Y.Z.full hL
+      rel := _root_.GlobalTheory.DistRel.thURel_of_fullTie D Y.Z.ρ Y.Z.good Y.Z.rd Y.Z.full hL
       l3 := GlobalTheory.SeriesTie.thetaLatticeCondition_of_fullSeriesComparison D Y.Z.ρ Y.Z.good Y.Z.rd Y.Z.full hL
       t4 := GlobalTheory.T.admT4_of_roots_in_field D Y.Z.ρ Y.Z.good Y.Z.rd Y.Z.full hRoots E
       type := GlobalTheory.ExportType.typeKept_of_fullTie D Y.Z.ρ Y.Z.good Y.Z.rd Y.Z.full hL.act E

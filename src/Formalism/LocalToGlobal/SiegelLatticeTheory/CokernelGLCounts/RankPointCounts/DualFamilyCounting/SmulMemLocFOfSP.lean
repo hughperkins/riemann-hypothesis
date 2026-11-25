@@ -24,16 +24,14 @@ variable {K F : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberFi
 private theorem mem_pow_vF_of_ne_zero {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {a : 𝓞 F} (ha : a ≠ 0) :
     a ∈ 𝔭 ^ vF 𝔭 a ∧ a ∉ 𝔭 ^ (vF 𝔭 a + 1) := by
   have hex : ∃ j, a ∉ 𝔭 ^ j := by
-    by_contra h
-    push_neg at h
+    by_contra! h
     have hi : a ∈ ⨅ i : ℕ, 𝔭 ^ i := (Submodule.mem_iInf _).mpr h
     rw [Ideal.iInf_pow_eq_bot_of_isDomain 𝔭 h𝔭.ne_top] at hi
     exact ha ((Submodule.mem_bot _).mp hi)
   obtain ⟨j, hj⟩ := hex
   have hbdd : BddAbove {e : ℕ | a ∈ 𝔭 ^ e} := by
     refine ⟨j, fun e he => ?_⟩
-    by_contra hlt
-    push_neg at hlt
+    by_contra! hlt
     exact hj (Ideal.pow_le_pow_right hlt.le he)
   refine ⟨Nat.sSup_mem ⟨0, by simp⟩ hbdd, fun h => ?_⟩
   have hc := le_csSup hbdd (show vF 𝔭 a + 1 ∈ {e : ℕ | a ∈ 𝔭 ^ e} from h)
@@ -167,20 +165,6 @@ theorem smul_mem_locF_of_SP {𝔭 : Ideal (𝓞 F)} [hp : 𝔭.IsPrime] {L : Sub
     rw [← algebraMap_smul K (algebraMap (𝓞 F) (𝓞 K) t) (r • v), smul_smul, ← hz, algebraMap_smul]
   rw [he]
   exact L.smul_mem z hv
-
-theorem eq_zero_of_orth {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hnd : Nondeg h) {ι' : Type}
-    (G : ι' → V) (hG : Submodule.span K (Set.range G) = ⊤) {z : V} (hz : ∀ s, h (G s) z = 0) :
-    z = 0 := by
-  apply hnd
-  intro y
-  have hy : y ∈ Submodule.span K (Set.range G) := hG ▸ Submodule.mem_top
-  induction hy using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨s, rfl⟩ := hx
-    rw [← hs.eq, hz s, map_zero]
-  | zero => simp
-  | add x w _ _ hx hw => rw [map_add (f := _), hx, hw, add_zero]
-  | smul c x _ hx => rw [map_smul, hx, smul_zero]
 
 end Vec
 

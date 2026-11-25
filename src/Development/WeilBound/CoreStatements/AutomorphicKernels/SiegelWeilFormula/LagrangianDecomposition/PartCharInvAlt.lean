@@ -16,55 +16,6 @@ public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeil
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.PartCharInv
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterInvariantAdelicFormEqMulEvalZero
 import Aesop.Main
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Topology.UniformSpace.Uniformizable
 import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
 import Development.AbelianVarietyTheory.Definitions.Foundations.EventuallyNormFinLeOne
 import Development.AbelianVarietyTheory.Definitions.Foundations.NormEulerPolySubOneLe
@@ -73,7 +24,6 @@ import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenSe
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqMulApplyZero
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceFormMapSurjective
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.AdeleLC
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.Linter.Style
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -232,37 +182,6 @@ theorem norm_iteratedFDeriv_B_le (β : (κ'' → W) → ℝ) (hβ : ContDiff ℝ
   calc _ ≤ ‖iteratedFDeriv ℝ i β (L x)‖ * 1 := mul_le_mul_of_nonneg_left hp (norm_nonneg _)
     _ = _ := mul_one _
 
-private theorem differentiable_integral_Ioc_of_contDiff {V E : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
-    [FiniteDimensional ℝ V] [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    (G : V × ℝ → E) (hG : ContDiff ℝ 1 G) :
-    Differentiable ℝ (fun x => ∫ s in Ioc (0 : ℝ) 1, G (x, s)) := by
-  intro x₀
-  have hK : IsCompact (Metric.closedBall x₀ 1 ×ˢ Icc (0 : ℝ) 1) :=
-    (isCompact_closedBall x₀ 1).prod isCompact_Icc
-  have hGd : Continuous (fderiv ℝ G) := hG.continuous_fderiv one_ne_zero
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hGd.continuousOn
-  have hGc : Continuous G := hG.continuous
-  have hd : ∀ p, HasFDerivAt G (fderiv ℝ G p) p := fun p =>
-    (hG.differentiable (by simp) p).hasFDerivAt
-  refine (hasFDerivAt_integral_of_dominated_of_fderiv_le (𝕜 := ℝ)
-    (μ := volume.restrict (Ioc (0 : ℝ) 1))
-    (F := fun x s => G (x, s))
-    (F' := fun x s => (fderiv ℝ G (x, s)).comp (ContinuousLinearMap.inl ℝ V ℝ))
-    (bound := fun _ => C * ‖ContinuousLinearMap.inl ℝ V ℝ‖)
-    (Metric.closedBall_mem_nhds x₀ one_pos) ?_ ?_ ?_ ?_ ?_ ?_).differentiableAt
-  · exact Filter.Eventually.of_forall fun x =>
-      (hGc.comp (Continuous.prodMk continuous_const continuous_id)).aestronglyMeasurable
-  · exact ((hGc.comp (Continuous.prodMk continuous_const continuous_id)).integrableOn_Icc).mono_set
-      Ioc_subset_Icc_self
-  · exact ((hGd.comp (Continuous.prodMk continuous_const continuous_id)).clm_comp
-      continuous_const).aestronglyMeasurable
-  · refine ae_restrict_of_forall_mem measurableSet_Ioc fun s hs x hx => ?_
-    refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
-    exact mul_le_mul_of_nonneg_right (hC _ ⟨hx, Ioc_subset_Icc_self hs⟩) (norm_nonneg _)
-  · exact (continuous_const.integrableOn_Icc).mono_set Ioc_subset_Icc_self
-  · exact Filter.Eventually.of_forall fun s x _ =>
-      (hd (x, s)).comp x (hasFDerivAt_prodMk_left x s)
-
 theorem near_schwartz (h : SchwartzMap (κ' ⊕ κ'' → W) ℂ) (β : (κ'' → W) → ℝ) (hβ : ContDiff ℝ ∞ β)
     (hβc : HasCompactSupport β) :
     ∃ g : SchwartzMap (κ' ⊕ κ'' → W) ℂ, ∀ x, g x = (β (x ∘ Sum.inr) : ℂ) * ∫ s in Ioc (0 : ℝ) 1, h (Ain s x) := by
@@ -277,7 +196,10 @@ theorem near_schwartz (h : SchwartzMap (κ' ⊕ κ'' → W) ℂ) (β : (κ'' →
           pder m (fun p : (κ' ⊕ κ'' → W) × ℝ => h (Ain p.2 p.1)) (x, s)
       from funext (hIF m)]
     set_option synthInstance.maxSize 256 in
-    exact differentiable_integral_Ioc_of_contDiff _ ((contDiff_pder m hc).of_le (by exact_mod_cast le_top))
+    exact (ContDiff.parametric_integral (f := fun x s =>
+        pder m (fun p : (κ' ⊕ κ'' → W) × ℝ => h (Ain p.2 p.1)) (x, s))
+      isCompact_Icc Ioc_subset_Icc_self measure_Ioc_lt_top.ne
+      ((contDiff_pder m hc).of_le (by exact_mod_cast le_top))).differentiable one_ne_zero
   have hB : ContDiff ℝ ∞ (fun y : κ' ⊕ κ'' → W => (β (y ∘ Sum.inr) : ℂ)) := by
     have hL : ContDiff ℝ ∞ (fun y : κ' ⊕ κ'' → W => y ∘ Sum.inr) :=
       contDiff_pi.2 fun j => by
@@ -549,8 +471,7 @@ theorem kills_linear_mul {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [
       _ ≤ (C : ℝ) * (t * ∑ m ∈ s, B m) := by gcongr
       _ = t * ((C : ℝ) * ∑ m ∈ s, B m) := by ring
   have h0 : ‖T g‖ ≤ 0 := by
-    by_contra hpos
-    push_neg at hpos
+    by_contra! hpos
     have hD : 0 < 2 * ((C : ℝ) * ∑ m ∈ s, B m + 1) := by positivity
     have ht := key (min 1 (‖T g‖ / (2 * ((C : ℝ) * ∑ m ∈ s, B m + 1))))
       (lt_min one_pos (div_pos hpos hD)) (min_le_left _ _)

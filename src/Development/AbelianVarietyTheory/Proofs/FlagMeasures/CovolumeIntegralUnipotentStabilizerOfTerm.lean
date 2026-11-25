@@ -58,6 +58,8 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameFixingIsometrySplitRowLatticeStatement
+import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUpUniMul
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometry, Development.AbelianVarietyTheory.Proofs.FlagMeasures.CongruenceStabUFromIntegralUnipotentIsometryStatement, Development.AbelianVarietyTheory.Proofs.FlagMeasures.CovolumeIntegralUnipotentStabilizerOfTerm
@@ -286,16 +288,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E}
 
 theorem mem_unimod {Λ : Submodule (𝓞 E) S.V} (hΛ : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ) (x : S.V) :
     x ∈ Λ ↔ ∀ y ∈ Λ, IsIntegral ℤ (S.hT y x) := by
-  have hΛ' : Formalism.HermitianLatticesTheory.dual S.hT Λ = Λ := hΛ
-  have key : ∀ x, x ∈ Formalism.HermitianLatticesTheory.dual S.hT Λ ↔ ∀ y ∈ Λ, IsIntegral ℤ (S.hT y x) := by
-    intro x
-    simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
-      LinearMap.restrictScalars_apply, Submodule.mem_one]
-    refine forall₂_congr fun y _ => ⟨?_, fun h => ⟨⟨_, h⟩, rfl⟩⟩
-    rintro ⟨o, ho⟩
-    rw [← ho]
-    exact o.isIntegral_coe
-  rw [← key, hΛ']
+  apply _root_.GlobalTheory.LoopC.RowSplit.mem_unimod <;> assumption
 
 theorem int_smul_mem {Λ : Submodule (𝓞 E) S.V} {c : E} (hc : IsIntegral ℤ c) {x : S.V} (hx : x ∈ Λ) :
     c • x ∈ Λ := by
@@ -724,8 +717,6 @@ theorem Dr1_ne_zero {T' : ℕ} (F : LFlag S r T) (F' : LFlag S r (T' : E)) (τ :
 
 end Det
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 theorem frame_mem_of_XS (D : D7) (Λ : LatV D) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (hz : F.fl.z ∈ Λ)
     (hX : XLam Λ F = XS D F.fl) (b : Fin (D.R.rS + 1)) : frame F b ∈ Λ := by
   refine Fin.lastCases ?_ (fun i => ?_) b
@@ -844,7 +835,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem _root_.GlobalTheory.T.congruence_stabU_from_integral_unipotent_isometry : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D), Stand D u u' → IsBase D u F0 → IsRowLat D F0 Λ → ∀ F' : FlagU D u', IsTermF D Λ (lf D F0) F' → ∃ I : Ideal (𝓞 D.host.E), I ≠ ⊥ ∧ (Ideal.absNorm I : ℝ) ≤ (∏ τ, ‖embS D τ (Gval (lf D F0) F')‖) ^ 4 * ∏ τ, ‖embS D τ (Dr1 (lf D F0) F')‖ ^ 2 ∧ ∀ a ∈ GlobalTheory.LoopV.stabU (ZhatL (lf D F0) F'), GlobalTheory.LoopV.EntIn I (a - 1) → ∃ n ∈ NLam Λ (lf D F0) ∩ NLam Λ F', ∀ c, n (frame F' c) = ∑ i, a i c • frame F' i := by
   first | exact @GlobalTheory.LoopV.Cong.congruence_mem
@@ -859,7 +849,6 @@ section -- clump:auto
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.LoopC.CovTerm
 
@@ -1071,15 +1060,7 @@ theorem leadMinor_cell {L U w : Matrix (Fin N) (Fin N) K} (hL : IsLoUni L) (hU :
 omit [NumberField K] in
 theorem upUni_mul {U B : Matrix (Fin N) (Fin N) K} (hU : IsUpUni U) (hB : IsUpUni B) :
     IsUpUni (U * B) := by
-  intro i j
-  refine ⟨fun h => (up_tri hU).mul (up_tri hB) h, fun h => ?_⟩
-  subst h
-  rw [Matrix.mul_apply, Finset.sum_eq_single i, (hU i i).2 rfl, (hB i i).2 rfl, one_mul]
-  · intro k _ hk
-    rcases lt_or_gt_of_ne hk with h | h
-    · rw [(hU i k).1 h, zero_mul]
-    · rw [(hB k i).1 h, mul_zero]
-  · simp
+  apply _root_.GlobalTheory.UpperUnipotentMul.isUpUni_mul <;> assumption
 
 variable {ι : Type} [Fintype ι] (τ : ι → (K →+* ℂ))
 

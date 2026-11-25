@@ -19,59 +19,15 @@ public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.Ordin
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAddEquiv
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TensorProductHopfOrdersStatement
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TorsionPointsHopfOrderStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 import ReciprocityTheory.DualLattices.CotangentSurjective
 import ReciprocityTheory.DualLattices.TensorSpan
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Lemma
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import ReciprocityTheory.DualLattices.SqIdeal
 import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
 import Mathlib.RingTheory.PiTensorProduct
@@ -125,18 +81,11 @@ lemma alg_mem_pInt (p : ℕ) {r : R} (h : r ∈ Ideal.span {(p : R)}) :
   obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.1 h
   exact (PositivityTheory.HtPt.Ri.mem_pInt p _).2 ⟨a, rfl⟩
 
-lemma add_zero_mem {p : ℕ} {N : Type} [AddCommGroup N] {g : N → C}
-    (hg : g ∈ addFun (C := C) R p N) : g 0 ∈ pInt (C := C) R p := by
-  have h := (show ∀ x y : N, g (x + y) - g x - g y ∈ GlobalTheory.CompanionTheory.Ar.GR.pInt (C := C) R p
-    from hg) 0 0
-  rw [add_zero, sub_self, zero_sub] at h
-  simpa using Submodule.neg_mem _ h
-
 lemma add_nsmul_mem {p : ℕ} {N : Type} [AddCommGroup N] {g : N → C}
     (hg : g ∈ addFun (C := C) R p N) (y : N) (n : ℕ) :
     g (n • y) - n * g y ∈ pInt (C := C) R p := by
   induction n with
-  | zero => simpa using PositivityTheory.HtPt.Ri.add_zero_mem hg
+  | zero => simpa using PositivityTheory.HtPt.Re.addFun_zero hg
   | succ n ih =>
     have h := (show ∀ x y : N, g (x + y) - g x - g y ∈ GlobalTheory.CompanionTheory.Ar.GR.pInt (C := C) R p
       from hg) (n • y) y
@@ -291,7 +240,7 @@ theorem tight_of (p : ℕ) [hp : Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
           have h1 := hev (g - r0 • 1) ((mem_aug _ _).2
             ⟨Submodule.sub_mem _ hg.1 (Submodule.smul_mem _ _ AA.one_mem), by
               simp [Algebra.smul_def, hr0]⟩)
-          have h2 := Submodule.add_mem _ (Submodule.add_mem _ h1 (hpr (add_zero_mem hg.2)))
+          have h2 := Submodule.add_mem _ (Submodule.add_mem _ h1 (hpr (PositivityTheory.HtPt.Re.addFun_zero hg.2)))
             (hpr (hk 1 trivial))
           convert h2 using 1
           simp [← e1, Algebra.smul_def, hr0]

@@ -32,58 +32,10 @@ public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Bun
 public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Inhabit
 public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChernClassOnFlagPair
 public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.RelationsStatement
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
 import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.FirstLatticeBaseChange
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ReduceModChar
 import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
-import Mathlib.Tactic.Polynomial.Basic
 import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XDotdualBc
 import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ClassListMapDomainPerm
 
@@ -556,8 +508,7 @@ theorem PositivityTheory.Xgn.t_flatten_lines : ∀ (O : Type) [CommRing O] [IsDo
   choose a M v hv using key
   have hnz : ∀ j, ∃ l, v j l ≠ 0 := by
     intro j
-    by_contra hall
-    push_neg at hall
+    by_contra! hall
     apply ((hΓ j).2 c0 hm0).1
     rw [hv j c0 hm0, eq_bot_iff]
     unfold spanOver
@@ -1138,27 +1089,7 @@ variable (O : Type) [CommRing O] {Ω : Type} [Field Ω] [Algebra O Ω]
 
 theorem chart_trans {s t : ∀ k, ι k} (hs : mseg x s ≠ 0) {a : Ω} (ha : a ∈ chartRing O (mseg x) s) :
     ∃ m : ℕ, (mseg x s / mseg x t) ^ m * a ∈ chartRing O (mseg x) t := by
-  have hf : mseg x s / mseg x t ∈ chartRing O (mseg x) t :=
-    ReciprocityTheory.ChartRestriction.G.Geo.div_mem_chartRing (o := O) _ _ _
-  unfold chartRing at ha
-  induction ha using Algebra.adjoin_induction with
-  | mem y hy =>
-    obtain ⟨u, rfl⟩ := hy
-    refine ⟨1, ?_⟩
-    have : (mseg x s / mseg x t) ^ 1 * (mseg x u / mseg x s) = mseg x u / mseg x t := by
-      rw [pow_one, mul_comm, div_mul_div_cancel₀ hs]
-    beta_reduce
-    rw [this]
-    exact ReciprocityTheory.ChartRestriction.G.Geo.div_mem_chartRing (o := O) _ _ _
-  | algebraMap r => exact ⟨0, by simpa using Subalgebra.algebraMap_mem _ r⟩
-  | add a b _ _ ha hb => exact frac_add _ hf ha hb
-  | mul a b _ _ ha hb =>
-    obtain ⟨m, hm⟩ := ha
-    obtain ⟨n, hn⟩ := hb
-    refine ⟨m + n, ?_⟩
-    have := Subalgebra.mul_mem _ hm hn
-    convert this using 1
-    ring
+  apply _root_.PositivityTheory.Xgn.A_pull_exists.pow_mul_mem <;> assumption
 
 theorem fam_span (S : Set E) : IsLatFamily O x fun c => spanOver (chartRing O (mseg x) c) S := by
   refine ⟨fun s _ => span_stable _ S, fun s t hs _ v hv => ?_⟩
@@ -1780,16 +1711,7 @@ theorem classNum_perm {K : Type} [DecidableEq K] {ι : K → Type} {O : Type} [C
     [IsDiscreteValuationRing O] {σ : Type} (cls : σ → K → ℤ) (H : MvPolynomial σ ℤ)
     {Q Q' : List (K → ℤ)} (h : Q.Perm Q') (W : Ideal (MRing ι O)) :
     classNum cls H Q W = classNum cls H Q' W := by
-  unfold classNum
-  refine Finset.sum_congr rfl fun μ _ => ?_
-  congr 1
-  have : LeftCommutative (diffStep (K := K)) := ⟨fun a b f => by
-    funext m
-    simp only [diffStep]
-    rw [sub_right_comm m a b]
-    ring⟩
-  simp only [vNumL, vNum, intNum, mixedDiff, List.ofFn_get]
-  rw [(h.append_left _).foldr_eq]
+  apply _root_.GlobalTheory.CompanionTheory.Ar.CkPullBirat.classNum_perm <;> assumption
 
 theorem key (hC : GroundTheory.Heights₂.Heights.NumbersDVR.ChernClassOnFlagPair.Statement) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (Ω : Type) [Field Ω]
     [Algebra O Ω] (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)]

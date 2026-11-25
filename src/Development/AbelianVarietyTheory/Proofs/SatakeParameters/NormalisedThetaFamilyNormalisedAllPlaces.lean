@@ -24,6 +24,7 @@ public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPu
 public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntWAPlaces
 public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
 import Mathlib.Algebra.Order.Floor.Extended
+import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.KappaSelfDualFourthPowerLattice
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
@@ -272,35 +273,8 @@ alias stable_of_one := _root_.GlobalTheory.ThLoc.KapNonSplit.stable_of_one
 alias odd_of_cmOK := _root_.GlobalTheory.ThLoc.KapNonSplit.odd_of_cmOK
 
 theorem hermitianSelfDual_of_fourfoldBlock {n : Type} [Fintype n] (h : Matrix n n ℂ) (Λ : AddSubgroup (n → ℂ))
-    (hsd : IsSelfDual (matH (blk4 h)) (pow4 Λ)) : IsSelfDual (matH h) Λ := by
-  have key : ∀ (x : n → ℂ) (y : Fin 4 × n → ℂ), altE (matH (blk4 h)) (CmData.embA 0 x) y = altE (matH h) x (slice 0 y) := by
-    intro x y
-    simp only [altE, matrixForm_fourfoldBlock, CmData.slice_embA]
-    rw [Finset.sum_eq_single (0 : Fin 4)]
-    · simp
-    · intro b _ hb
-      simp [hb]
-    · intro hh
-      exact absurd (Finset.mem_univ _) hh
-  ext x
-  constructor
-  · intro hx
-    have h1 : CmData.embA 0 x ∈ dualLat (matH (blk4 h)) (pow4 Λ) := by
-      intro y hy
-      obtain ⟨m, hm⟩ := hx (slice 0 y) (hy 0)
-      exact ⟨m, by rw [key, hm]⟩
-    rw [hsd] at h1
-    have h2 := h1 0
-    rwa [CmData.slice_embA, if_pos rfl] at h2
-  · intro hx y hy
-    have h1 : CmData.embA 0 x ∈ dualLat (matH (blk4 h)) (pow4 Λ) := by
-      rw [hsd]
-      exact CmData.embA_mem Λ 0 hx
-    obtain ⟨m, hm⟩ := h1 _ (CmData.embA_mem Λ 0 hy)
-    refine ⟨m, ?_⟩
-    rw [key, CmData.slice_embA, if_pos rfl] at hm
-    exact hm
-
+    (hsd : IsSelfDual (matH (blk4 h)) (pow4 Λ)) : IsSelfDual (matH h) Λ :=
+  Formalism.L2.KerInert.Kap.selfDual_of_fourth_power_block h Λ hsd
 section Base
 
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ)
@@ -703,8 +677,6 @@ noncomputable section
 
 namespace GlobalTheory.ThLoc.AllPlaces
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {N N' : ℕ}
 
 theorem tPull_comp (γ₁ γ₂ : Matrix (Fin N) (Fin N) D.host.E) (γ₁' γ₂' : Matrix (Fin N') (Fin N') D.host.E)
@@ -778,8 +750,6 @@ end GlobalTheory.ThLoc.AllPlaces
 
 namespace GlobalTheory.ThLoc.AllPlaces
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {N N' : ℕ}
 
 theorem formV_eq_Hf (u v : TaylorLogMetric.VC D N N') :
@@ -806,7 +776,6 @@ end GlobalTheory.ThLoc.AllPlaces
 
 
 open GlobalTheory.ThLoc.AllPlaces in
-attribute [local instance] Formalism.BasicNotions.Host.cmStar in
 theorem GlobalTheory.ThLoc.latAt_all : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), TaylorLogMetric.IsCurveIdeal D cc → TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ → ∀ (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ), TaylorLogMetric.IsChi D χ → ∀ (X : Fields) (s : Seam D X), s.Ok → ∀ (a₀ : ℕ) (b₀ c₀ : ℤ) (ha : 0 < a₀) (hd : 0 < D.host.d) (lam : ℂ) (hlam : lam ≠ 0), CmOK a₀ b₀ c₀ D.host.d → (cmL a₀ b₀ D.host.d ha hd lam hlam).lattice.toAddSubgroup = TaylorLogMetric.lamOf D cc δ → ∀ (N N' : ℕ) (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)), TaylorLogMetric.admitted D N N' L L' → ∀ (p : ℕ) [Fact p.Prime] (ι : ℂ ≃+* ℂ_[p]), GlobalTheory.ThLoc.LatAt a₀ b₀ c₀ D.host.d ha hd lam hlam (Formalism.L2.AlgTh.hSc X.Tau N N' (TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ))⁻¹) (s.laF B.tor L L') (fun z => B.eNat χ N N' L L' (s.flatV N N' z)) p ι := by
   intro D cc δ hcc hδ B χ hχ X s hs a₀ b₀ c₀ ha hd lam hlam hcm hlat N N' L L' hA p _ ι
   have hp : p.Prime := Fact.out

@@ -54,9 +54,6 @@ namespace GlobalTheory.Core.Rk
 
 open Formalism.BasicNotions
 
-def TInAt (D : D7) (u : D.what₂.Word) (D' : D7) (u' : D'.what₂.Word) (r s : ℝ) : Prop :=
-  Real.log (D.mem u).A.Xu - r ≤ Real.log ((D'.mem u').A.T : ℝ) ∧ Real.log ((D'.mem u').A.T : ℝ) ≤ s
-
 def SameTops (D D' : D7) : Prop :=
   ∀ (τ : D.what₂.Tau) (τ' : D'.what₂.Tau) (t : D.host.TT) (t' : D'.host.TT) (h : 0 < D.R.k) (h' : 0 < D'.R.k),
     (D.eTau τ : D.R.GG) = D.R.tau1 t → (D'.eTau τ' : D'.R.GG) = D'.R.tau1 t' →
@@ -82,17 +79,7 @@ structure SameHost (D D' : D7) : Prop where
     (D.host.art (ZMod.unitOfCoprime p h)).1 = (D'.host.art (ZMod.unitOfCoprime p h')).1 ∧
       (D.R.iotaInv (D.host.art (ZMod.unitOfCoprime p h)).2).val = (D'.R.iotaInv (D'.host.art (ZMod.unitOfCoprime p h')).2).val
 
-theorem SameHost.condN_eq {D D' : D7} (h : SameHost D D') : D.host.condN = D'.host.condN := by
-  show D.host.QS * D.host.q * D.host.d = D'.host.QS * D'.host.q * D'.host.d
-  rw [h.QS_eq, h.q_eq, h.d_eq]
-
 theorem SameHost.refl (D : D7) : SameHost D D := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, fun _ _ _ => ⟨rfl, rfl⟩⟩
-
-theorem SameHost.trans {D D' D'' : D7} (h : SameHost D D') (h' : SameHost D' D'') : SameHost D D'' :=
-  ⟨h.1.trans h'.1, h.2.trans h'.2, h.3.trans h'.3, h.4.trans h'.4, h.5.trans h'.5, h.6.trans h'.6, h.7.trans h'.7, h.8.trans h'.8,
-    h.9.trans h'.9, fun p k k'' =>
-      have k' : Nat.Coprime p D'.host.condN := h.condN_eq ▸ k
-      ⟨(h.art_eq p k k').1.trans (h'.art_eq p k' k'').1, (h.art_eq p k k').2.trans (h'.art_eq p k' k'').2⟩⟩
 
 structure SameWord (D : D7) (u : D.what₂.Word) (D' : D7) (u' : D'.what₂.Word) : Prop where
   host : SameHost D D'
@@ -123,16 +110,6 @@ def SomeAt (Q : ℝ → ∀ D : D7, D.what₂.Word → Prop) : Prop :=
   ∃ x₀ : ℝ, ∀ x, x₀ ≤ x → ∀ (i₀ : F.Ix x) (u₀ : ℕ), u₀ < (F.D x i₀).R.n →
     ∃ i : F.Ix x, (F.D x i).host.u0.val = u₀ ∧ SameTops (F.D x i) (F.D x i₀) ∧ ∃ u, Q x (F.D x i) u
 
-def RKAll : Prop := ∃ x₀ : ℝ, ∀ x, x₀ ≤ x → ∀ i : F.Ix x, ∃ u, RK (F.D x i) u
-
-def RKRoomOver (Tr : ℝ → D7 → Prop) (ε : ℝ) : Prop :=
-  ∃ CR CT : ℝ, F.SomeAt fun x D u => ∃ (D' : D7) (u' : D'.what₂.Word), Tr x D' ∧ SameWord D u D' u' ∧
-    TInAt D u D' u' (CR * x ^ ε) (CT * D.R.m * x ^ ε) ∧ RK D' u'
-
-def Covered : Prop :=
-  ∃ x₀ : ℝ, ∀ x, x₀ ≤ x → ∀ (i₀ : F.Ix x) (u₀ : ℕ), u₀ < (F.D x i₀).R.n →
-    ∃ i : F.Ix x, (F.D x i).host.u0.val = u₀ ∧ SameTops (F.D x i) (F.D x i₀)
-
 variable {F}
 
 theorem SomeAt.exists {Q : ℝ → ∀ D : D7, D.what₂.Word → Prop} (h : F.SomeAt Q) :
@@ -141,17 +118,6 @@ theorem SomeAt.exists {Q : ℝ → ∀ D : D7, D.what₂.Word → Prop} (h : F.S
   refine ⟨x₀, fun x hx ⟨i₀⟩ => ?_⟩
   obtain ⟨i, -, -, u, hu⟩ := h x hx i₀ 0 (F.D x i₀).R.ord_pos
   exact ⟨i, u, hu⟩
-
-theorem SomeAt.exists_ge {Q : ℝ → ∀ D : D7, D.what₂.Word → Prop} (h : F.SomeAt Q) (y : ℝ) :
-    ∃ x, y ≤ x ∧ ∃ (i : F.Ix x) (u : (F.D x i).what₂.Word), Q x (F.D x i) u := by
-  obtain ⟨x₀, h⟩ := h.exists
-  obtain ⟨x, hx, hne⟩ := F.Ix_ne (max x₀ y)
-  exact ⟨x, le_of_max_le_right hx, h x (le_of_max_le_left hx) hne⟩
-
-theorem not_rkRoomOver {ε : ℝ} {Tr : ℝ → D7 → Prop} (hT : ∀ x D u, Tr x D → ¬ RK D u) : ¬ F.RKRoomOver Tr ε := by
-  rintro ⟨CR, CT, h⟩
-  obtain ⟨x, -, i, u, D', u', h1, -, -, h2⟩ := h.exists_ge 0
-  exact hT _ _ _ h1 h2
 
 end Pts
 
@@ -203,8 +169,6 @@ def eDiag (L C : ℝ) : ℝ := 8 * Real.exp (-(C * mfL D L)) + 6 * Real.exp (-(k
 
 def RankMu : Prop :=
   (d0 D u : ℝ) = ((D.mem u).A.duStar : ℝ) * (((D.mem u).A.T : ℝ) ^ D.R.k - 1) ^ D.R.f
-
-def cK : ℝ := (c0 D.s u * c0 D.s u) ^ (-(1 / 2 : ℝ))
 
 namespace Pts
 

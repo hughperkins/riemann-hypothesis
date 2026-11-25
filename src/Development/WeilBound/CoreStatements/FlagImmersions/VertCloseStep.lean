@@ -22,56 +22,11 @@ public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsSmoothHerm
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
 import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionOrderAtPoint
 import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
 import Std.Tactic.BVDecide.Normalize.Prop
 import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlagLabelBasesExist
 import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linter.HaveILetI
 
 -- This file was produced by scripts/clump.py from the modules listed below.
@@ -292,10 +247,6 @@ theorem div_le_of_integral (y : (Σ k, ι k) → Ω) (hP : (mCoordIdeal y).IsPri
     simp only [map_prod, map_pow, aeval_X]
     linear_combination ((∏ k, y ⟨k, c k⟩ ^ e k) * aeval y b ^ n) * hp
 
-theorem X_mem_iff (y : (Σ k, ι k) → Ω) (q : Σ k, ι k) : (X q : MRing ι) ∈ mCoordIdeal y ↔ y q = 0 := by
-  show mConeMap y (X q) = 0 ↔ _
-  simp [mConeMap, X_ne_zero]
-
 theorem C_not_mem {P : Ideal (MRing ι)} (hP : IsHorizontal P) {n : ℤ} (hn : n ≠ 0) : (C n : MRing ι) ∉ P := by
   intro h
   have h2 : n ∈ P.comap (C : ℤ →+* MRing ι) := h
@@ -318,7 +269,7 @@ theorem half_bound (y : (Σ k, ι k) → Ω) (hP : (mCoordIdeal y).IsPrime) (hH 
   have hVW : mCoordIdeal y ≤ W := le_sup_left.trans h.1.1.2
   choose c hcW using h.2
   have hcP : ∀ k, (X ⟨k, c k⟩ : MRing ι) ∉ mCoordIdeal y := fun k hk => hcW k (hVW hk)
-  have hc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k hk => hcP k ((X_mem_iff y _).2 hk)
+  have hc : ∀ k, y ⟨k, c k⟩ ≠ 0 := fun k hk => hcP k ((GlobalTheory.CompanionTheory.Ar.Top.LineUnit.X_mem_mCoordIdeal_iff y _).2 hk)
   have hmP : (C (m : ℤ) : MRing ι) ∉ mCoordIdeal y := C_not_mem hH (by exact_mod_cast hm.ne')
   have hint : IsIntegral (chartRingZ y c) ((m : Ω) * (u * ∏ k, y ⟨k, c k⟩ ^ (-((df k : ℤ) - dg k))) ^ q) := by
     refine GlobalTheory.CompanionTheory.Ar.ChartVal.isIntegral_of_forall_valuationSubring Subtype.val_injective _

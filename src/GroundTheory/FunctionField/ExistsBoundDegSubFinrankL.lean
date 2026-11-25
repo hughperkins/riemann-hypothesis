@@ -41,23 +41,8 @@ theorem finiteDimensional_map_mkQ_trans {S T U : Submodule R M} (hST : S ≤ T) 
       Submodule.factor_comp_mk]
   have hTU' : T.map S.mkQ ≤ U.map S.mkQ := Submodule.map_mono hTU
   have hker : LinearMap.ker f = (T.map S.mkQ).comap (U.map S.mkQ).subtype := by
-    ext ⟨w, hw⟩
-    simp only [LinearMap.mem_ker, Submodule.mem_comap, Submodule.subtype_apply, f,
-      LinearMap.coe_comp, Function.comp_apply]
-    obtain ⟨m, -, rfl⟩ := Submodule.mem_map.1 hw
-    rw [Submodule.mkQ_apply,
-      show Submodule.factor hST (Submodule.Quotient.mk m) = Submodule.Quotient.mk m from rfl,
-      Submodule.Quotient.mk_eq_zero]
-    constructor
-    · intro hm
-      exact Submodule.mem_map_of_mem hm
-    · intro hm
-      obtain ⟨m', hm', he⟩ := Submodule.mem_map.1 hm
-      have : m' - m ∈ S := (Submodule.Quotient.eq S).1 he
-      have := hST this
-      have h2 : m = m' - (m' - m) := by abel
-      rw [h2]
-      exact T.sub_mem hm' this
+    dsimp only [f]
+    rw [LinearMap.ker_comp, Submodule.factor, Submodule.ker_mapQ, Submodule.comap_id]
   have ek : LinearMap.ker f ≃ₗ[R] T.map S.mkQ :=
     (LinearEquiv.ofEq _ _ hker).trans (Submodule.comapSubtypeEquivOfLe hTU')
   have er : LinearMap.range f ≃ₗ[R] U.map T.mkQ := LinearEquiv.ofEq _ _ hrange
@@ -600,29 +585,8 @@ theorem eq_genusInt_of_le {D E : Divisor k K}
     deg E + 1 - (finrank k (L E) : ℤ) = genusInt k K :=
   le_antisymm (le_genusInt E) (by have := deg_sub_finrank_L_mono h; linarith)
 
-theorem finrank_L_zero_eq_one (hk : algebraicClosure k K = ⊥) :
-    finrank k (L (0 : Divisor k K)) = 1 := by
-  rw [finrank_L_zero, hk, IntermediateField.finrank_bot]
-
-theorem genusInt_nonneg (hk : algebraicClosure k K = ⊥) : 0 ≤ genusInt k K := by
-  have h := le_genusInt (0 : Divisor k K)
-  rw [finrank_L_zero_eq_one hk, map_zero] at h
-  simpa using h
-
-
-variable (k K) in
-noncomputable def genus : ℕ := (genusInt k K).toNat
-
-theorem genus_eq_genusInt (hk : algebraicClosure k K = ⊥) : (genus k K : ℤ) = genusInt k K :=
-  Int.toNat_of_nonneg (genusInt_nonneg hk)
 
 namespace Divisor
-
-theorem riemann_inequality (hk : algebraicClosure k K = ⊥) (D : Divisor k K) :
-    deg D + 1 - (genus k K : ℤ) ≤ finrank k (L D) := by
-  have := le_genusInt D
-  rw [← genus_eq_genusInt hk] at this
-  linarith
 
 theorem exists_mem_A (a : Repartition k K) : ∃ D : Divisor k K, a ∈ A D := by
   classical
@@ -675,19 +639,6 @@ instance finiteDimensional_quotient (D : Divisor k K) :
   have := finiteDimensional_relSpace_of_le (le_sup_left : D ≤ D ⊔ E)
   rw [h] at this
   exact Module.Finite.equiv Submodule.topEquiv
-
-noncomputable def indexOfSpeciality (D : Divisor k K) : ℕ :=
-  finrank k (Repartition k K ⧸ (A D ⊔ principal k K))
-
-theorem indexOfSpeciality_eq_genusInt (D : Divisor k K) :
-    (indexOfSpeciality D : ℤ) = finrank k (L D) - deg D - 1 + genusInt k K := by
-  obtain ⟨E, hE⟩ := exists_eq_genusInt (k := k) (K := K)
-  have h := relSpace_sup_eq_top D hE
-  have hr := finrank_relSpace (le_sup_left : D ≤ D ⊔ E)
-  rw [h, finrank_top] at hr
-  have hE' := eq_genusInt_of_le hE (le_sup_right : E ≤ D ⊔ E)
-  unfold indexOfSpeciality
-  linarith
 
 end Divisor
 

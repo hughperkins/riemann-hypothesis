@@ -51,8 +51,6 @@ namespace GlobalTheory.HeckeTieCompare
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.FWT
   Formalism.L2.Pj GlobalTheory.IndefiniteRowSideFullHecke.RationalHeckeScalars
 
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
 
 section Local
@@ -89,10 +87,6 @@ theorem level_notMem {P : PlE D.host} (h : ∃ i', P ∉ D.ntw.S0 i') :
   rcases P.isPrime.mem_or_mem hm with h | h
   · exact hi (D.ntw.placesOver_subset_exceptional i' 0 h)
   · exact hi (D.ntw.placesOver_subset_exceptional i' 1 h)
-
-theorem scalar_eq (i : Fin D.R.m) (P : PlE D.host) (k : ℕ) :
-    (((R.C.mu0 i).val P : ℂˣ) : ℂ)⁻¹ ^ k * (((Nat.card (kP P) : ℕ) : ℂ) ^ (k * (D.R.nV / 2)))⁻¹ = heckeScalar R i P k := by
-  rw [heckeScalar, zpow_neg, zpow_neg, zpow_natCast, zpow_natCast, inv_pow]
 
 theorem exists_family (t : ∀ i : Fin D.R.m, ℕ → PlE D.host → Module.End D.what₂.LL (Fin (R.nW i) → D.what₂.LL)) :
     ∃ hL : ∀ j, ℕ → PlE D.host → Module.End D.what₂.LL (WL j),

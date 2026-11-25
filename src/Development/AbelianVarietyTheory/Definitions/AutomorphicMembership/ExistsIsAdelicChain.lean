@@ -88,17 +88,6 @@ def topLift (t : T) : (R.HX t).H →ₗ[ℂ] R.CC t (D.R.m - 1) := R.ioX t ∘�
 
 def botLift (t : T) : R.CC t 1 →ₗ[ℂ] MMap (R.MY 0) := postOn (R.MY 0) R.e0 ∘ₗ toMM R t 0 ∘ₗ R.ioY t 0
 
-theorem toMM_injective (t : T) (j : ℕ) : Function.Injective (toMM R t j) :=
-  (PiTensorProduct.lift.symm : (SmT (R.MY j) →ₗ[ℂ] (GA D (Yc D j) → ℂ)) ≃ₗ[ℂ] MMap (R.MY j)).injective.comp Subtype.val_injective
-
-theorem range_toMM (t : T) (j : ℕ) : LinearMap.range (toMM R t j) = multAt R R.triv t j := by
-  ext X
-  constructor
-  · rintro ⟨U, rfl⟩
-    exact (mem_multT R.θ (R.MY j) _ _ _).1 U.2
-  · intro hX
-    exact ⟨⟨PiTensorProduct.lift X, Submodule.mem_map_of_mem hX⟩, PiTensorProduct.lift.symm_apply_apply X⟩
-
 theorem multAt_le (P : LevelP R.Pg D.R.r ℂ) (t : T) (j : ℕ) : multAt R P t j ≤ multAt R R.triv t j :=
   mult_anti _ _ (principal_le_level (R.βY j) (R.datYt t j R.triv) P)
 
@@ -171,29 +160,7 @@ theorem haar_chain (hY : R.models_νY) (hY' : R.models_νY') (t : T) (j : ℕ) (
   · obtain rfl : j = D.R.m - 1 := by omega
     exact ⟨(hY' t).1.1, (hY' t).2⟩
 
-
-set_option genInjectivity false in
-set_option genSizeOfSpec false in
-structure HChain (m : ℕ) (E B : Type) [NormedAddCommGroup E] [InnerProductSpace ℂ E] [NormedAddCommGroup B]
-    [InnerProductSpace ℂ B] where
-
-  Sp : ℕ → Type
-  [nSp : ∀ j, NormedAddCommGroup (Sp j)]
-  [iSp : ∀ j, InnerProductSpace ℂ (Sp j)]
-  [fSp : ∀ j, FiniteDimensional ℂ (Sp j)]
-
-  bot : Sp 0 ≃ₗᵢ[ℂ] E
-
-  top : Sp m ≃ₗᵢ[ℂ] B
-
-  io : ∀ j, Sp (j + 1) →ₗ[ℂ] Sp j
-
-attribute [instance] HChain.nSp HChain.iSp HChain.fSp
-
-
 end Inhabitant
-
-def MultTied {X0 : BaseLevelRowSide D} (Y : RowsTie R F X0) : Prop := Function.Surjective Y.tup ∧ Nonempty (MultTie Y.sharp)
 
 theorem isMultiplicityInner_mul_inner {V : HSp D} {Sp : D.what₂.Tau → SPar} {M : DSModel V Sp} {μ : Measure (GA D V)} {𝓕 : Set (GA D V)}
     {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (e : H →ₗ[ℂ] MMap M) {d : ℂ} (hd : d ≠ 0)

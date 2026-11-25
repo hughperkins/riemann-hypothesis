@@ -18,56 +18,8 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.CategoryTheory.Category.Basic
 public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCCalc
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Std.Tactic.BVDecide.Normalize.Prop
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.TypeStar
 import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCMatA
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TopCompC, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCBlockC, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCBlock, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TopCompB, Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TopComp
@@ -328,41 +280,32 @@ theorem append_eq (j : ℕ) (σA : Equiv.Perm (blkA (n := n) j)) (τ : Equiv.Per
         (σA ((Fintype.equivFin (blkA (n := n) j)).symm i)) (1 : ℂ)))
       (fun i => embL (blkB (n := n) j) (single ((Fintype.equivFin (blkB (n := n) j)).symm i)
         (τ ((Fintype.equivFin (blkB (n := n) j)).symm i)) (1 : ℂ))) = vv (piP j σA τ) ∘ epsE j := by
+  have hvv : ∀ {S : Finset (Fin n)} (x y : S), piP j σA τ x = (y : Fin n) →
+      embL S (single x y (1 : ℂ)) = vv (piP j σA τ) x := by
+    intro S x y hp
+    ext p q
+    simp only [vv, hp, embL, embOn, Matrix.single_apply,
+      LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk]
+    by_cases hpq : (x : Fin n) = p ∧ (y : Fin n) = q
+    · obtain ⟨rfl, rfl⟩ := hpq
+      simp
+    · rw [if_neg hpq]
+      split_ifs with h1 h2
+      · exact absurd ⟨by rw [h2.1], by rw [h2.2]⟩ hpq
+      · rfl
+      · rfl
   funext i
   refine Fin.addCases (fun i => ?_) (fun i => ?_) i
   · simp only [Fin.append_left, Function.comp_apply, epsE_left]
     generalize (Fintype.equivFin (blkA (n := n) j)).symm i = a
-    have hp : piP j σA τ a = σA a := by
-      simp [piP, Equiv.Perm.subtypeCongr.left_apply _ _ a.2]
-    ext p q
-    simp only [vv, hp, embL]
-    simp only [embOn, Matrix.single_apply, LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk]
-    by_cases hpq : (a : Fin n) = p ∧ (σA a : Fin n) = q
-    · obtain ⟨rfl, rfl⟩ := hpq
-      simp
-    · rw [if_neg hpq]
-      split_ifs with h1 h2
-      · exact absurd ⟨by rw [h2.1], by rw [h2.2]⟩ hpq
-      · rfl
-      · rfl
+    exact hvv a (σA a) (by simp [piP, Equiv.Perm.subtypeCongr.left_apply _ _ a.2])
   · simp only [Fin.append_right, Function.comp_apply, epsE_right]
     generalize (Fintype.equivFin (blkB (n := n) j)).symm i = b
-    have hp : piP j σA τ b = τ b := by
-      have hb : (b : Fin n) ∉ blkA (n := n) j := by
-        have := b.2; simpa [blkB] using this
-      simp [piP, Equiv.Perm.subtypeCongr.right_apply _ _ hb, eBq]
-      exact Subtype.ext rfl
-    ext p q
-    simp only [vv, hp, embL]
-    simp only [embOn, Matrix.single_apply, LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk]
-    by_cases hpq : (b : Fin n) = p ∧ (τ b : Fin n) = q
-    · obtain ⟨rfl, rfl⟩ := hpq
-      simp
-    · rw [if_neg hpq]
-      split_ifs with h1 h2
-      · exact absurd ⟨by rw [h2.1], by rw [h2.2]⟩ hpq
-      · rfl
-      · rfl
+    refine hvv b (τ b) ?_
+    have hb : (b : Fin n) ∉ blkA (n := n) j := by
+      have := b.2; simpa [blkB] using this
+    simp [piP, Equiv.Perm.subtypeCongr.right_apply _ _ hb, eBq]
+    exact Subtype.ext rfl
 
 private theorem iteratedFDeriv_comp_equiv_eq_of_contDiffOn (hS : IterSymm) {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (ψ : V → ℂ) (Ω : Set V) (hΩ : IsOpen Ω) (hψ : ContDiffOn ℂ ∞ ψ Ω) (c : V) (hc : c ∈ Ω)

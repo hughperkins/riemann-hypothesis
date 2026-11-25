@@ -12,65 +12,17 @@ public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFi
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactZeroHolds
 public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftGeneratorWordEvaluation
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
 import Formalism.FormalDegreeBessel.FinalG
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.LinearAlgebra.Lagrange
 import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-import Mathlib.Tactic.TypeStar
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexifiedDerivativeCommutator
-import Mathlib.Order.CompletePartialOrder
 import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
-import Mathlib.Tactic.Lemma
 import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Mathlib.RingTheory.PiTensorProduct
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorAsGenerators, Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCovarianceHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.CoefficientInterpolationHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeLocalRepresentative, Formalism.HermitianCurvature.HermitianCurvatureProofs.DeterminantShiftCoefficient, Formalism.HermitianCurvature.HermitianCurvatureProofs.ExponentialDegreeHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.ExponentialSymbolHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameExistence, Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftCapelliAsGenerators, Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftCovarianceChartHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.NilpotentLieFiniteHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.NilpotentOfCharPoly, Formalism.HermitianCurvature.HermitianCurvatureProofs.RightCapelliAsGenerators, Formalism.HermitianCurvature.HermitianCurvatureProofs.RightChartHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.RightGeneratorWordEvaluation, Formalism.HermitianCurvature.HermitianCurvatureProofs.SymbolOperatorFieldHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.SymbolOperatorLiftHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.SymbolOperatorLinearHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorToSymbolOperator, Formalism.HermitianCurvature.HermitianCurvatureProofs.OpCapLOfOf, Formalism.HermitianCurvature.HermitianCurvatureProofs.WordFamilySymbolHolds, Formalism.HermitianCurvature.HermitianCurvatureProofs.JfSmoothBuiltOfCapJoints
@@ -86,8 +38,6 @@ open scoped ContDiff Topology
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem cvag_posL_iff {k r : ℕ} (a b : Fin (Q.mdim k r 0)) : Q.posL k r 0 a = Q.posL k r 0 b ↔ a = b := by
   simp [Q.posL, Fin.ext_iff]
@@ -679,8 +629,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem clag_list {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (Bs : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) (σ : Equiv.Perm (Fin k)) :
     (List.ofFn fun i : Fin k => fun y : Q.Mx k r → E =>
@@ -719,8 +667,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem left_covariance_chart_holds : CovL := by
   intro k r d O U κ Φ hC x hx ξ Ξ₀ _hΞ₀ hcov X hX
@@ -809,8 +755,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem nilpotent_of_char_poly : NilOfCharpoly := by
   intro n M h
   have hmon := Matrix.charpoly_monic M
@@ -851,8 +795,6 @@ open scoped ContDiff Topology
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem crag_list {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (Bs : Fin k → Fin (2 * r + k + 1) → ℂ) (w : ℂ) (σ : Equiv.Perm (Fin k)) :
@@ -1239,8 +1181,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 namespace SymbolOperatorExtension
 
 variable {d : ℕ}
@@ -1440,8 +1380,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 def liftA {d o : ℕ} (a : (k : Fin (o + 1)) → (Fin k → Fin d) → (Fin d → ℝ) → ℂ) (m' : ℕ) :
     (k : Fin (m' + 1)) → (Fin k → Fin d) → (Fin d → ℝ) → ℂ :=
   fun k w x => if h : (k : ℕ) ≤ o then a ⟨k, by omega⟩ w x else 0
@@ -1519,8 +1457,6 @@ namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
-
 theorem symbol_operator_linear_holds : SOpLin := by
   intro d S T c O hST hS hT
   obtain ⟨o, a⟩ := S
@@ -1557,8 +1493,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 namespace IdentityZeroOperators
 
@@ -1658,8 +1592,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 def wfam {d : ℕ} {α : Type} (L : List (ℂ × List α)) (F : α → (Fin d → ℝ) → (Fin d → ℝ)) (c : ℂ) : WOp d :=
   L.map (fun t => (t.1, t.2.map F)) ++ [(c, [])]
@@ -1792,8 +1724,6 @@ open scoped ContDiff
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 
 noncomputable section
-
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 theorem word_family_apply_holds : WFamApp := by
   intro d α L F c v x

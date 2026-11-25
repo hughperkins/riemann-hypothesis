@@ -110,23 +110,20 @@ end Alg
 private theorem res_pi_bijective {Y : Scheme.{0}} {M : Type} (A : Y.Opens) (D : M → Y.Opens)
     (hD : ∀ m, D m ≤ A) (hc : A ≤ iSup D) (hd : ∀ i j, i ≠ j → D i ⊓ D j = ⊥) :
     Function.Bijective fun (x : Γ(Y, A)) m ↦ Y.presheaf.map (homOfLE (hD m)).op x := by
-  constructor
-  · intro x y e
-    exact TopCat.Sheaf.eq_of_locally_eq' Y.sheaf D A (fun m ↦ homOfLE (hD m)) hc x y
-      fun m ↦ congrFun e m
-  · intro y
-    have hcomp : TopCat.Presheaf.IsCompatible Y.sheaf.1 D y := by
-      intro i j
-      by_cases hij : i = j
-      · subst hij
-        rfl
-      · have : Subsingleton Γ(Y, D i ⊓ D j) := by
-          rw [hd i j hij]
-          infer_instance
-        exact this.elim _ _
-    obtain ⟨x, hx, -⟩ := TopCat.Sheaf.existsUnique_gluing' Y.sheaf D A
-      (fun m ↦ homOfLE (hD m)) hc y hcomp
-    exact ⟨x, funext hx⟩
+  rw [Function.bijective_iff_existsUnique]
+  intro y
+  have hcomp : TopCat.Presheaf.IsCompatible Y.sheaf.1 D y := by
+    intro i j
+    by_cases hij : i = j
+    · subst hij
+      rfl
+    · have : Subsingleton Γ(Y, D i ⊓ D j) := by
+        rw [hd i j hij]
+        infer_instance
+      exact this.elim _ _
+  obtain ⟨x, hx, hunique⟩ := TopCat.Sheaf.existsUnique_gluing' Y.sheaf D A
+    (fun m ↦ homOfLE (hD m)) hc y hcomp
+  exact ⟨x, funext hx, fun z hz ↦ hunique z (congrFun hz)⟩
 
 section Geo
 
@@ -229,15 +226,6 @@ private theorem omegaTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ 
 
   rw [secTrace_eq_sum W hd hc hU b', Finset.sum_smul, map_sum]
 
-private theorem cohOn_map_sum {X : Scheme.{0}} (R : Type) [CommRing R] [Algebra R Γ(X, ⊤)]
-    {F G : X.Modules} {ι : Type} (t : Finset ι) (φ : ι → (F ⟶ G)) (U : X.Opens) (n : ℕ) :
-    cohOn.map R (∑ i ∈ t, φ i) U n = ∑ i ∈ t, cohOn.map R (φ i) U n := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simpa using cohOn.map_zero_hom R F G U n
-  | insert a t ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, cohOn.map_add_hom, ih]
-
 private theorem hodgeTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ Z} [IsFinite c] [Etale c]
     (h : c ≫ s = s') {M : Type} [Fintype M] (W : M → Y.Opens) (hd : ∀ i j, i ≠ j → W i ⊓ W j = ⊥)
     (hc : iSup W = ⊤) [∀ m, IsFinite ((W m).ι ≫ c)] [∀ m, Etale ((W m).ι ≫ c)]
@@ -251,7 +239,7 @@ private theorem hodgeTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ 
       cohOn.map k (omegaTrace h a) ⊤ b y :=
     congrArg (cohOn.map k (omegaTrace h a) ⊤ b)
       ((coh.pushforwardEquiv k (appTop_algebraMap h) (Omega s' a) b).symm_apply_apply y)
-  rw [e1, omegaTrace_eq_sum h W hd hc hg a, cohOn_map_sum, LinearMap.sum_apply]
+  rw [e1, omegaTrace_eq_sum h W hd hc hg a, cohOn.map_sum_hom, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun m _ ↦ ?_
   letI := algΓ ((W m).ι ≫ s')
   rw [cohOn.map_comp, LinearMap.comp_apply]

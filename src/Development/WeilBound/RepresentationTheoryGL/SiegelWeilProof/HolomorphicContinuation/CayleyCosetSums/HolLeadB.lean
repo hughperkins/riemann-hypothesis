@@ -103,17 +103,8 @@ theorem inG_mul {x y : M2 n} (hx : InG x) (hy : InG y) : InG (x * y) := by
   calc yᴴ * xᴴ * JJ n * (x * y) = yᴴ * (xᴴ * JJ n * x) * y := by simp only [Matrix.mul_assoc]
     _ = JJ n := by rw [hx, hy]
 
-theorem det_ne_zero_of_inG {x : M2 n} (hx : InG x) : x.det ≠ 0 := by
-  intro h
-  have h1 := congrArg Matrix.det hx
-  rw [Matrix.det_mul, Matrix.det_mul, h, mul_zero] at h1
-  have h2 : (JJ n).det ≠ 0 := by
-    have := congrArg Matrix.det (JJ_mul_JJ (n := n))
-    rw [Matrix.det_mul, Matrix.det_neg] at this
-    intro h3
-    rw [h3, zero_mul] at this
-    simp at this
-  exact h2 h1.symm
+theorem det_ne_zero_of_inG {x : M2 n} (hx : InG x) : x.det ≠ 0 :=
+  by apply _root_.PositivityTheory.Rg.Sw.LVs.det_ne_zero_of_inG; assumption
 
 def toGR (x : M2 n) (hx : InG x) : GR n := ⟨(Matrix.isUnit_iff_isUnit_det _ |>.2 (isUnit_iff_ne_zero.2
   (det_ne_zero_of_inG hx))).unit, hx⟩
@@ -479,18 +470,13 @@ theorem fderiv_zOfE_raise (x : M2 n) (h : (u1 x).det ≠ 0) (S : Matrix (Fin n) 
         rw [Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hu1, Matrix.mul_one]
     _ = WM x * S * (u1 x)⁻¹ := congrArg (fun M => M * (u1 x)⁻¹) key
 
-theorem toBlocks₁₁_mul' (A B : M2 n) :
-    (A * B).toBlocks₁₁ = A.toBlocks₁₁ * B.toBlocks₁₁ + A.toBlocks₁₂ * B.toBlocks₂₁ := by
-  conv_lhs => rw [← fromBlocks_toBlocks A, ← fromBlocks_toBlocks B, fromBlocks_multiply]
-  simp
-
 theorem toBlocks₁₂_mul' (A B : M2 n) :
     (A * B).toBlocks₁₂ = A.toBlocks₁₁ * B.toBlocks₁₂ + A.toBlocks₁₂ * B.toBlocks₂₂ := by
   conv_lhs => rw [← fromBlocks_toBlocks A, ← fromBlocks_toBlocks B, fromBlocks_multiply]
   simp
 
 theorem mul_cm₁₁ (x : M2 n) : (x * Cm n).toBlocks₁₁ = Nm x := by
-  simp [toBlocks₁₁_mul', Cm, Nm]
+  simp [PositivityTheory.Rg.Sw.HSt.LoweringDerivative.upper_left_block_mul_eq, Cm, Nm]
 
 theorem mul_cm₁₂ (x : M2 n) : (x * Cm n).toBlocks₁₂ = Nm' x := by
   simp [toBlocks₁₂_mul', Cm, Nm']

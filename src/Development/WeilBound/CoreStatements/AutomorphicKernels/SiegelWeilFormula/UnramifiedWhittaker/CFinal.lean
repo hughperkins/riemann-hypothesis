@@ -24,59 +24,10 @@ public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LevelJoi
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicityLevelFormula
 public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
 public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedFormulaPolynomialGen
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Std.Tactic.BVDecide.Normalize.Prop
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.ReduceModChar
 import Aesop.Main
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-import Mathlib.Tactic.TypeStar
-import Mathlib.Algebra.Order.Star.Int
-import Mathlib.RingTheory.WittVector.IsPoly
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CharacterLevelFormula, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ClassLevelFormula, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetIntegralUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetIntegralUnramifiedStatement, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetMeasureFormula, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralHermitianInvariance, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralHermitianVolumeOne, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LevelExhaustion, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicityBoundUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicityPowerFormula, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumExhaustionUnramified, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMatricesCard, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardFibreGramDifferential, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnimodularHermitianRepsCountSucc, Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedLocalFormula, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.LocCAsm, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.LocCMain, Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.CFinal
@@ -135,24 +86,19 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {bs : Module.Basis (Fin d) F E} {v : HeightOneSpectrum (𝓞 F)} {ψv : Fv F v → ℂ} {S : Subring (Fv F v ⊗[F] E)}
   {σS : S →+* S} {ϖ : Fv F v} {ε : ℤ}
 
-theorem coe_mul_pS_pow (hG : GoodLoc σ J T bs v ψv S σS ϖ ε) (k : ℕ) (t : S) :
-    ((t * hG.pS ^ k : S) : Fv F v ⊗[F] E) = (ϖ ^ k) • (t : Fv F v ⊗[F] E) := by
-  rw [Subring.coe_mul, Subring.coe_pow, Algebra.smul_def, map_pow, mul_comm]
-  rfl
-
 theorem smul_sub_mem_iff (hG : GoodLoc σ J T bs v ψv S σS ϖ ε) (k : ℕ) (s s' : S) :
     (ϖ ^ k)⁻¹ • (s : Fv F v ⊗[F] E) - (ϖ ^ k)⁻¹ • (s' : Fv F v ⊗[F] E) ∈ S ↔ s - s' ∈ lev hG.pS k := by
   have hne : ϖ ^ k ≠ 0 := pow_ne_zero _ hG.unif_ne
   constructor
   · intro h
     refine Ideal.mem_span_singleton'.2 ⟨⟨_, h⟩, Subtype.ext ?_⟩
-    rw [coe_mul_pS_pow hG]
+    rw [GlobalTheory.CompanionTheory.GunrJt.coe_pow_mul hG]
     show (ϖ ^ k) • ((ϖ ^ k)⁻¹ • (s : Fv F v ⊗[F] E) - (ϖ ^ k)⁻¹ • (s' : Fv F v ⊗[F] E)) = (s : Fv F v ⊗[F] E) - s'
     rw [← smul_sub, smul_smul, mul_inv_cancel₀ hne, one_smul]
   · intro h
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 h
     have e : (s : Fv F v ⊗[F] E) - (s' : Fv F v ⊗[F] E) = (ϖ ^ k) • (c : Fv F v ⊗[F] E) := by
-      rw [← coe_mul_pS_pow hG, hc, AddSubgroupClass.coe_sub]
+      rw [← GlobalTheory.CompanionTheory.GunrJt.coe_pow_mul hG, hc, AddSubgroupClass.coe_sub]
     rw [← smul_sub, e, smul_smul, inv_mul_cancel₀ hne, one_smul]
     exact c.2
 
@@ -515,8 +461,7 @@ theorem measure_eq_one_of_selfDual {V : Type} [AddCommGroup V] [TopologicalSpace
       · simp [Φ, show x ∉ (L : Set V) from hx]
     · rw [Set.indicator_of_notMem (show y ∉ (L : Set V) from hy)]
       have hex : ∃ x₀ ∈ L, χ x₀ y ≠ 1 := by
-        by_contra hcon
-        push_neg at hcon
+        by_contra! hcon
         exact hy ((hann y).1 hcon)
       obtain ⟨x₀, hx₀, hne⟩ := hex
       have htr : ∫ x, Φ (x₀ + x) * χ (x₀ + x) y ∂μ = ∫ x, Φ x * χ x y ∂μ :=
@@ -890,8 +835,7 @@ theorem not_mem_lev_one {ϖ a : R} (h : ¬ ϖ ∣ a) : a ∉ lev ϖ 1 := by
 
 theorem exists_trace_not_dvd {σ : R →+* R} {ϖ : R} {q : ℕ} {ε : ℤ} (h : IsUnrQuad R σ ϖ q ε) {c : R}
     (hc : ¬ ϖ ∣ c) : ∃ t : R, ¬ ϖ ∣ (t * c + σ (t * c)) := by
-  by_contra hall
-  push_neg at hall
+  by_contra! hall
   obtain ⟨u, ⟨d, hd⟩, -⟩ := h.basis
   have h1 : ϖ ∣ 1 * c + σ (1 * c) := hall 1
   have h2 : ϖ ∣ u * c + σ (u * c) := hall u
