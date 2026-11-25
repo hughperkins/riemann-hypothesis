@@ -175,13 +175,10 @@ namespace GlobalTheory.PlaceClosedField
 
 theorem vLa_pos_of_mem {K : Type} [Field K] [NumberField K] (la : HeightOneSpectrum (𝓞 K))
     {x : 𝓞 K} (hx : x ∈ la.asIdeal) (h0 : x ≠ 0) : 0 < vLa la ((x : 𝓞 K) : K) := by
-  have h1 : la.intValuation x < 1 := (la.intValuation_lt_one_iff_mem _).2 hx
-  have h2 : WithZero.log (la.intValuation x) < 0 := by
-    have := (WithZero.log_lt_log (la.intValuation_ne_zero _ h0) one_ne_zero).2 h1
-    simpa using this
-  have h : ((x : 𝓞 K) : K) = algebraMap (𝓞 K) K x := rfl
-  rw [vLa, h, HeightOneSpectrum.valuation_of_algebraMap]
-  omega
+  change 0 < -WithZero.log (la.valuation K (algebraMap (𝓞 K) K x))
+  rw [HeightOneSpectrum.valuation_of_algebraMap, neg_pos]
+  simpa using (WithZero.log_lt_log (la.intValuation_ne_zero _ h0) one_ne_zero).2
+    ((la.intValuation_lt_one_iff_mem _).2 hx)
 
 theorem ramOverZ_pos {K : Type} [Field K] [NumberField K] (la : HeightOneSpectrum (𝓞 K)) :
     0 < ramOverZ la := by

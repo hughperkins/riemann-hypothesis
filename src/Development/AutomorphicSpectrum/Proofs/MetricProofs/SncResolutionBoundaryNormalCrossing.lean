@@ -320,8 +320,8 @@ theorem exists_unit_mul_monomial_of_primes {m e : ℕ} (I Dc : Ideal (MvPolynomi
     rw [Ideal.radical_eq_sInf, Ideal.mem_sInf]
     rintro 𝔓 ⟨hle, h𝔓⟩
     obtain ⟨h1, h2, h3⟩ := hcontr 𝔓 h𝔓
-    have hgm : g ∈ 𝔓.comap (algebraMap (MvPolynomial (Fin m) ℂ) (locRing I t)) := by
-      rw [Ideal.mem_comap]; exact hle (Ideal.mem_span_singleton_self _)
+    have hgm : g ∈ 𝔓.comap (algebraMap (MvPolynomial (Fin m) ℂ) (locRing I t)) :=
+      hle (Ideal.mem_span_singleton_self _)
     obtain ⟨i, hiJ, hi⟩ := (hpr _ h1 h2 h3).1 (hg _ h1 h2 h3 hgm)
     exact Ideal.mem_of_dvd _ (Finset.dvd_prod_of_mem _ hiJ) hi
   exact eq_unit_mul_monomial (fun l => algebraMap _ (locRing I t) (r l)) hspan' hdim' J hg0 hrad
@@ -348,12 +348,7 @@ theorem ideal_sup_le_of_mem (P D : Ideal (MvPolynomial (Σ k, ι k) ℂ)) (p : (
       rw [← eval_renC w' x, hpt]
     have hchart : ∀ c ∈ chartIdeal P p, eval w' c = 0 := fun c hc => by
       rw [← hren]
-      have hs : (renR (Σ k, ι k)).symm (renC (Σ k, ι k) c) = c := (renR (Σ k, ι k)).symm_apply_apply c
-      have hm : renC (Σ k, ι k) c ∈ SncRes.ideal P p := by
-        unfold SncRes.ideal
-        rw [mem_map_renR_iff, hs]
-        exact hc
-      exact hw0 _ (hI hm)
+      exact hw0 _ (hI (Ideal.mem_map_of_mem (renR (Σ k, ι k)) hc))
     obtain ⟨hcone, h1, -⟩ := conePts_of_chartIdeal hP p w' hchart
     have hlift : (fun q => eval w (SncRes.lift p q)) = w' := by
       funext q
@@ -365,10 +360,8 @@ theorem ideal_sup_le_of_mem (P D : Ideal (MvPolynomial (Σ k, ι k) ℂ)) (p : (
         simp [h1 k]
       · simp [w']
     have hfz : eval w' f = 0 := by
-      have h2 : eval w (bind₁ (SncRes.lift p) f) = eval (fun q => eval w (SncRes.lift p q)) f :=
-        eval₂Hom_bind₁ _ _ _ _
-      rw [← hlift, ← h2]
-      exact hw0 _ hg
+      rw [← hlift]
+      exact (eval₂Hom_bind₁ (RingHom.id ℂ) w (SncRes.lift p) f).symm.trans (hw0 _ hg)
     have hD := hf w' hcone hfz
     have hle : chartIdeal (P ⊔ D) p ≤ RingHom.ker (eval w') := by
       refine sup_le (sup_le (fun c hc => RingHom.mem_ker.mpr (hcone.2 c hc))

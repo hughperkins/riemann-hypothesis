@@ -230,25 +230,10 @@ private theorem isSmooth_subQuot_lemma_7 {G V₀ : Type} [Group G] [TopologicalS
     IsSmooth (subQuot B A) := by
   intro x
   obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-  rw [isOpen_iff_mem_nhds]
-  intro g0 hg0
-  have hU : IsOpen {g | B.toRepresentation g y = y} := isSmooth_sub_lemma_6 hρ B y
-  have hc : Continuous fun g : G => g0⁻¹ * g := continuous_const.mul continuous_id
-  have hmem : g0 ∈ (fun g : G => g0⁻¹ * g) ⁻¹' {g | B.toRepresentation g y = y} := by
-    show B.toRepresentation (g0⁻¹ * g0) y = y
-    rw [inv_mul_cancel, map_one]
-    rfl
-  refine Filter.mem_of_superset ((hU.preimage hc).mem_nhds hmem) ?_
-  intro g hg
-  have hg' : B.toRepresentation (g0⁻¹ * g) y = y := hg
-  have e2 : subQuot B A (g0⁻¹ * g) (Submodule.Quotient.mk y) = Submodule.Quotient.mk y := by
-    show Submodule.Quotient.mk (B.toRepresentation (g0⁻¹ * g) y) = _
-    rw [hg']
-  show subQuot B A g (Submodule.Quotient.mk y) = Submodule.Quotient.mk y
-  rw [show g = g0 * (g0⁻¹ * g) by group, map_mul]
-  show subQuot B A g0 (subQuot B A (g0⁻¹ * g) (Submodule.Quotient.mk y)) = Submodule.Quotient.mk y
-  rw [e2]
-  exact hg0
+  exact Subgroup.isOpen_mono
+    (H₁ := B.toRepresentation.stabilizer y)
+    (H₂ := (subQuot B A).stabilizer (Submodule.Quotient.mk y))
+    (fun g hg => congrArg Submodule.Quotient.mk hg) (isSmooth_sub_lemma_6 hρ B y)
 
 private theorem jhMult_relJacD_le_add_lemma_8 (e' : ∀ a, (Σ b, Fin (d' a b)) ≃ Fin (d a))
     {σ : Representation ℂ (∀ a, Levi k fun b => Fin (d' a b)) U} (hσ : σ.IsIrreducible)
@@ -289,13 +274,9 @@ theorem jhMult_le_relJacD (e' : ∀ a, (Σ b, Fin (d' a b)) ≃ Fin (d a))
       1 ≤ jhMult σ (relJacD e' (subQuot S T)) := by
     intro S T hφ
     obtain ⟨φ⟩ := hφ
-    have hinj : Function.Injective φ.symm.toIntertwiningMap := by
-      intro a b hab
-      have h' : φ (φ.symm a) = φ (φ.symm b) := congrArg φ hab
-      rwa [φ.apply_symm_apply, φ.apply_symm_apply] at h'
     exact hτ1.trans (GlobalTheory.CompanionTheory.SocleJm.jhMult_le_of_injective hσ
       (GlobalTheory.JacStagesExact.relJacMap e' φ.symm.toIntertwiningMap)
-      (GlobalTheory.JacStagesExact.relJacMap_injective e' (isSmooth_subQuot_lemma_7 hρ S T) _ hinj))
+      (GlobalTheory.JacStagesExact.relJacMap_injective e' (isSmooth_subQuot_lemma_7 hρ S T) _ φ.symm.injective))
   show (⨆ r, ⨆ (_ : OccursTimes τ ρ r), (r : ℕ∞)) ≤ _
   refine iSup₂_le fun r hr => ?_
   obtain ⟨S, T, hTS, hST, hiso⟩ := hr

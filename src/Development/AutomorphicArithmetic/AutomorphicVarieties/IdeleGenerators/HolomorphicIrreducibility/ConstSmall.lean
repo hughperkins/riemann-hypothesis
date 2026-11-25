@@ -186,7 +186,7 @@ section -- clump:auto
 
 open Formalism.ConjugateSelfDual Finset UpperTheory.V.Sd
 
-private theorem gauss_mul_gauss_inv {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ.IsPrimitive) :
+theorem UpperTheory.V.Sd.gauss_mul_gauss_inv {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ.IsPrimitive) :
     gaussSum χ ZMod.stdAddChar * gaussSum χ⁻¹ ZMod.stdAddChar * χ (-1) = N := by
   have hi : (χ⁻¹).IsPrimitive := by
     rw [DirichletCharacter.isPrimitive_def, DirichletCharacter.conductor_inv]; exact hχ
@@ -257,7 +257,7 @@ private theorem root_sub_one {x : Qbar l} (h : x ^ l = 1) : ‖x - 1‖ < 1 := b
     exact mul_lt (mul_lt (nat_lt dvd_rfl) h1) r.2
   exact lt_of_pow_lt_pow_left₀ l zero_le_one (by rwa [one_pow])
 
-private theorem char_le (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (a : ZMod N) :
+theorem UpperTheory.V.Sd.int_chi (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (a : ZMod N) :
     ‖ι.symm (χ a)‖ ≤ 1 := by
   by_cases ha : IsUnit a
   · obtain ⟨u, rfl⟩ := ha
@@ -274,7 +274,7 @@ private theorem gauss_le (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : Diri
   rw [gaussSum, map_sum]
   refine sum_le _ _ fun a _ => ?_
   rw [map_mul]
-  refine mul_le (char_le ι χ a) (root_le (NeZero.ne N) ?_).le
+  refine mul_le (UpperTheory.V.Sd.int_chi ι χ a) (root_le (NeZero.ne N) ?_).le
   rw [← map_pow, add_pow_N, map_one]
 
 private theorem gauss_eq (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ.IsPrimitive)
@@ -283,7 +283,7 @@ private theorem gauss_eq (ι : Qbar l ≃+* ℂ) {N : ℕ} [NeZero N] (χ : Diri
   simp only [map_mul, map_natCast, nat_eq hN] at h
   refine le_antisymm (gauss_le ι _) (not_lt.1 fun hlt => ?_)
   rw [mul_comm (ι.symm (gaussSum χ _))] at h
-  exact (mul_lt (mul_lt hlt (gauss_le ι _)) (char_le ι χ _)).ne h
+  exact (mul_lt (mul_lt hlt (gauss_le ι _)) (UpperTheory.V.Sd.int_chi ι χ _)).ne h
 
 private theorem map_Lk (ι : Qbar l ≃+* ℂ) (k : ℕ) (x : ℂ) : ι.symm (Lk k x) = Lk k (ι.symm x) := by
   unfold Lk
@@ -372,7 +372,7 @@ theorem UpperTheory.V.Sd.constSmall :
   have hT1 : ‖ι.symm T‖ ≤ 1 := by
 
     rw [hT, map_sum]
-    exact sum_le _ _ fun b _ => by rw [map_mul]; exact mul_le (char_le ι _ _) (hL _)
+    exact sum_le _ _ fun b _ => by rw [map_mul]; exact mul_le (UpperTheory.V.Sd.int_chi ι _ _) (hL _)
   have hA := sum_all h.one_lt hw0 hk φ⁻¹ hζ
   have hB := sum_multiples M w hw0 (fun n => φ⁻¹ (n : ZMod M) * Lk k (ζ ^ n))
   simp only [Nat.cast_mul, map_mul, hφw, one_mul] at hB
@@ -398,7 +398,7 @@ theorem UpperTheory.V.Sd.constSmall :
     split_ifs with hn
     · simp
     · rw [map_mul, map_mul, map_sub, map_one]
-      refine mul_lt (root_sub_one ?_) (mul_le (char_le ι _ _) (hL _))
+      refine mul_lt (root_sub_one ?_) (mul_le (UpperTheory.V.Sd.int_chi ι _ _) (hL _))
       have hu : IsUnit (n : ZMod w) := Ne.isUnit (mt (ZMod.natCast_eq_zero_iff _ _).1 hn)
       rw [← map_pow, ← MulChar.pow_apply' _ hl.out.ne_zero, inv_pow, h.θpow, inv_one, MulChar.one_apply hu, map_one]
   have h2 : ‖(2 : Qbar l)‖ = 1 := by

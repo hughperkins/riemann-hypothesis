@@ -574,11 +574,9 @@ theorem exists_frame_of_isGrpPullback_ring {E : Type} [Field E] [NumberField E] 
   · refine (eig_iff hπ (ha z) _ _).1 ?_
     rw [hub]
     exact y.eig σ k z
-  · have e : y.u σ = fun i => (ub σ i).left ≫ π := funext fun i => (hub σ i).symm
-    obtain ⟨cf, hcf, -⟩ := y.basis σ (w.left ≫ π) ((tan_iff hπ w).2 ht)
+  · obtain ⟨cf, hcf, -⟩ := y.basis σ (w.left ≫ π) ((tan_iff hπ w).2 ht)
       (fun z => (eig_iff hπ (ha z) w _).2 (he z))
-    rw [e] at hcf
-    exact ⟨cf, isLieComb_of_isCombAt hπ _ cf w hcf⟩
+    exact ⟨cf, isLieComb_of_isCombAt hπ _ cf w (by simpa only [hub] using hcf)⟩
 
 end GlobalTheory.KSExist
 end -- clump:auto

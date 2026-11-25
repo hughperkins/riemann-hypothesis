@@ -1,6 +1,7 @@
 module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ConstSmall
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisCoef
 import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisSlash
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.EisVan
@@ -16,6 +17,7 @@ import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 import Mathlib.Data.NNRat.Floor
 import Mathlib.Geometry.Euclidean.Volume.Basic
 import Mathlib.NumberTheory.Chebyshev
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ModularFormCoefficients
 public import Mathlib.NumberTheory.DirichletCharacter.GaussSum
 import Mathlib.NumberTheory.Height.NumberField
 import Mathlib.NumberTheory.Height.Projectivization
@@ -52,58 +54,10 @@ import Mathlib.Topology.Sheaves.Init
 open CongruenceSubgroup UpperHalfPlane UpperTheory.V.Af UpperTheory.V.Sd
 open scoped MatrixGroups ModularForm
 
-private theorem eisChi_gauss_ne {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {ψ : AddChar (ZMod N) ℂ} (hχ : χ.IsPrimitive)
-    (hψ : ψ.IsPrimitive) : gaussSum χ ψ ≠ 0 := by
-  have h1 : gaussSum χ ψ * gaussSum χ⁻¹ ψ⁻¹
-      = ∑ b : ZMod N, ∑ a : ZMod N, χ a * ψ (b * (a - 1)) := by
-    conv_lhs => rw [gaussSum.eq_1 χ⁻¹, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun b _ => ?_
-    rw [← mul_assoc, mul_comm (gaussSum χ ψ), ← gaussSum_mulShift_of_isPrimitive ψ hχ b,
-      gaussSum, Finset.sum_mul]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [AddChar.mulShift_apply, AddChar.inv_apply, mul_assoc, ← AddChar.map_add_eq_mul]
-    congr 2
-    ring
-  have h2 : gaussSum χ ψ * gaussSum χ⁻¹ ψ⁻¹ = (N : ℂ) := by
-    rw [h1, Finset.sum_comm]
-    simp_rw [← Finset.mul_sum, AddChar.sum_mulShift _ hψ, sub_eq_zero]
-    rw [Finset.sum_eq_single (1 : ZMod N)]
-    · simp
-    · intro a _ ha
-      simp [ha]
-    · simp
-  intro h0
-  rw [h0, zero_mul] at h2
-  exact (Nat.cast_ne_zero.2 (NeZero.ne N)) h2.symm
-
 private theorem eisChi_coe_sum {N : ℕ} {k : ℤ} {ι : Type} (s : Finset ι) (c : ι → ℂ)
     (F : ι → ModularForm (Gamma1 N) k) :
     ((∑ a ∈ s, c a • F a : ModularForm (Gamma1 N) k) : ℍ → ℂ) = ∑ a ∈ s, c a • (F a : ℍ → ℂ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, ← ih]; rfl
-
-private theorem eisChi_coef_sum {N : ℕ} [NeZero N] {k : ℤ} {ι : Type} (s : Finset ι) (c : ι → ℂ)
-    (F : ι → ModularForm (Gamma1 N) k) (n : ℕ) :
-    coef ((∑ a ∈ s, c a • F a : ModularForm (Gamma1 N) k) : ℍ → ℂ) n = ∑ a ∈ s, c a * coef (F a) n := by
-  classical
-  have hp : (1 : ℝ) ∈ (Gamma1 N : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
-    simp
-  induction s using Finset.induction_on with
-  | empty => simp [coef, qExpansion_zero]
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, ← ih]
-    unfold coef
-    have h1 := ModularForm.qExpansion_add one_pos hp (c a • F a) (∑ a ∈ s, c a • F a)
-    have h2 := ModularForm.qExpansion_smul one_pos hp (c a) (F a)
-    have h3 : ((c a • F a : ModularForm (Gamma1 N) k) : ℍ → ℂ) = c a • (F a : ℍ → ℂ) := rfl
-    rw [h3, h2] at h1
-    have h4 : ((c a • F a + ∑ a ∈ s, c a • F a : ModularForm (Gamma1 N) k) : ℍ → ℂ) =
-      c a • (F a : ℍ → ℂ) + ((∑ a ∈ s, c a • F a : ModularForm (Gamma1 N) k) : ℍ → ℂ) := rfl
-    rw [h4, h1]
-    simp
+  simp only [FunLike.coe_sum, FunLike.coe_smul]
 
 private theorem eisChi_slash_sum {k : ℤ} {ι : Type} (s : Finset ι) (c : ι → ℂ)
     (F : ι → ℍ → ℂ) (γ : SL(2, ℤ)) :
@@ -131,7 +85,10 @@ theorem UpperTheory.V.Sd.eisChi :
   have hi : (χ⁻¹).IsPrimitive := by
     rw [DirichletCharacter.isPrimitive_def, DirichletCharacter.conductor_inv]; exact hχ
   have hg : gaussSum χ⁻¹ (ZMod.stdAddChar (N := N)) ≠ 0 :=
-    eisChi_gauss_ne hi (ZMod.isPrimitive_stdAddChar N)
+    fun h0 => by
+      have h := gauss_mul_gauss_inv χ⁻¹ hi
+      rw [h0, zero_mul, zero_mul] at h
+      exact (Nat.cast_ne_zero.2 (NeZero.ne N)) h.symm
   set g := gaussSum χ⁻¹ (ZMod.stdAddChar (N := N)) with hgdef
   haveI : Fact (1 < N) := ⟨hN⟩
   have h0 : χ⁻¹ (0 : ZMod N) = 0 := MulChar.map_nonunit _ not_isUnit_zero
@@ -166,7 +123,7 @@ theorem UpperTheory.V.Sd.eisChi :
     · rw [MulChar.map_nonunit _ ha, mul_zero, zero_smul]
       exact Submodule.zero_mem _
   · intro n hn
-    rw [eisChi_coef_sum]
+    rw [UpperTheory.V.Sd.modularForm_coef_sum_smul]
     have h1 : ∀ a : ZMod N, (2 * g)⁻¹ * χ⁻¹ a * coef (F a) n = ∑ e ∈ n.divisors, (2 * g)⁻¹ * (e : ℂ) ^ (k - 1) *
         (χ⁻¹ a * (ZMod.stdAddChar (a * (e : ZMod N)) : ℂ) +
           (-1) ^ k * (χ⁻¹ a * (ZMod.stdAddChar (a * (-(e : ZMod N))) : ℂ))) := by
@@ -184,7 +141,7 @@ theorem UpperTheory.V.Sd.eisChi :
     have h2 : ((-1 : ℂ) ^ k) * (-1) ^ k = 1 := by rw [← mul_pow]; simp
     have h3 : (2 * g)⁻¹ * (2 * g) = 1 := inv_mul_cancel₀ (mul_ne_zero two_ne_zero hg)
     linear_combination ((2 * g)⁻¹ * (e : ℂ) ^ (k - 1) * χ (e : ZMod N) * g) * h2 + ((e : ℂ) ^ (k - 1) * χ (e : ZMod N)) * h3
-  · rw [eisChi_coef_sum, Finset.mul_sum]
+  · rw [UpperTheory.V.Sd.modularForm_coef_sum_smul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     by_cases ha : a = 0
     · simp [ha, h0]

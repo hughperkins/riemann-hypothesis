@@ -430,16 +430,6 @@ private theorem small_mul {x y : ℂ} (hx : ‖ι.symm x‖ < 1) (hy : ‖ι.sym
   rw [map_mul, norm_mul]
   exact (mul_le_of_le_one_right (norm_nonneg _) hy).trans_lt hx
 
-private theorem int_chi {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (a : ZMod N) : ‖ι.symm (χ a)‖ ≤ 1 := by
-  by_cases ha : IsUnit a
-  · have hm : χ a ^ Fintype.card (ZMod N)ˣ = 1 := by
-      rw [← ha.unit_spec, ← map_pow, ← Units.val_pow_eq_pow_val, pow_card_eq_one, Units.val_one, map_one]
-    have h1 : ‖ι.symm (χ a)‖ ^ Fintype.card (ZMod N)ˣ = 1 := by
-      rw [← norm_pow, ← map_pow, hm, map_one, norm_one]
-    exact ((pow_eq_one_iff_of_nonneg (norm_nonneg _) Fintype.card_ne_zero).1 h1).le
-  · rw [MulChar.map_nonunit χ ha, map_zero, norm_zero]
-    exact zero_le_one
-
 private theorem int_term (k : ℕ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (j : ℕ) :
     ‖ι.symm (χ (j : ZMod N) * (j : ℂ) ^ (k - 1))‖ ≤ 1 := by
   refine int_mul ι (int_chi ι χ _) ?_

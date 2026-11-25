@@ -125,13 +125,9 @@ theorem eq_zero_of_sum_apply_eq_zero (σ : Representation ℂ G S) (π : Represe
           exact Finset.sum_congr rfl fun j _ => map_neg _ _
         rw [h1]
         exact (eq_neg_of_add_eq_zero_left ht).symm ▸ rfl
-      have htop : W = ⊤ := by
-        rcases IsSimpleOrder.eq_bot_or_eq_top W with h | h
-        · exfalso
-          apply hne
-          rw [h] at hmem
-          exact hmem
-        · exact h
+      have htop : W = ⊤ := (eq_bot_or_eq_top W).resolve_left fun h => hne (by
+        rw [h] at hmem
+        exact hmem)
       have hall : ∀ s, b a s ∈ LinearMap.range Φ := fun s => by
         have : s ∈ W := by rw [htop]; trivial
         exact this
@@ -184,11 +180,8 @@ theorem lift_flip_subtype_injective : ∀ {G S V : Type} [Group G] [AddCommGroup
     simpa using hx
   have h0 := eq_zero_of_sum_apply_eq_zero σ π hirr hschur _ hli
     (fun i g s => hM _ (β i).2 g s) (E x).support (fun i => E x i) hsum
-  have hE : E x = 0 := by
-    ext i
-    by_cases hi : i ∈ (E x).support
-    · simpa using h0 i hi
-    · simpa using hi
+  have hE : E x = 0 := Finsupp.ext fun i =>
+    if hi : i ∈ (E x).support then h0 i hi else Finsupp.notMem_support_iff.1 hi
   exact E.map_eq_zero_iff.1 hE
 
 end GlobalTheory.CompanionTheory.EvalTensor
@@ -428,14 +421,10 @@ theorem exists_fixed_of_ne_bot (ρ : Representation ℂ (G × H) V) (hi : ρ.IsI
     rw [Prod.mk_one_one, map_one, Module.End.one_apply]
   haveI : IsSimpleOrder (Subrepresentation ρ) := hi
   let SB : Subrepresentation ρ := ⟨B, hBinv⟩
-  have hSB : SB = ⊤ := by
-    rcases IsSimpleOrder.eq_bot_or_eq_top SB with h | h
-    · exfalso
-      apply hA0
+  have hSB : SB = ⊤ := (eq_bot_or_eq_top SB).resolve_left fun h =>
+    hA0 (le_bot_iff.mp (by
       have hB : B = ⊥ := congrArg Subrepresentation.toSubmodule h
-      rw [hB] at hAB
-      exact le_bot_iff.mp hAB
-    · exact h
+      simpa only [hB] using hAB))
   have hvB : v ∈ B := by
     have hB : B = ⊤ := congrArg Subrepresentation.toSubmodule hSB
     rw [hB]
@@ -448,14 +437,9 @@ end Product
 theorem exists_irreducible_sub_inl : ∀ {G H V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [AddCommGroup V] [Module ℂ V], (∀ U ∈ 𝓝 (1 : G), ∃ K : Subgroup G, IsOpen (K : Set G) ∧ IsCompact (K : Set G) ∧ (K : Set G) ⊆ U) → (∀ U ∈ 𝓝 (1 : H), ∃ K : Subgroup H, IsOpen (K : Set H) ∧ IsCompact (K : Set H) ∧ (K : Set H) ⊆ U) → ∀ ρ : Representation ℂ (G × H) V, IsAdmissible ρ → ρ.IsIrreducible → ∃ (K : Subgroup G) (S : Subrepresentation (ρ.comp (MonoidHom.inl G H))) (u : V), IsOpen (K : Set G) ∧ IsCompact (K : Set G) ∧ u ∈ S.toSubmodule ∧ u ≠ 0 ∧ (∀ x ∈ K, ρ (x, 1) u = u) ∧ S.toRepresentation.IsIrreducible ∧ FiniteDimensional ℂ (fixed S.toRepresentation K) := by
   intro G H V _ _ _ _ _ _ _ _ hG hH ρ hadm hi
   haveI : IsSimpleOrder (Subrepresentation ρ) := hi
-  obtain ⟨v, hv0⟩ : ∃ v : V, v ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
-    apply (bot_ne_top : (⊥ : Subrepresentation ρ) ≠ ⊤)
-    apply Subrepresentation.ext
-    ext x
-    rw [hcon x]
-    exact ⟨fun _ => Submodule.zero_mem _, fun _ => Submodule.zero_mem _⟩
+  have : Nontrivial ρ.asModule := IsSimpleModule.nontrivial (MonoidAlgebra ℂ (G × H)) _
+  have : Nontrivial V := ρ.asModuleEquiv.injective.nontrivial
+  obtain ⟨v, hv0⟩ := exists_ne (0 : V)
   have hU : {gh : G × H | ρ gh v = v} ∈ 𝓝 ((1 : G), (1 : H)) :=
     (hadm.1 v).mem_nhds (by show ρ (1, 1) v = v; rw [Prod.mk_one_one, map_one, Module.End.one_apply])
   obtain ⟨U1, hU1, U2, hU2, hUU⟩ := mem_nhds_prod_iff.mp hU
@@ -721,9 +705,8 @@ def homSp (ρ : Representation ℂ (G × H) V) (σ : Representation ℂ G X) : S
   smul_mem' := fun c f hf g s => by simp [hf g s]
 
 theorem comm_one (ρ : Representation ℂ (G × H) V) (g : G) (h : H) (v : V) :
-    ρ (1, h) (ρ (g, 1) v) = ρ (g, 1) (ρ (1, h) v) := by
-  rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul]
-  simp
+    ρ (1, h) (ρ (g, 1) v) = ρ (g, 1) (ρ (1, h) v) :=
+  (ProdSub.inl_inr_comm ρ g h v).symm
 
 def homRep (ρ : Representation ℂ (G × H) V) (σ : Representation ℂ G X) :
     Representation ℂ H (homSp ρ σ) where

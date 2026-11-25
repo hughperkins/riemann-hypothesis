@@ -79,11 +79,8 @@ theorem nontrivial_of_isSubquotient {G V W : Type} [Group G] [AddCommGroup V] [M
     (h : IsSubquotient σ ρ) : Nontrivial V := by
   obtain ⟨S, f, hf⟩ := h
   haveI : Nontrivial W := Model.nontrivial_of_isIrreducible hσ
-  obtain ⟨u, hu⟩ := exists_ne (0 : W)
-  obtain ⟨v, rfl⟩ := hf u
-  refine ⟨(v : V), 0, fun h0 => hu ?_⟩
-  have hv0 : v = 0 := Subtype.ext h0
-  rw [hv0, map_zero]
+  have : Nontrivial S := hf.nontrivial
+  exact Function.Injective.nontrivial (f := fun x : S => (x : V)) Subtype.val_injective
 
 theorem sum_concat {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {s : ℕ}
     (c : Fin s → ℕ) (x : ∀ a, Fin (c a) → IrrGL (k := k)) :

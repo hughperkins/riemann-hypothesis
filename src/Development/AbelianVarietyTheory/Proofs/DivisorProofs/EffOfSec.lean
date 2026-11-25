@@ -47,8 +47,6 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry NumberField Monoidal
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory CategoryTheory.Hom.group
 
-noncomputable section
-
 namespace GlobalTheory.EffBound
 
 open GlobalTheory.CechPic
