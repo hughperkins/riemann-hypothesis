@@ -1,5 +1,7 @@
 module
 
+
+import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnitaryPointsDiscreteFundamentalDomain
 public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicitySpaceEqZeroOfLowestKTypes
 public import Formalism.LocalToGlobal.IndefiniteReal.AutomorphicEvaluation
@@ -53,7 +55,6 @@ import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
 import Std.Tactic.BVDecide.Normalize.Prop
 import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfOrbit, Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultiplicityMapEqZeroOfTranslatedEvaluationAeZer
 
@@ -103,24 +104,7 @@ section Count
 
 
 theorem gfset_countable (I : AutInst) : I.GFset.Countable := by
-  classical
-  haveI : Countable I.E := (Module.finBasis ℚ I.E).equivFun.injective.countable
-  haveI : Countable (Matrix (Fin I.n) (Fin I.n) I.E) :=
-    inferInstanceAs (Countable (Fin I.n → Fin I.n → I.E))
-  haveI : Countable (GL (Fin I.n) I.E) :=
-    Function.Injective.countable (f := (Units.val : GL (Fin I.n) I.E → Matrix (Fin I.n) (Fin I.n) I.E)) fun _ _ h => Units.ext h
-
-  let W : GL (Fin I.n) I.E → Set I.GA := fun γ =>
-    {x | (∀ v, uMat (x.1 v) = (I.P v)⁻¹ * (γ : Matrix (Fin I.n) (Fin I.n) I.E).map (I.φ v) * I.P v) ∧
-      I.fmat x.2 = (γ : Matrix (Fin I.n) (Fin I.n) I.E).map (Formalism.UG.inclE (F := I.F) (Af I.F))}
-  have hsub : I.GFset ⊆ ⋃ γ, W γ := by
-    rintro x ⟨γ, -, h1, h2⟩
-    exact Set.mem_iUnion.2 ⟨γ, h1, h2⟩
-  refine Set.Countable.mono hsub (Set.countable_iUnion fun γ => Set.Subsingleton.countable ?_)
-  rintro x ⟨hx1, hx2⟩ y ⟨hy1, hy2⟩
-  refine Prod.ext (funext fun v => ?_) ?_
-  · exact Subtype.ext (Units.ext ((hx1 v).trans (hy1 v).symm))
-  · exact Subtype.ext (Units.ext (hx2.trans hy2.symm))
+  first | exact _root_.GlobalTheory.RatDiscrete.countable_GFset | exact @_root_.GlobalTheory.RatDiscrete.countable_GFset | apply _root_.GlobalTheory.RatDiscrete.countable_GFset <;> assumption
 
 theorem eq_zero_of_ae_fund (I : AutInst) (μf : Measure I.Gf) [μf.IsHaarMeasure] [SigmaFinite μf] {fund : Set I.GA}
     (hfund : I.IsFundDom (I.muA μf) fund) {φ : I.GA → ℂ} (hc : Continuous φ)
@@ -195,7 +179,7 @@ theorem eq_zero_of_value {T : MMap M} (hT : IsMultMap θ M J χ T) (v₀ : M.Vec
       simpa using h0
     · intro a s ha ih w
       have hne : ((if a ∈ s then w a else v₀ a : M.sm a) : M.H a) ≠ 0 := by
-        simp only [ha, if_false]
+        simp only [ha, ite_false]
         exact hv₀ a
       have h3 := step _ a (ih w) hne (w a)
       convert h3 using 2

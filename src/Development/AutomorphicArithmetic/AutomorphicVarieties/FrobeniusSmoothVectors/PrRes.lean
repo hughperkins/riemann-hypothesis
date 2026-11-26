@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.DefIso
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocRho
 import Mathlib.RingTheory.AdicCompletion.Noetherian
@@ -15,16 +16,7 @@ private theorem residue_eq_map_algebraMap_comp_res_of_isCO {O' C : Type} [CommRi
     [IsCO O' C] [IsLocalHom (algebraMap O' C)] :
     IsLocalRing.residue C =
       (IsLocalRing.ResidueField.map (algebraMap O' C)).comp (res O' C : C →+* ResidueField O') := by
-  ext z
-  obtain ⟨a, ha⟩ := IsCO.res_surj (O := O') z
-  have h1 : (res O' C) z = (res O' C) (algebraMap O' C a) := by
-    rw [← sub_eq_zero, ← map_sub, res_eq_zero_iff]
-    exact ha
-  have h2 : IsLocalRing.residue C z = IsLocalRing.residue C (algebraMap O' C a) := by
-    rw [← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff]
-    exact ha
-  rw [RingHom.comp_apply, RingHom.coe_coe, h1, h2, AlgHom.commutes]
-  exact (IsLocalRing.ResidueField.map_residue _ a).symm
+  apply _root_.residue_eq_residueField_map_comp_res <;> assumption
 
 private theorem nRep_isBar_of_isBar_comp_map {l : ℕ} [Fact l.Prime] {k : Type} [Field k] {F : Frame l k} {n : ℕ}
     {K K' : Type} [Field K] [CommRing K'] [Nontrivial K'] (f : k →+* K) (j : K →+* K')

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootEqOfClose
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 import Mathlib.RingTheory.Valuation.LocalSubring
@@ -74,16 +75,8 @@ open Polynomial in
 private theorem fix_root {k Ω : Type} [Field k] [NumberField k] [Field Ω] [Algebra k Ω] {N : ℕ} (hN : N ≠ 0)
     (A : ValuationSubring Ω) (hA : ¬ A.valuation (N : Ω) < 1) {σ : G k Ω} (hσ : σ ∈ Ine (F := k) A) {z : Ω}
     (hz : z ^ N = 1) : σ z = z := by
-  have hm : ∀ {y : Ω}, y ^ N = 1 → y ∈ A := fun {y} hy =>
-    mem_of_int A (IsIntegral.of_pow (Nat.pos_of_ne_zero hN) (hy ▸ isIntegral_one))
-  have hz' : (σ z) ^ N = 1 := by rw [← map_pow, hz, map_one]
-  refine key A (X ^ N - 1) (hm hz) (hm hz') (by simp [hz]) (by simp [hz'])
-    (hσ.2 _ ((A.valuation_le_one_iff _).2 (hm hz))) fun h => hA ?_
-  have e : (N : Ω) = z * aeval z (derivative (X ^ N - 1 : ℤ[X])) := by
-    simp only [derivative_sub, derivative_X_pow, derivative_one, sub_zero, map_mul, map_natCast, map_pow, aeval_X]
-    rw [mul_left_comm, ← pow_succ', Nat.sub_add_cancel (Nat.pos_of_ne_zero hN), hz, mul_one]
-  rw [e, map_mul]
-  exact lt_of_le_of_lt (mul_le_of_le_one_left' ((A.valuation_le_one_iff _).2 (hm hz))) h
+  intros
+  apply _root_.GlobalTheory.TameTau.ine_fix_root <;> assumption
 
 theorem UpperTheory.V.Base.ramFinite :
     ∀ (k E E' Ω : Type) [Field k] [NumberField k] [Field E] [NumberField E] [Field E'] [NumberField E'] [Field Ω]

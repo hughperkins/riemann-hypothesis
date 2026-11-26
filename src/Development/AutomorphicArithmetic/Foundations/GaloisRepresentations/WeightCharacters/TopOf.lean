@@ -25,7 +25,7 @@ theorem top_of : FamEx → FamProj → FamWt → UpperTheory.Gal.Int.Cong.WtLacE
   classical
   obtain ⟨W, f, hW, hf0, hfU, hfK, -⟩ := _root_.GlobalTheory.Cong.exists_algForm_ofType E a lam _ U (inf_le_left.trans hK.fin) hU w₀
   obtain rfl : lam = W.at := (funext hW).symm
-  obtain ⟨X, b, hbd, hdef, hne⟩ := Loc.frame denomBdd_holds rhoBound_holds latFacts_holds levelEx_holds ι W t fun j => Or.inr (ht j)
+  obtain ⟨X, b, hbd, hdef, hne⟩ := Loc.frame denomBdd_holds rhoBound_holds latFacts_holds _root_.UpperTheory.Gal.Gen.levelEx_pf ι W t fun j => Or.inr (ht j)
   obtain ⟨g₀, i₀, hz⟩ : ∃ g i, f.1 (b g i) g ≠ 0 := by
     by_contra h
     push Not at h

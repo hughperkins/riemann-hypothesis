@@ -6,51 +6,7 @@ public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThre
 public import Mathlib.RingTheory.LocalRing.ResidueField.Defs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjugateStarMatrix
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.ENatToNat
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AntidiagonalTranspose, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TransposeInverseTheta, Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormUniq
@@ -71,14 +27,10 @@ theorem aux2 {R : Type u_1} [CommRing R] (m : ℕ) :
     Jmat R m * Jmat R m = (1 : Matrix (Fin m) (Fin m) R) := by
   ext i j
   simp only [Matrix.mul_apply, Jmat, Matrix.one_apply]
-  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, Fin.rev_rev]
+  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Fin.rev_rev]
   by_cases h : i = j
   · simp [h]
   · simp [h, Ne.symm h]
-
-noncomputable def Jgl (R : Type u_1) [CommRing R] (m : ℕ) : GL (Fin m) R :=
-  { val := Jmat R m, inv := Jmat R m, val_inv := aux2 m, inv_val := aux2 m :
-    (Matrix (Fin m) (Fin m) R)ˣ }
 
 theorem aux4 {n : Type} [Fintype n] [DecidableEq n] {R : Type u_1} [CommRing R] (g : GL n R) :
     (↑g⁻¹ : Matrix n n R).transpose * (↑g : Matrix n n R).transpose = (1 : Matrix n n R) := by
@@ -94,7 +46,7 @@ noncomputable def trInv {n : Type} [Fintype n] [DecidableEq n] {R : Type u_1} [C
     val_inv := aux4 g, inv_val := aux5 g : (Matrix n n R)ˣ }
 
 noncomputable def theta {m : ℕ} {R : Type u_1} [CommRing R] (g : GL (Fin m) R) : GL (Fin m) R :=
-  Jgl R m * trInv g * Jgl R m
+  UpperTheory.V.U3.Jgl R m * trInv g * UpperTheory.V.U3.Jgl R m
 
 private theorem Jmat_transpose {R : Type u_1} [CommRing R] (m : ℕ) :
     (Jmat R m).transpose = Jmat R m := by
@@ -106,10 +58,10 @@ private theorem Jmat_transpose {R : Type u_1} [CommRing R] (m : ℕ) :
     · rintro rfl; simp
   simp [this]
 
-private theorem Jgl_mul_self {R : Type u_1} [CommRing R] (m : ℕ) : Jgl R m * Jgl R m = 1 :=
+private theorem Jgl_mul_self {R : Type u_1} [CommRing R] (m : ℕ) : UpperTheory.V.U3.Jgl R m * UpperTheory.V.U3.Jgl R m = 1 :=
   Units.ext (aux2 m)
 
-private theorem Jgl_inv {R : Type u_1} [CommRing R] (m : ℕ) : (Jgl R m)⁻¹ = Jgl R m :=
+private theorem Jgl_inv {R : Type u_1} [CommRing R] (m : ℕ) : (UpperTheory.V.U3.Jgl R m)⁻¹ = UpperTheory.V.U3.Jgl R m :=
   inv_eq_of_mul_eq_one_left (Jgl_mul_self m)
 
 private theorem trInv_mul {n : Type} [Fintype n] [DecidableEq n] {R : Type u_1} [CommRing R]
@@ -126,16 +78,16 @@ private theorem trInv_trInv {n : Type} [Fintype n] [DecidableEq n] {R : Type u_1
   change ((↑g : Matrix n n R).transpose).transpose = ↑g
   exact Matrix.transpose_transpose _
 
-private theorem trInv_Jgl {R : Type u_1} [CommRing R] (m : ℕ) : trInv (Jgl R m) = Jgl R m := by
+private theorem trInv_Jgl {R : Type u_1} [CommRing R] (m : ℕ) : trInv (UpperTheory.V.U3.Jgl R m) = UpperTheory.V.U3.Jgl R m := by
   apply Units.ext
-  change (((Jgl R m)⁻¹ : GL (Fin m) R) : Matrix (Fin m) (Fin m) R).transpose = Jmat R m
+  change (((UpperTheory.V.U3.Jgl R m)⁻¹ : GL (Fin m) R) : Matrix (Fin m) (Fin m) R).transpose = Jmat R m
   rw [Jgl_inv]
   exact Jmat_transpose m
 
 theorem aux8 {m : ℕ} {R : Type u_1} [CommRing R] (g : GL (Fin m) R) : theta (theta g) = g := by
   have hJ := Jgl_mul_self (R := R) m
   simp only [theta, trInv_mul, trInv_trInv, trInv_Jgl]
-  calc _ = (Jgl R m * Jgl R m) * g * (Jgl R m * Jgl R m) * (Jgl R m * Jgl R m) := by
+  calc _ = (UpperTheory.V.U3.Jgl R m * UpperTheory.V.U3.Jgl R m) * g * (UpperTheory.V.U3.Jgl R m * UpperTheory.V.U3.Jgl R m) * (UpperTheory.V.U3.Jgl R m * UpperTheory.V.U3.Jgl R m) := by
         simp only [hJ, mul_one, one_mul]
         simp only [mul_assoc, hJ, mul_one]
         simp only [← mul_assoc, hJ, one_mul]
@@ -145,7 +97,7 @@ theorem aux9 {m : ℕ} {R : Type u_1} [CommRing R] (g h : GL (Fin m) R) :
     theta (g * h) = theta g * theta h := by
   have hJ := Jgl_mul_self (R := R) m
   simp only [theta, trInv_mul]
-  calc _ = Jgl R m * trInv g * 1 * trInv h * Jgl R m := by simp only [mul_one, mul_assoc]
+  calc _ = UpperTheory.V.U3.Jgl R m * trInv g * 1 * trInv h * UpperTheory.V.U3.Jgl R m := by simp only [mul_one, mul_assoc]
     _ = _ := by rw [← hJ]; simp only [mul_assoc]
 
 noncomputable def thetaAut (m : ℕ) (R : Type u_1) [CommRing R] : MulAut (GL (Fin m) R) :=
@@ -160,7 +112,7 @@ private theorem thetaAut_sq (m : ℕ) (R : Type u_1) [CommRing R] :
 theorem aux11 (m : ℕ) (R : Type u_1) [CommRing R] :
     (if (1 : ℤˣ) = (1 : ℤˣ) then (1 : MulAut (GL (Fin m) R)) else thetaAut m R) =
       (1 : MulAut (GL (Fin m) R)) :=
-  if_pos rfl
+  ite_eq_left rfl
 
 theorem aux12 (m : ℕ) (R : Type u_1) [CommRing R] (s t : ℤˣ) :
     (if s * t = (1 : ℤˣ) then (1 : MulAut (GL (Fin m) R)) else thetaAut m R) =
@@ -210,7 +162,7 @@ theorem UpperTheory.Reformulated.B.TransposeInverseTheta.aux2.{u_1} :
   intro R _ m
   ext i j
   simp only [Matrix.mul_apply, UpperTheory.Reformulated.B.TransposeInverseTheta.Jmat, Matrix.one_apply]
-  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, Fin.rev_rev]
+  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Fin.rev_rev]
   simp only [eq_comm]
 
 noncomputable def UpperTheory.Reformulated.B.TransposeInverseTheta.Jgl.{u_1} :
@@ -302,7 +254,7 @@ theorem UpperTheory.Reformulated.B.TransposeInverseTheta.aux11.{u_1} :
       (if (1 : ℤˣ) = (1 : ℤˣ) then (1 : MulAut (GL (Fin m) R)) else UpperTheory.Reformulated.B.TransposeInverseTheta.thetaAut m R) =
         (1 : MulAut (GL (Fin m) R)) := by
   intro m R _
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem UpperTheory.Reformulated.B.TransposeInverseTheta.thetaAut_mul_self (m : ℕ) (R : Type*) [CommRing R] :
     UpperTheory.Reformulated.B.TransposeInverseTheta.thetaAut m R * UpperTheory.Reformulated.B.TransposeInverseTheta.thetaAut m R = 1 := by

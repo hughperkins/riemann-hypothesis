@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.ContinuousMeasureSplitting
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasCore
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasInfCut
@@ -13,7 +14,6 @@ import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.Topology.Baire.LocallyCompactRegular
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
-
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MExistsCut, Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MultiplicityGExists
 
@@ -30,10 +30,6 @@ namespace Formalism.L2.SG.MExistsCut
 
 variable {D : D7}
 
-def toInfI (I : AutInst) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso I) (s : I.Ginf) :
-    Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf I.F) I.cm.sig I.J :=
-  (Formalism.L2.SG.Measures.splitA I.cm.sig I.J (Formalism.L2.SG.AdBridge.toHA I hb (s, 1))).1
-
 def toFinI (I : AutInst) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso I) (x : I.Gf) :
     Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HA (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af I.F) I.cm.sig I.J :=
   (Formalism.L2.SG.Measures.splitA I.cm.sig I.J (Formalism.L2.SG.AdBridge.toHA I hb (1, x))).2
@@ -41,10 +37,10 @@ def toFinI (I : AutInst) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso I) (x : I.Gf
 def MeasTieCore (A : UnitaryGroupInstance D) (L : UnitaryLatticeData D) (μf : Measure A.I.Gf) [SigmaFinite μf] (muN muH : D.what₂.Word → Measure A.I.Ginf)
     (Mb : MBlk A L) (hb : Formalism.L2.SG.AdBridge.AdBridgeIso A.I) : Prop :=
   Mb.measG.μG = (A.I.muA μf).map (Formalism.L2.SG.AdBridge.toHA A.I hb) ∧
-    Mb.measG.μGinf = (Formalism.L2.SG.ProjRows.muInf A.I).map (toInfI A.I hb) ∧
+    Mb.measG.μGinf = (Formalism.L2.SG.ProjRows.muInf A.I).map (Formalism.L2.SG.Pf.MeasInf.toInfL A.I hb) ∧
     Mb.measG.μGf = μf.map (toFinI A.I hb) ∧
-    ∀ u, Formalism.L2.SG.Measures.amb (Mb.measW u).μNinf = (muN u).map (toInfI A.I hb) ∧
-      Formalism.L2.SG.Measures.amb (Mb.measW u).μHinf = (muH u).map (toInfI A.I hb)
+    ∀ u, Formalism.L2.SG.Measures.amb (Mb.measW u).μNinf = (muN u).map (Formalism.L2.SG.Pf.MeasInf.toInfL A.I hb) ∧
+      Formalism.L2.SG.Measures.amb (Mb.measW u).μHinf = (muH u).map (Formalism.L2.SG.Pf.MeasInf.toInfL A.I hb)
 
 variable (D)
 
@@ -72,7 +68,7 @@ def MGExists : Prop :=
   ∀ (I : AutInst) (μf : Measure I.Gf) [μf.IsHaarMeasure] [SigmaFinite μf] (r : ℕ),
     ∃ hb : Formalism.L2.SG.AdBridge.AdBridgeIso I, ∃ M : MeasG I.cm.sig I.J r, M.IsTextNorm ∧
       M.μG = (I.muA μf).map (Formalism.L2.SG.AdBridge.toHA I hb) ∧
-      M.μGinf = (Formalism.L2.SG.ProjRows.muInf I).map (toInfI I hb) ∧ M.μGf = μf.map (toFinI I hb)
+      M.μGinf = (Formalism.L2.SG.ProjRows.muInf I).map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb) ∧ M.μGf = μf.map (toFinI I hb)
 
 variable (D)
 
@@ -294,24 +290,11 @@ variable (σ : E →ₐ[F] E) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
 theorem haMap_cont {R R' : Type} [CommRing R] [Algebra F R] [TopologicalSpace R]
     [CommRing R'] [Algebra F R'] [TopologicalSpace R'] (φ : R →ₐ[F] R') (hf : Continuous (tensMap (E := E) φ)) :
     Continuous (haMap σ J φ) := by
-  have hs : Continuous (fun g : ↥(HR R σ J) => (g : GL (Fin M) (R ⊗[F] E))) := continuous_subtype_val
-  have hv : Continuous (fun g : ↥(HR R σ J) =>
-      ((g : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E))) :=
-    Units.continuous_val.comp hs
-  have hi : Continuous (fun g : ↥(HR R σ J) =>
-      (((g : GL (Fin M) (R ⊗[F] E))⁻¹ : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E))) :=
-    Units.continuous_coe_inv.comp hs
-  have hb : Continuous (fun g : ↥(HR R σ J) => Formalism.UG.bc (tensMap (E := E) φ) (g : GL (Fin M) (R ⊗[F] E))) := by
-    rw [Units.continuous_iff]
-    exact ⟨hv.matrix_map hf, hi.matrix_map hf⟩
-  show Continuous (fun g : ↥(HR R σ J) =>
-    (⟨Formalism.UG.bc (tensMap (E := E) φ) (g : GL (Fin M) (R ⊗[F] E)), (haMap σ J φ g).2⟩ : ↥(HR R' σ J)))
-  exact hb.subtype_mk _
+  apply _root_.PI.UnitaryGroupMassFormula.MeasWCore.continuous_haMap <;> assumption
 
 end Top
 
 end Formalism.L2.SG.Pf.Meas
-
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -357,7 +340,6 @@ def sA (hE : Module.finrank F E = 2) : HA (AF F) σ J ≃ₜ* HA (Ainf F) σ J �
 end Iso
 
 end Formalism.L2.SG.Pf.Meas
-
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -441,7 +423,6 @@ theorem cross_inf (x : I.Gf) : (splitA I.cm.sig I.J (toHA I hb (1, x))).1 = 1 :=
 
 end Formalism.L2.SG.Pf.Meas
 
-
 namespace Formalism.L2.SG.Pf.Meas
 
 open Formalism.L2.SG.Measures Formalism.L2.SG.AdBridge Formalism.L2.SG.MExistsCut Formalism.IndefR.Eqv.G5
@@ -459,13 +440,13 @@ theorem toFinI_one : toFinI I hb 1 = 1 := by
   rw [this, map_one, map_one]
   rfl
 
-theorem toInfI_one : toInfI I hb 1 = 1 := by
-  unfold toInfI
+theorem toInfI_one : Formalism.L2.SG.Pf.MeasInf.toInfL I hb 1 = 1 := by
+  unfold Formalism.L2.SG.Pf.MeasInf.toInfL
   have : ((1 : I.Ginf), (1 : I.Gf)) = (1 : I.GA) := rfl
   rw [this, map_one, map_one]
   rfl
 
-theorem Phi_pair (s : I.Ginf) (x : I.Gf) : Phi I hb (s, x) = (toInfI I hb s, toFinI I hb x) := by
+theorem Phi_pair (s : I.Ginf) (x : I.Gf) : Phi I hb (s, x) = (Formalism.L2.SG.Pf.MeasInf.toInfL I hb s, toFinI I hb x) := by
   have hsx : ((s, x) : I.GA) = (s, 1) * (1, x) := by simp
   rw [hsx, map_mul, Phi_apply, Phi_apply]
   refine Prod.ext ?_ ?_
@@ -477,13 +458,13 @@ theorem Phi_pair (s : I.Ginf) (x : I.Gf) : Phi I hb (s, x) = (toInfI I hb s, toF
     rfl
 
 def eInf : I.Ginf ≃ₜ* HA (Ainf I.F) I.cm.sig I.J where
-  toFun := toInfI I hb
+  toFun := Formalism.L2.SG.Pf.MeasInf.toInfL I hb
   invFun k := ((Phi I hb).symm (k, 1)).1
   left_inv s := by
-    show ((Phi I hb).symm (toInfI I hb s, 1)).1 = s
+    show ((Phi I hb).symm (Formalism.L2.SG.Pf.MeasInf.toInfL I hb s, 1)).1 = s
     rw [← toFinI_one I hb, ← Phi_pair, ContinuousMulEquiv.symm_apply_apply]
   right_inv k := by
-    show toInfI I hb ((Phi I hb).symm (k, 1)).1 = k
+    show Formalism.L2.SG.Pf.MeasInf.toInfL I hb ((Phi I hb).symm (k, 1)).1 = k
     have := Phi_pair I hb ((Phi I hb).symm (k, 1)).1 ((Phi I hb).symm (k, 1)).2
     rw [Prod.mk.eta, ContinuousMulEquiv.apply_symm_apply] at this
     exact (congrArg Prod.fst this).symm
@@ -522,7 +503,6 @@ theorem Phi_eq : (Phi I hb : I.GA → _) = Prod.map (eInf I hb) (eFin I hb) := b
   exact Phi_pair I hb s x
 
 end Formalism.L2.SG.Pf.Meas
-
 
 namespace Formalism.L2.SG.Pf.Meas
 
@@ -595,7 +575,6 @@ end Loc
 
 end Formalism.L2.SG.Pf.Meas
 
-
 namespace Formalism.L2.SG.Pf.Meas
 
 open Formalism.L2.SG.Measures Formalism.L2.SG.AdBridge Formalism.L2.SG.MExistsCut Formalism.IndefR.Eqv.G5
@@ -604,7 +583,7 @@ variable (I : Formalism.MainNotions.S.AutInst) (hb : AdBridgeIso I)
 
 def mG (μf : Measure I.Gf) [SigmaFinite μf] (r : ℕ) : MeasG I.cm.sig I.J r where
   μG := (I.muA μf).map (toHA I hb)
-  μGinf := (Formalism.L2.SG.ProjRows.muInf I).map (toInfI I hb)
+  μGinf := (Formalism.L2.SG.ProjRows.muInf I).map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb)
   μGf := μf.map (toFinI I hb)
   μGv := fun v => haarV I.cm.sig I.J (finrank_two I) v
   μB := fun X0 => haarB I.cm.sig I.J (finrank_two I) X0
@@ -615,11 +594,11 @@ variable (μf : Measure I.Gf) [μf.IsHaarMeasure] [SigmaFinite μf]
 
 theorem muA_map_toHA :
     (I.muA μf).map (toHA I hb) =
-      (((Formalism.L2.SG.ProjRows.muInf I).map (toInfI I hb)).prod (μf.map (toFinI I hb))).map
+      (((Formalism.L2.SG.ProjRows.muInf I).map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb)).prod (μf.map (toFinI I hb))).map
         (sA I.cm.sig I.J (finrank_two I)).symm := by
   obtain ⟨⟨g1, g2, g3, g4, g5⟩, ⟨h1, h2, h3, h4, h5⟩, ⟨k1, k2, k3, k4, k5⟩⟩ := grp_facts I.cm.sig I.J (finrank_two I)
   have hΦ : (I.muA μf).map (Phi I hb) =
-      ((Formalism.L2.SG.ProjRows.muInf I).map (toInfI I hb)).prod (μf.map (toFinI I hb)) := by
+      ((Formalism.L2.SG.ProjRows.muInf I).map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb)).prod (μf.map (toFinI I hb)) := by
     rw [Phi_eq]
     have : SigmaFinite (Formalism.L2.SG.ProjRows.muInf I) := inferInstance
     exact (Measure.map_prod_map (Formalism.L2.SG.ProjRows.muInf I) μf (map_continuous (eInf I hb)).measurable
@@ -633,7 +612,7 @@ theorem muA_map_toHA :
 
 theorem mG_norm (r : ℕ) : (mG I hb μf r).IsTextNorm := by
   obtain ⟨⟨g1, g2, g3, g4, g5⟩, ⟨h1, h2, h3, h4, h5⟩, ⟨k1, k2, k3, k4, k5⟩⟩ := grp_facts I.cm.sig I.J (finrank_two I)
-  have hinf : ((Formalism.L2.SG.ProjRows.muInf I).map (toInfI I hb)).IsHaarMeasure := by
+  have hinf : ((Formalism.L2.SG.ProjRows.muInf I).map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb)).IsHaarMeasure := by
     show ((Formalism.L2.SG.ProjRows.muInf I).map (eInf I hb)).IsHaarMeasure
     have : (Formalism.L2.SG.ProjRows.muInf I).IsHaarMeasure := inferInstance
     have : BorelSpace I.Ginf := inferInstance
@@ -733,7 +712,7 @@ def MWExistsStd : Prop :=
     ∀ (muN muH : Measure I.Ginf),
     IsHaarOnSet I (Ninf I e z) muN → IsHaarOnSet I (Hset I (Set.range e ∪ Set.range f ∪ {z})) muH →
     ∃ W : Formalism.L2.SG.Measures.MeasW I.cm.sig I.J (⟨e, f, z⟩ : Formalism.L2.SG.Sub.Frame I.E I.n r), W.IsTextNorm ∧
-      Formalism.L2.SG.Measures.amb W.μNinf = muN.map (toInfI I hb) ∧ Formalism.L2.SG.Measures.amb W.μHinf = muH.map (toInfI I hb)
+      Formalism.L2.SG.Measures.amb W.μNinf = muN.map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb) ∧ Formalism.L2.SG.Measures.amb W.μHinf = muH.map (Formalism.L2.SG.Pf.MeasInf.toInfL I hb)
 
 theorem mWExistsStd_of (hC : Formalism.L2.SG.Pf.MeasCore.MWCore) (hT : Formalism.L2.SG.Pf.MeasInf.InfTransfer) :
     MWExistsStd := by

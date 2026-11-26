@@ -26,11 +26,8 @@ theorem card_first_window (X : Dat) : (X.Wa 0).card = X.ua + 1 - X.a := by
 theorem card_second_window (X : Dat) : (X.Wb 0).card = X.ub + 1 - X.lb := by
   simp only [Dat.Wb, Nat.add_zero, Nat.card_Icc]
 
-private theorem natCast_sub_le_natCast_natSub (x y : ℕ) : (x : ℝ) - y ≤ ((x - y : ℕ) : ℝ) := by
-  rcases le_total y x with hxy | hxy
-  · rw [Nat.cast_sub hxy]
-  · rw [Nat.sub_eq_zero_of_le hxy, Nat.cast_zero, sub_nonpos]
-    exact_mod_cast hxy
+private theorem natCast_sub_le_natCast_natSub (x y : ℕ) : (x : ℝ) - y ≤ ((x - y : ℕ) : ℝ) :=
+  sub_le_iff_le_add.2 (by exact_mod_cast le_tsub_add)
 
 theorem winFacts_of (K : Cst) (hK : K.Pos) (CH : ℝ) (hCH : K.TLP ≤ CH) (X : Dat) (h : X.Hyp K.C₀ CH) :
     WinFacts K X := by
@@ -84,7 +81,6 @@ theorem below_abs (N wa wb c : ℕ) (Y : ℝ) (hY : 1 ≤ Y) (ha : 2 * Y * N * c
   · subst hN
     simp only [pow_zero, mul_one, sub_self]
     positivity
-  have hY0 : 0 < Y := by linarith
   have hA : (0 : ℝ) < wa := by exact_mod_cast hwa
   have hB : (0 : ℝ) < wb := by exact_mod_cast hwb
   have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN

@@ -109,7 +109,7 @@ theorem minusPart_eq_zero_of_raise {σ : Type} (a : TH.Mat p q →ₗ[ℂ] Modul
   intro e
   rw [homogeneousComponent_of_mem (show Φ ∈ homogeneousSubmodule σ ℂ d from hΦ)]
   split_ifs with he
-  · rw [homogeneousComponent_of_mem hm, if_neg (by omega)]
+  · rw [homogeneousComponent_of_mem hm, ite_eq_right (by omega)]
   · simp
 
 theorem raise_of_minusPart {M : Matrix (Ln p q r s) (Ln p q r s) ℂ}
@@ -121,7 +121,7 @@ theorem raise_of_minusPart {M : Matrix (Ln p q r s) (Ln p q r s) ℂ}
 
 theorem isKC_Eab {a b : Ix p q} (hab : sameBlock a b) : IsKC (Eab a b) := by
   intro c d hcd
-  rw [Eab, Matrix.single_apply, if_neg]
+  rw [Eab, Matrix.single_apply, ite_eq_right]
   rintro ⟨rfl, rfl⟩
   exact hcd hab
 
@@ -235,7 +235,6 @@ open GlobalTheory.Chain (signed)
 open GlobalTheory.Chain.RealIt (LPol locS locT IsPolyIso)
 open MeasureTheory Matrix
 open scoped TensorProduct InnerProductSpace ComplexConjugate
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
 open GlobalTheory.ArchRec
 
 end -- clump:auto

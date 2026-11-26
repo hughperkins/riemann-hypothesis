@@ -7,6 +7,7 @@ import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.RingTheory.Valuation.Integral
+import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerOfFibIntEqZero
 
 @[expose] public section
 
@@ -89,16 +90,7 @@ theorem exists_not_mem_range {F : Type} [Field F] [ValuativeRel F] [TopologicalS
 
 theorem exists_mul_mem_integer {F : Type} [Field F] [ValuativeRel F] (s : F) :
     ∃ c : F, c ∈ 𝒪[F] ∧ c ≠ 0 ∧ c * s ∈ 𝒪[F] := by
-  by_cases hs : s ∈ 𝒪[F]
-  · exact ⟨1, one_mem _, one_ne_zero, by simpa using hs⟩
-  · have hs0 : s ≠ 0 := by
-      rintro rfl
-      exact hs (zero_mem _)
-    refine ⟨s⁻¹, ?_, inv_ne_zero hs0, by rw [inv_mul_cancel₀ hs0]; exact one_mem _⟩
-    rw [Valuation.mem_integer_iff] at hs ⊢
-    rw [map_inv₀]
-    push_neg at hs
-    exact inv_le_one_of_one_le₀ hs.le
+  apply _root_.GlobalTheory.CompanionTheory.BZPsiPG.FibKer.exists_integral_mul <;> assumption
 
 theorem exists_omega0 {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
     {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : Model F E) :

@@ -11,6 +11,7 @@ public import Mathlib.Algebra.CharP.Algebra
 public import Mathlib.FieldTheory.Finite.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CharpolyCoeffsInSubalgebra
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CharpolyCoeffsInSubalgebra
 import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MemPowSmulLe
 import Mathlib.RingTheory.KrullDimension.Field
 import Mathlib.Tactic.Linter.HaveILetI
@@ -306,13 +307,7 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem dim_le_of_primes {A : Type} [CommRing A] (I : Ideal A) (c : WithBot ℕ∞)
     (h : ∀ P : Ideal A, P.IsPrime → I ≤ P → ringKrullDim (A ⧸ P) ≤ c) : ringKrullDim (A ⧸ I) ≤ c := by
-  rw [ringKrullDim_quotient]
-  refine iSup_le fun s => ?_
-  refine le_trans ?_ (h s.head.1.asIdeal s.head.1.isPrime s.head.2)
-  rw [ringKrullDim_quotient]
-  let t : LTSeries (PrimeSpectrum.zeroLocus (R := A) s.head.1.asIdeal) :=
-    ⟨s.length, fun i => ⟨(s i).1, (show s.head.1 ≤ (s i).1 from s.head_le i)⟩, fun i => s.step i⟩
-  exact Order.LTSeries.length_le_krullDim t
+  apply _root_.dim_le_of_primes <;> assumption
 
 private theorem dim_anti {A : Type} [CommRing A] {I J : Ideal A} (h : I ≤ J) :
     ringKrullDim (A ⧸ J) ≤ ringKrullDim (A ⧸ I) :=

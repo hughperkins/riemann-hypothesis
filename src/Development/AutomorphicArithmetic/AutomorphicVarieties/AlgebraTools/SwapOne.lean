@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SwapOneAlt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqOneOfStrictMono
@@ -29,13 +30,20 @@ private theorem invN_le {n : ℕ} {a c : Fin n} (h : a.val + 1 = c.val) (u : Per
 
 private theorem swap_one {R : Type} [CommRing R] {n : ℕ} {q : R} {H : Type} [Ring H] [Algebra R H] (b : Bern n q H)
     {a c : Fin n} (h : a.val + 1 = c.val) : b.T (swap a c) * b.one = q • b.one := by
-  obtain ⟨hA, -, h1, -⟩ := UpperTheory.V.AlgebraTools.hkInv n
-  have hlt : (1 : Perm (Fin n))⁻¹ a < (1 : Perm (Fin n))⁻¹ c := by
-    simp only [inv_one, Perm.one_apply, Fin.lt_def]
-    omega
-  have e := (hA a c h 1 hlt).2.2
-  rw [mul_one, show invN (1 : Perm (Fin n)) = 0 by rw [invN, h1, Finset.card_empty], zero_add] at e
-  rw [(UpperTheory.V.AlgebraTools.hkOne R n q H b).1 (swap a c), e, pow_one]
+  have hac : a ≠ c := fun e => by rw [e] at h; omega
+  rw [← sub_eq_zero, Bern.one, Finset.mul_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+  refine Finset.sum_involution (fun u _ => swap a c * u) (fun u _ => ?_) (fun u _ _ e => ?_)
+    (fun _ _ => Finset.mem_univ _) (fun u _ => swap_mul_self_mul a c u)
+  · rcases lt_trichotomy (u⁻¹ a) (u⁻¹ c) with hl | he | hl
+    · exact pair_lt b h u hl
+    · exact absurd (u⁻¹.injective he) hac
+    · have hw' : (swap a c * u)⁻¹ a < (swap a c * u)⁻¹ c := by
+        rw [mul_inv_rev, swap_inv, Perm.mul_apply, Perm.mul_apply, swap_apply_left, swap_apply_right]
+        exact hl
+      have := pair_lt b h (swap a c * u) hw'
+      rw [swap_mul_self_mul] at this
+      rwa [add_comm]
+  · exact hac (swap_eq_one_iff.1 (mul_eq_right.1 e))
 
 private theorem step {R : Type} [CommRing R] [IsDomain R] {n : ℕ} {q : R} {H : Type} [Ring H] [Algebra R H]
     (b : Bern n q H) (K : Type) [Field K] [Algebra (MvPolynomial (Fin n) R) K]

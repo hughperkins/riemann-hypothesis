@@ -8,47 +8,7 @@ public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsT
 public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
 import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
 
 @[expose] public section
@@ -145,21 +105,14 @@ private theorem eq_of_left_comp_eq_of_isGrpPullback {S S' : Scheme.{0}} {G' : Ov
 
 private theorem one_left_comp_of_isGrpPullback' {S S' : Scheme.{0}} {G' : Over S'} {G : Over S} [GrpObj G'] [GrpObj G]
     {f : S' ⟶ S} {φ : G'.left ⟶ G.left} (hp : IsGrpPullback G' G f φ) (T : Over S') :
-    (1 : T ⟶ G').left ≫ φ = (1 : Over.mk (T.hom ≫ f) ⟶ G).left := by
-  let e : Over.mk (T.hom ≫ f) ⟶ G := Over.homMk ((1 : T ⟶ G').left ≫ φ)
-    (by show _ = T.hom ≫ f; rw [Category.assoc, hp.1.w, ← Category.assoc, Over.w])
-  have h := hp.2 T 1 1 e e rfl rfl
-  rw [_root_.mul_one] at h
-  have he : e * e = e := Over.OverMorphism.ext h
-  have he1 : e = 1 := by simpa using congrArg (e⁻¹ * ·) he
-  exact congrArg CommaMorphism.left he1
+    (1 : T ⟶ G').left ≫ φ = (1 : Over.mk (T.hom ≫ f) ⟶ G).left :=
+  congrArg CommaMorphism.left (map_one (pushHom hp T))
 
 private theorem pow_left_comp_of_isGrpPullback {S S' : Scheme.{0}} {G' : Over S'} {G : Over S} [GrpObj G'] [GrpObj G]
     {f : S' ⟶ S} {φ : G'.left ⟶ G.left} (hp : IsGrpPullback G' G f φ) {T : Over S'} {x : T ⟶ G'}
     {y : Over.mk (T.hom ≫ f) ⟶ G} (h : x.left ≫ φ = y.left) (n : ℕ) : (x ^ n).left ≫ φ = (y ^ n).left := by
-  induction n with
-  | zero => rw [pow_zero, pow_zero]; exact one_left_comp_of_isGrpPullback' hp T
-  | succ n ih => rw [pow_succ, pow_succ]; exact (hp.2 T _ _ _ _ ih.symm h.symm).symm
+  rw [← (Over.OverMorphism.ext h : pushHom hp T x = y), ← map_pow]
+  rfl
 
 end Id
 
@@ -217,7 +170,7 @@ theorem exists_tateIsoQ {E : Type} [Field E] [NumberField E] [IsCMField E] {H : 
   let ev : ∀ n, D.La → QkPt P.D.toPre C n := fun n v =>
     if hn : 0 < n then Classical.choose (hpt n hn v) else GlobalTheory.TorusExt.qkZero hB C n
   have hev : ∀ n (hn : 0 < n) v, P.ToA C n (ev n v) (X n v) := fun n hn v => by
-    simp only [ev, dif_pos hn]
+    simp only [ev, dite_eq_left hn]
     exact Classical.choose_spec (hpt n hn v)
   refine ⟨⟨J.ζ, J.ζ_prim, J.ζ_pow, ev, ?_, ?_, ?_, ?_, ?_, ?_⟩, rfl, ?_⟩
   · intro n hn a b

@@ -1,5 +1,6 @@
 module
 
+import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CardFilterValLt
 public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.WeylComplementInDetCoeffSpan
 
 @[expose] public section
@@ -41,7 +42,7 @@ theorem lt_colH_iff (hν : Antitone ν) (k : ℕ) (t : Fin n) : t.val < colH ν 
   constructor
   · intro h
     by_contra h'
-    push_neg at h'
+    push Not at h'
     exact absurd (colH_le_of hν t h') (not_le.mpr h)
   · intro h
     exact Nat.lt_of_succ_le (colH_ge hν t h)
@@ -49,16 +50,7 @@ theorem lt_colH_iff (hν : Antitone ν) (k : ℕ) (t : Fin n) : t.val < colH ν 
 end Heights
 
 theorem card_fin_lt (c m : ℕ) (hm : m ≤ c) : (Finset.univ.filter fun k : Fin c => k.val < m).card = m := by
-  have e : (Finset.univ.filter fun k : Fin c => k.val < m).map Fin.valEmbedding = Finset.range m := by
-    ext x
-    simp only [Finset.mem_map, Finset.mem_filter, Finset.mem_univ, true_and, Fin.valEmbedding_apply,
-      Finset.mem_range]
-    constructor
-    · rintro ⟨k, hk, rfl⟩
-      exact hk
-    · intro hx
-      exact ⟨⟨x, by omega⟩, hx, rfl⟩
-  rw [← Finset.card_map Fin.valEmbedding, e, Finset.card_range]
+  apply _root_.Formalism.L2.G.Pend.card_filter_val_lt <;> assumption
 
 theorem kap_antitone {n : ℕ} {μ : Fin n → ℕ} (hμ : Antitone μ) (c : ℕ) : Antitone fun t : Fin n => c - μ t.rev := by
   intro s t hst
@@ -80,7 +72,7 @@ theorem card_ge_eq {n K K' : ℕ} (sz : Fin K → ℕ) (sz' : Fin K' → ℕ) (h
       constructor <;> intro <;> omega
     rw [e1, e2]
     exact e
-  · push_neg at hln
+  · push Not at hln
     have e1 : (Finset.univ.filter fun k => l ≤ sz k) = ∅ :=
       Finset.filter_eq_empty_iff.mpr fun k _ => by have := hsz k; omega
     have e2 : (Finset.univ.filter fun k => l ≤ sz' k) = ∅ :=
@@ -172,7 +164,7 @@ theorem reorder_holds : Reorder := by
     obtain ⟨k', hk'⟩ := x'
     subst hk'
     have hI : I' k' = fun j => I (e (sz' k') hl ⟨k', rfl⟩).1 (Fin.cast (e (sz' k') hl ⟨k', rfl⟩).2.symm j) :=
-      dif_pos hl
+      dite_eq_left hl
     simp only
     rw [hI]
     exact initMinor_cast B (e (sz' k') hl ⟨k', rfl⟩).2 _ _ _

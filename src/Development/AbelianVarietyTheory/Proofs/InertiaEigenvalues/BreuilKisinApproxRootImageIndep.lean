@@ -50,12 +50,7 @@ theorem exists_mul_derivative_scaleRoots_sub_mem {W R : Type} [CommRing W] [Comm
   exact I.sub_mem (I.mul_mem_left _ hx) (I.mul_mem_left _ ht)
 
 theorem eval₂_C_X_powerSeries {W : Type} [CommRing W] (P : Polynomial W) :
-    Polynomial.eval₂ (PowerSeries.C : W →+* W⟦X⟧) X P = (P : W⟦X⟧) := by
-  induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.eval₂_add, hp, hq, Polynomial.coe_add]
-  | monomial n a =>
-    rw [Polynomial.eval₂_monomial, ← Polynomial.C_mul_X_pow_eq_monomial, Polynomial.coe_mul, Polynomial.coe_pow,
-      Polynomial.coe_C, Polynomial.coe_X]
+    Polynomial.eval₂ (PowerSeries.C : W →+* W⟦X⟧) X P = (P : W⟦X⟧) := Polynomial.eval₂_C_X_eq_coe
 
 theorem approxRoot_image_indep_general_rings {W R : Type} [CommRing W] [CommRing R] (l n m c : ℕ) (P a b : Polynomial W)
     (hab : a * P + b * Polynomial.derivative P = Polynomial.C ((l : W) ^ c)) (q : W⟦X⟧)

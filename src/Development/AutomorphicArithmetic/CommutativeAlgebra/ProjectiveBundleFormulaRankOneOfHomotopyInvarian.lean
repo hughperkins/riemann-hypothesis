@@ -7,47 +7,7 @@ public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCup
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClasses
 public import Mathlib.Algebra.Homology.Embedding.ExtendHomotopy
 public import Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 
@@ -96,12 +56,12 @@ private theorem pa_val {n : ℕ} (i : Fin (n + 1)) (k : Fin (n + 2)) :
   · have h' : i.castSucc < k := by
       rw [Fin.lt_def]
       simpa using h
-    rw [Fin.predAbove_of_castSucc_lt _ _ h', Fin.coe_pred, if_pos h]
+    rw [Fin.predAbove_of_castSucc_lt _ _ h', Fin.coe_pred, ite_eq_left h]
   · have h' : k ≤ i.castSucc := by
       rw [Fin.le_def]
       simp
       omega
-    rw [Fin.predAbove_of_le_castSucc _ _ h', Fin.coe_castPred, if_neg h]
+    rw [Fin.predAbove_of_le_castSucc _ _ h', Fin.coe_castPred, ite_eq_right h]
 
 private theorem hT_val {A : Type} [One A] {n : ℕ} (i : Fin (n + 1)) (v : Fin (n + 1) → A) (k : Fin (n + 2)) (a : Fin (n + 1))
     (h : (k : ℕ) ≤ i) (ha : (a : ℕ) = k) : hT i v k = v a := by
@@ -194,7 +154,7 @@ private theorem hT_map {A B : Type} [One A] [One B] {n : ℕ} (f : A → B) (hf 
   unfold hT
   split_ifs <;> simp [hf]
 
-private def kap : Cn ⟶ Cn where
+private def c1 (E : Spc) : E ⟶ Cn where
   app k :=
     { app := fun T => TypeCat.ofHom fun _ _ => 1
       naturality := fun T T' g => by
@@ -205,7 +165,7 @@ private def kap : Cn ⟶ Cn where
     ext T v
     rfl
 
-private def Hc : SimplicialObject.Homotopy (𝟙 Cn) kap where
+private def Hc : SimplicialObject.Homotopy (𝟙 Cn) (c1 Cn) where
   h {n} i :=
     { app := fun T => TypeCat.ofHom (hT i)
       naturality := fun T T' g => by
@@ -389,17 +349,6 @@ private theorem comp_triv {E E' : Spc} (f : E ⟶ E') : f ≫ triv E' 1 = triv E
 private theorem phi_pr : phi ≫ PGL.pr 1 = triv Cn 1 := by
   ext k T v
   rfl
-
-private def c1 (E : Spc) : E ⟶ Cn where
-  app k :=
-    { app := fun T => TypeCat.ofHom fun _ _ => 1
-      naturality := fun T T' g => by
-        ext v
-        funext j
-        exact (map_one (Units.map g.unop.appTop.hom.toMonoidHom)).symm }
-  naturality k k' θ := by
-    ext T v
-    rfl
 
 private def sec1 (E : Spc) : E ⟶ X1 E :=
   pullback.lift (𝟙 E) (c1 E ≫ phi) (by rw [Category.assoc, phi_pr, comp_triv, comp_triv])

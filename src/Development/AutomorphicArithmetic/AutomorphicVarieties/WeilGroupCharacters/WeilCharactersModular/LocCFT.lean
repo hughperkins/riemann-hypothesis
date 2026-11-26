@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LamLocal
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
 public import GroundTheory.LocalFields.LocalArtinCompletion
 public import Mathlib.NumberTheory.Padics.ValuativeRel
@@ -106,17 +107,7 @@ private theorem ag_lift {G C : Type} [Group G] [TopologicalSpace G] [IsTopologic
 private theorem ag_map {G G' : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Group G']
     [TopologicalSpace G'] [IsTopologicalGroup G'] (f : G →* G') (hf : Continuous f) :
     ∃ F : TopologicalAbelianization G →* TopologicalAbelianization G', Continuous F ∧ ∀ g : G, F g = (f g : G') := by
-  set M := (commutator G').topologicalClosure
-  have hker : ((QuotientGroup.mk' M).comp f).ker = M.comap f := by
-    ext x
-    simp
-  have hle : (commutator G).topologicalClosure ≤ M.comap f := by
-    apply Subgroup.topologicalClosure_minimal
-    · rw [← hker]
-      exact Abelianization.commutator_subset_ker _
-    · exact (Subgroup.isClosed_topologicalClosure _).preimage hf
-  refine ⟨QuotientGroup.map _ M f hle, ?_, fun g => rfl⟩
-  exact continuous_coinduced_dom.2 (continuous_quotient_mk'.comp hf)
+  apply _root_.ab_map <;> assumption
 
 open GroundTheory.LocalField ValuativeRel GroundTheory.LocalField.Abstract in
 private theorem ag_field (K Ω : Type) [Field K] [ValuativeRel K] [TopologicalSpace K]

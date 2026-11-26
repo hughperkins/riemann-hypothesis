@@ -1,5 +1,6 @@
 module
 
+import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CellGeo
 public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PairingOmegaPrimeZ
 
@@ -16,18 +17,7 @@ open Formalism.MainNotions.S Formalism.BasicNotions
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : ℕ} {T T' : E}
 
 theorem hT_X_X (F : FlagG S r T) {x x' : S.V} (hx : x ∈ F.X) (hx' : x' ∈ F.X) : S.hT x x' = 0 := by
-  have h1 : ∀ a, ∀ y ∈ F.X, S.hT (F.e a) y = 0 := by
-    intro a y hy
-    induction hy using Submodule.span_induction with
-    | mem y hy => obtain ⟨b, rfl⟩ := hy; exact F.e_iso a b
-    | zero => simp
-    | add y z _ _ h1 h2 => simp [map_add (f := _), h1, h2]
-    | smul c y _ h => simp [map_smul, h]
-  induction hx using Submodule.span_induction with
-  | mem x hx => obtain ⟨a, rfl⟩ := hx; exact h1 a x' hx'
-  | zero => simp
-  | add y z _ _ h1 h2 => simp [map_add (f := _), LinearMap.add_apply, h1, h2]
-  | smul c y _ h => simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h]
+  apply _root_.Formalism.MainNotions.BridgeLemma.geo_X_X <;> assumption
 
 theorem hT_z_X (F : FlagG S r T) {x : S.V} (hx : x ∈ F.X) : S.hT F.z x = 0 := by
   induction hx using Submodule.span_induction with

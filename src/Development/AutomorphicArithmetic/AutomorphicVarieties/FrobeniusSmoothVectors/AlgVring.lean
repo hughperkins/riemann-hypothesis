@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FibreTraces.ComplOfNil
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgTwist
@@ -114,14 +115,7 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem adicComplete_of_pow_eq_bot {R : Type} [CommRing R] (I : Ideal R) (n : ℕ) (h : I ^ n = ⊥) :
     IsAdicComplete I R := by
-  have key : ∀ x y : R, x ≡ y [SMOD (I ^ n • ⊤ : Submodule R R)] → x = y := by
-    intro x y hxy
-    rw [h, Submodule.bot_smul] at hxy
-    exact SModEq.bot.mp hxy
-  refine { haus' := fun x hx => key x 0 (hx n), prec' := fun {f} hf => ⟨f n, fun m => ?_⟩ }
-  rcases le_total m n with hmn | hnm
-  · exact hf hmn
-  · rw [key _ _ (hf hnm)]
+  apply _root_.compl_of_nil <;> assumption
 
 theorem UpperTheory.V.Fr.alg_quot :
     ∀ (O : Type) [CommRing O] [IsLocalRing O] (C : Type) [CommRing C] [Algebra O C] [IsCO O C] {D : Type} [CommRing D] [Algebra O D] [Algebra C D] [IsScalarTower O C D] (𝔪 : Ideal D), IsVertexRing C 𝔪 → ∀ N : ℕ, ∃ h : IsCO O (D ⧸ 𝔪 ^ (N + 1)), @maximalIdeal _ _ h.toIsLocalRing = 𝔪.map (Ideal.Quotient.mk (𝔪 ^ (N + 1))) := by
@@ -696,7 +690,7 @@ theorem UpperTheory.V.Fr.alg_vertex :
       by_cases hd : ∃ s ∈ L, s.2.1 ≠ s.2.2
       · obtain ⟨c, -, hc⟩ := hC.cyc L hL hd
         exact ⟨c, hc⟩
-      · push_neg at hd
+      · push Not at hd
         have hm : (L.map (fun s => ρ.r s.1 s.2.1 s.2.2)).prod ∈ (algebraMap C K).rangeS := by
           apply list_prod_mem
           intro y hy

@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcPolar
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.BcStmt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusPowerCompatibility
@@ -17,15 +18,7 @@ private theorem normV_under {K K' : Type} [Field K] [NumberField K] [Field K'] [
 
 private theorem algSat_pow (n q f : ℕ) (B : Multiset ℂˣ) :
     algSat n (q ^ f) (B.map (· ^ f)) = (algSat n q B).map (· ^ f) := by
-  have e : ∀ (q : ℕ) (B : Multiset ℂˣ),
-      algSat n q B = B.map fun α : ℂˣ => (((q : ℝ) ^ (((n : ℝ) - 1) / 2) : ℝ) : ℂ) * (α : ℂ) := fun q B => by
-    simp only [algSat, Multiset.bind_def, Multiset.pure_def, Multiset.bind_singleton, Multiset.map_map, Function.comp_def]
-  simp only [e, Multiset.map_map, Function.comp_def]
-  refine Multiset.map_congr rfl fun α _ => ?_
-  have h : (((q ^ f : ℕ) : ℝ)) ^ (((n : ℝ) - 1) / 2) = ((q : ℝ) ^ (((n : ℝ) - 1) / 2)) ^ f := by
-    rw [Nat.cast_pow, ← Real.rpow_natCast, ← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg q),
-      ← Real.rpow_mul (Nat.cast_nonneg q), mul_comm]
-  rw [h, mul_pow, Units.val_pow_eq_pow_val, Complex.ofReal_pow]
+  apply _root_.algSat_pow <;> assumption
 
 theorem UpperTheory.V.Br.bcAtt0 :
     UpperTheory.V.Br.BcAtt0 := by

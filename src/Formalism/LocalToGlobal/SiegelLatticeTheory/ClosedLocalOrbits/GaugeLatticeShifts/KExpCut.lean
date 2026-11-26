@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHCut
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOpInhab
@@ -175,18 +176,7 @@ theorem fa_torsion {F : Type} [Field F] [NumberField F] (a : FiniteAdeleRing (�
 
 theorem int_multiple {E : Type} [Field E] [NumberField E] (e : E) :
     ∃ n : ℕ, 0 < n ∧ (n : E) * e ∈ Formalism.UG.intOE E := by
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 E) e
-  have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
-  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.absNorm_mem (Ideal.span {b}))
-  have hn0 : Ideal.absNorm (Ideal.span {b}) ≠ 0 := by
-    rw [Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
-    exact hb0
-  refine ⟨Ideal.absNorm (Ideal.span {b}), Nat.pos_of_ne_zero hn0, c * a, ?_⟩
-  have hbE : algebraMap (𝓞 E) E b ≠ 0 := by
-    rw [Ne, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 E) E)]
-    exact hb0
-  rw [← map_natCast (algebraMap (𝓞 E) E), ← hc, map_mul, map_mul]
-  field_simp
+  apply _root_.PIW.AdelClassFin.DictRing.e_denom <;> assumption
 
 theorem tens_torsion {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (x : E ⊗[F] Formalism.MainNotions.S.Af F) : ∃ n : ℕ, 0 < n ∧ n • x ∈ Formalism.MainNotions.S.IntAf F E := by
@@ -340,13 +330,6 @@ variable {ι ι' : Type} [Fintype ι] [Fintype ι'] {V V' : Type}
   [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]
   [NormedAddCommGroup V'] [InnerProductSpace ℂ V'] [FiniteDimensional ℂ V']
 
-private theorem piLp_two_norm_apply_le_norm {κ : Type} [Fintype κ] {W : Type} [NormedAddCommGroup W]
-    (f : PiLp 2 (fun _ : κ => W)) (i : κ) : ‖f i‖ ≤ ‖f‖ := by
-  have h := PiLp.norm_sq_eq_of_L2 (fun _ : κ => W) f
-  have h2 : ‖f i‖ ^ 2 ≤ ∑ j, ‖f j‖ ^ 2 :=
-    Finset.single_le_sum (f := fun j => ‖f j‖ ^ 2) (fun j _ => sq_nonneg _) (Finset.mem_univ i)
-  nlinarith [norm_nonneg (f i), norm_nonneg f]
-
 theorem norm_le_blkOp (B : ι → ι' → (V' →L[ℂ] V)) (ρ : ι) (ρ' : ι') : ‖B ρ ρ'‖ ≤ ‖blkOp B‖ := by
   refine ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _) fun v => ?_
   let x : PiLp 2 (fun _ : ι' => V') := WithLp.toLp 2 (fun σ => if σ = ρ' then v else 0)
@@ -359,7 +342,7 @@ theorem norm_le_blkOp (B : ι → ι' → (V' →L[ℂ] V)) (ρ : ι) (ρ' : ι'
     rw [Finset.sum_eq_single ρ' (fun σ _ hσ => by simp [hx0 σ hσ]) (fun h => absurd (Finset.mem_univ ρ') h)]
     simp [x]
   calc ‖B ρ ρ' v‖ = ‖(blkOp B x) ρ‖ := by rw [h1]
-    _ ≤ ‖blkOp B x‖ := piLp_two_norm_apply_le_norm _ _
+    _ ≤ ‖blkOp B x‖ := PiLp.norm_apply_le _ _
     _ ≤ ‖blkOp B‖ * ‖x‖ := (blkOp B).le_opNorm x
     _ = ‖blkOp B‖ * ‖v‖ := by rw [hx]
 
@@ -494,8 +477,8 @@ theorem kform_unfold (hK : X.LevelSubgroupCharacter) (hR : FoldReadyX X)
     (Ω₀ ∪ Ω₀') hΩ (Or.inl h10) a a' (Ph X u hK T) (Ph X u' hK T')
     ((hT T).1 _ hΩ Set.subset_union_left) ((hT' T').1 _ hΩ Set.subset_union_right) F F' hF hF'
     ((hT T).2 _ hΩ F hF) ((hT' T').2 _ hΩ F' hF') Dt Dt' hD hD' R hRt Fs hFs X.B.fund hFB
-  have e1 : PuFun X u hK Dt T = hm.toLp _ := dif_pos hm
-  have e2 : PuFun X u' hK Dt' T' = hm'.toLp _ := dif_pos hm'
+  have e1 : PuFun X u hK Dt T = hm.toLp _ := dite_eq_left hm
+  have e2 : PuFun X u' hK Dt' T' = hm'.toLp _ := dite_eq_left hm'
   unfold Kform scl
   rw [e1, e2, MeasureTheory.L2.inner_def]
   congr 1

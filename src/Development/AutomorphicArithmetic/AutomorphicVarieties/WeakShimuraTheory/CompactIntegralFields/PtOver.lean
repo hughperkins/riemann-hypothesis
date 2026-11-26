@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteExtensionDegreeDvdCardInvariants
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.RingTheory.Ideal.GoingUp
 public import Mathlib.RingTheory.Valuation.ValuationSubring
@@ -130,33 +131,8 @@ theorem UpperTheory.Reformulated.B.IntegralExtensionAlgClosed.exists_ringHom_ext
     [inst_2 : Algebra R S] [Algebra.IsIntegral R S] [inst_4 : Field K] [IsAlgClosed K],
     Function.Injective (⇑(Algebra.algebraMap R S) : R → S) →
       ∀ (b : R →+* K), ∃ (Φ : S →+* K), Φ.comp (Algebra.algebraMap R S) = b := by
-  intro R S K _ _ _ _ _ _ hinj b
-  haveI hp : (RingHom.ker b).IsPrime := RingHom.ker_isPrime b
-  obtain ⟨Q, -, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := S)
-    (RingHom.ker b) ⊥ (by
-      intro x hx
-      have hx0 : algebraMap R S x = 0 := by simpa using hx
-      have : x = 0 := hinj (by simpa using hx0)
-      simp [this])
-  haveI : Q.LiesOver (RingHom.ker b) := ⟨hQp.symm⟩
-  letI : Algebra (R ⧸ RingHom.ker b) K := (RingHom.kerLift b).toAlgebra
-  haveI : FaithfulSMul (R ⧸ RingHom.ker b) K :=
-    (faithfulSMul_iff_algebraMap_injective _ _).2 (RingHom.kerLift_injective b)
-  haveI : Algebra.IsIntegral (R ⧸ RingHom.ker b) (S ⧸ Q) := inferInstance
-  haveI : FaithfulSMul (R ⧸ RingHom.ker b) (S ⧸ Q) := inferInstance
-  haveI : Module.IsTorsionFree (R ⧸ RingHom.ker b) (S ⧸ Q) :=
-    Module.isTorsionFree_iff_faithfulSMul.2 inferInstance
-  haveI : Module.IsTorsionFree (R ⧸ RingHom.ker b) K :=
-    Module.isTorsionFree_iff_faithfulSMul.2 inferInstance
-  haveI : Algebra.IsAlgebraic (R ⧸ RingHom.ker b) (S ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let ψ : (S ⧸ Q) →ₐ[R ⧸ RingHom.ker b] K := (by
-    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
-    solve_by_elim* (maxDepth := 2) only [*,
-      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
-      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
-  refine ⟨ψ.toRingHom.comp (Ideal.Quotient.mk Q), ?_⟩
-  ext x
-  exact ψ.commutes (Ideal.Quotient.mk (RingHom.ker b) x)
+  intros
+  apply _root_.GlobalTheory.InvariantSpecialisation.exists_extension <;> assumption
 end -- clump:auto
 end -- clump:auto
 -- ===== end clump member: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegralExtensionAlgClosed =====
@@ -600,7 +576,7 @@ private theorem arch {l : ℕ} [Fact l.Prime] (𝔞 : Amb l) (A : Type) [CommRin
   obtain ⟨b, rfl⟩ := 𝔞.V.valuation_surjective y
   by_cases ha : 𝔞.V.valuation a ≤ 1
   · exact ⟨0, by simpa using ha⟩
-  push_neg at ha
+  push Not at ha
   have ha0 : a ≠ 0 := by
     rintro rfl
     simp at ha
@@ -659,7 +635,7 @@ theorem UpperTheory.V.Ws.Po.ambAbs :
     if h : γ = 0 then 0 else Real.exp (φ (Additive.ofMul (Units.mk0 γ h)))
   have g0 : gg 0 = 0 := by simp [gg]
   have gpos : ∀ γ, γ ≠ 0 → 0 < gg γ := fun γ h => by
-    simp only [gg, dif_neg h]
+    simp only [gg, dite_eq_right h]
     exact Real.exp_pos _
   have gmono : StrictMono gg := by
     intro γ δ h
@@ -667,7 +643,7 @@ theorem UpperTheory.V.Ws.Po.ambAbs :
     by_cases hγ : γ = 0
     · rw [hγ, g0]
       exact gpos δ hδ
-    · simp only [gg, dif_neg hγ, dif_neg hδ]
+    · simp only [gg, dite_eq_right hγ, dite_eq_right hδ]
       apply Real.exp_lt_exp.2
       apply hφm
       exact (show Units.mk0 γ hγ < Units.mk0 δ hδ from h)
@@ -681,12 +657,12 @@ theorem UpperTheory.V.Ws.Po.ambAbs :
     by_cases hδ : δ = 0
     · simp [hδ, g0]
     have hγδ : γ * δ ≠ 0 := mul_ne_zero hγ hδ
-    simp only [gg, dif_neg hγ, dif_neg hδ, dif_neg hγδ, ← Real.exp_add, ← map_add (f := _)]
+    simp only [gg, dite_eq_right hγ, dite_eq_right hδ, dite_eq_right hγδ, ← Real.exp_add, ← map_add (f := _)]
     congr 2
     rw [← ofMul_mul, Units.mk0_mul]
   have g1 : gg 1 = 1 := by
     have h1 : (1 : 𝔞.V.ValueGroup) ≠ 0 := one_ne_zero
-    simp only [gg, dif_neg h1, Units.mk0_one, ofMul_one, map_zero, Real.exp_zero]
+    simp only [gg, dite_eq_right h1, Units.mk0_one, ofMul_one, map_zero, Real.exp_zero]
   let w : AbsoluteValue 𝔞.K ℝ :=
     { toFun := fun x => gg (𝔞.V.valuation x)
       map_mul' := fun x y => by
@@ -965,7 +941,7 @@ private theorem xr_const {O S σ : Type} [CommRing O] [CommRing S] [Algebra O S]
       have hdvd : X s ∣ g - r := by
         rw [MvPowerSeries.X_dvd_iff]
         intro n hn
-        rw [map_sub, hr, if_pos hn, sub_self]
+        rw [map_sub, hr, ite_eq_left hn, sub_self]
       obtain ⟨q, hq⟩ := hdvd
       have hrI : F r ∈ I := by
         apply ih
@@ -1059,7 +1035,7 @@ theorem UpperTheory.V.Ws.Po.extR :
         W.π.commutes _⟩
       show ∀ k : W.σ →₀ ℕ, Finsupp.weight W.wt k ≠ 0 → MvPowerSeries.coeff k _ = 0
       intro k hk
-      rw [← MvPowerSeries.c_eq_algebraMap, MvPowerSeries.coeff_C, if_neg]
+      rw [← MvPowerSeries.c_eq_algebraMap, MvPowerSeries.coeff_C, ite_eq_right]
       rintro rfl
       exact hk (map_zero _)
     have h3 := hη0 _ hb (by

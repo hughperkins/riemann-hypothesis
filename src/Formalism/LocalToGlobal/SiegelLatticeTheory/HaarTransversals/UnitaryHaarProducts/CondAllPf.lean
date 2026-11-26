@@ -1,5 +1,6 @@
 module
 
+import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PsiCondAll
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.CondStd
 public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiffProd
 public import Mathlib.Algebra.AffineMonoid.Basic
@@ -40,9 +41,6 @@ open scoped nonZeroDivisors WithZero
 namespace Formalism.L2.SG.Pf.LocTr
 
 variable {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F))
-
-theorem isDiffVal_dV : Formalism.L2.SG.LocVol.IsDiffVal v (Formalism.L2.SG.LocVol.dV v) := by
-  apply Formalism.L2.SG.Pf.NcVal.OmVSt.OmX.dV_isDiffVal
 
 open Classical in
 theorem single_at (y : Fv F v) : (singleV F v y) v = y := by
@@ -119,7 +117,7 @@ theorem bwd (x : Fv F v) (hx : Formalism.L2.SG.LocVol.dV v * x ∈ v.adicComplet
   intro d0 hd0
 
   have hD : Valued.v (algebraMap F (v.adicCompletion F) (algebraMap (𝓞 F) F d0)) ≤
-      Valued.v (Formalism.L2.SG.LocVol.dV v) := (isDiffVal_dV v).2.1 d0 hd0
+      Valued.v (Formalism.L2.SG.LocVol.dV v) := (Formalism.L2.SG.Pf.NcVal.OmVSt.OmX.dV_isDiffVal v).2.1 d0 hd0
   have hI := mem_intAd.mp hq
   apply mem_integers_of_valuation_le_one
   intro w
@@ -164,31 +162,13 @@ theorem mul_diff_int (y : F)
     (hy : ∀ z : 𝓞 F, ∃ n : ℤ, Algebra.trace ℚ F (y * algebraMap (𝓞 F) F z) = n)
     (d : 𝓞 F) (hd : d ∈ differentIdeal ℤ (𝓞 F)) :
     ∃ c : 𝓞 F, algebraMap (𝓞 F) F c = y * algebraMap (𝓞 F) F d := by
-  have hJ : FractionalIdeal.dual ℤ ℚ (1 : FractionalIdeal (𝓞 F)⁰ F) ≠ 0 :=
-    FractionalIdeal.dual_ne_zero ℤ ℚ one_ne_zero
-
-  have hyJ : y ∈ FractionalIdeal.dual ℤ ℚ (1 : FractionalIdeal (𝓞 F)⁰ F) := by
-    rw [FractionalIdeal.mem_dual (A := ℤ) (K := ℚ) (one_ne_zero : (1 : FractionalIdeal (𝓞 F)⁰ F) ≠ 0)]
-    intro a ha
-    rw [FractionalIdeal.mem_one_iff] at ha
-    obtain ⟨z, rfl⟩ := ha
-    obtain ⟨n, hn⟩ := hy z
-    rw [Algebra.traceForm_apply, hn]
-    exact RingHom.mem_range.mpr ⟨n, by simp⟩
-  have hd' : algebraMap (𝓞 F) F d ∈
-      ((differentIdeal ℤ (𝓞 F) : Ideal (𝓞 F)) : FractionalIdeal (𝓞 F)⁰ F) :=
-    (FractionalIdeal.mem_coeIdeal _).mpr ⟨d, hd, rfl⟩
-  rw [diff_coe_lemma] at hd'
-  have hm := FractionalIdeal.mul_mem_mul hyJ hd'
-  rw [mul_inv_cancel₀ hJ, FractionalIdeal.mem_one_iff] at hm
-  obtain ⟨c, hc⟩ := hm
-  exact ⟨c, hc⟩
+  apply _root_.PsiCondAllPf.mul_diff_int <;> assumption
 
 theorem fwd (x : Fv F v)
     (hP : ∀ y ∈ v.adicCompletionIntegers F, ∀ q : F,
       singleV F v (x * y) - algebraMap F (Af F) q ∈ Formalism.UG.intAd F → ∃ n : ℤ, Algebra.trace ℚ F q = n) :
     Formalism.L2.SG.LocVol.dV v * x ∈ v.adicCompletionIntegers F := by
-  have hD := isDiffVal_dV v
+  have hD := Formalism.L2.SG.Pf.NcVal.OmVSt.OmX.dV_isDiffVal v
   by_contra hnot
   rw [mem_adicCompletionIntegers, not_le] at hnot
   set δ := Formalism.L2.SG.LocVol.dV v with hδ

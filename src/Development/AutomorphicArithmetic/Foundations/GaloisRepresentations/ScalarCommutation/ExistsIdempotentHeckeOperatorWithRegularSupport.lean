@@ -1195,8 +1195,6 @@ private theorem cen_ex {E : Type} [Field E] [NumberField E] [IsCMField E] {A : A
   first
     | (obtain ⟨y, -, -, h1, -, h2, h3⟩ := UpperTheory.exists_levelSubgroup_central_scalar_of_pos E A n p S F c hc; exact ⟨_, h2, h1, h3⟩)
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 theorem auxFn : ExistsIdempotentHeckeOperatorWithRegularSupport := by
   intro E _ _ _ A n p _ S F x U w₀ Up V hn hsc hgen hoff hq r W hA N hrN hst L hw Ty hTy
   obtain ⟨hF, -, c, hc, -, hcK⟩ := _root_.UpperTheory.Gal.W2.Seed.tyFact_holds E A n p S F x U w₀ Up V hn hsc hgen hoff hq r W hA N hrN hst L hw Ty hTy

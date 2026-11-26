@@ -9,10 +9,7 @@ public import Formalism.HermitianLattices.HermitianLatticesProofs.ShortVectors
 public import Formalism.HermitianLattices.HermitianLatticesProofs.TraceReal
 public import Formalism.HermitianLattices.GenusCovolBound
 public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusScale
 import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovol
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetFinite, Formalism.HermitianLattices.FinalNeighbourConstruct
@@ -45,7 +42,9 @@ theorem final_finIntermediate : FinIntermediate := Formalism.HermitianLatticesTh
 alias final_shortVectors := _root_.Formalism.HermitianLatticesTheory.shortVectors
 theorem final_isomOfTrace : IsomOfTrace := Formalism.HermitianLatticesTheory.isomOfTrace
 alias final_traceReal := _root_.Formalism.HermitianLatticesTheory.traceReal
-theorem final_autFinite : AutFinite := Formalism.HermitianLatticesTheory.autFinite
+theorem final_autFinite : AutFinite := by
+  intro K V _ _ _ _ _ _ _ _ h _
+  exact Formalism.HermitianLatticesTheory.autFinite K V h
 theorem final_classSetFinite : ClassSetFinite := Formalism.HermitianLatticesTheory.classSetFinite
 
 end Formalism.HermitianLatticesTheory

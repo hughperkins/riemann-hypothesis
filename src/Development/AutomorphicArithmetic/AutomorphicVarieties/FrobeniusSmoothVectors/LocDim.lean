@@ -616,19 +616,8 @@ theorem UpperTheory.V.Fr.loc_dim :
         (Ideal.map_eq_bot_iff_le_ker _).mpr hKeq.ge
       rw [L.unr] at hmap
       exact IsDiscreteValuationRing.not_a_field L.O' hmap
-  have htor : Submodule.torsion O L.O' = ⊥ := by
-    rw [eq_bot_iff]
-    intro z hz
-    obtain ⟨⟨r, hr⟩, hrz⟩ := (Submodule.mem_torsion_iff z).mp hz
-    rw [Submodule.mem_bot]
-    have hr0 : algebraMap O L.O' r ≠ 0 := by
-      intro h
-      apply nonZeroDivisors.ne_zero hr
-      exact hinj (by rw [h, map_zero])
-    change r • z = 0 at hrz
-    rw [Algebra.smul_def] at hrz
-    exact (mul_eq_zero.mp hrz).resolve_left hr0
-  haveI : Module.Flat O L.O' := Module.Flat.flat_iff_torsion_eq_bot_of_isBezout.mpr htor
+  haveI : Module.IsTorsionFree O L.O' := Module.isTorsionFree_iff_algebraMap_injective.2 hinj
+  haveI : Module.Flat O L.O' := inferInstance
   letI : Algebra S.A (TensorProduct O L.O' S.A) := Algebra.TensorProduct.rightAlgebra
   let e : (TensorProduct O S.A L.O') ≃ₐ[S.A] (TensorProduct O L.O' S.A) :=
     AlgEquiv.ofRingEquiv (f := (Algebra.TensorProduct.comm O S.A L.O').toRingEquiv) (fun a => by

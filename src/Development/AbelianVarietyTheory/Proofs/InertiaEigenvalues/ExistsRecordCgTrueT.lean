@@ -17,42 +17,6 @@ public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership
 public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
 public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormsFiniteGL
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodToralTwistStable
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Topology.Sheaves.Init
 import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasExponentZeroIff
 import Development.AutomorphicArithmetic.IntegralCasts.IsOpenStabOfMemNhds
@@ -65,11 +29,7 @@ import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.Fi
 import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalRepGLExistsSatakeParameters
 import Mathlib.Tactic.Linter.Style
 import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSteinberg
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Linter.HaveILetI
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NotNonemptyZero, Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyUnrT, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasSatakeOfUnrT, Development.AbelianVarietyTheory.Proofs.DivisorProofs.LpDimLocParT, Development.AbelianVarietyTheory.Proofs.DivisorProofs.LawsT, Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRecordCgTrueT
@@ -80,47 +40,6 @@ section -- clump:auto
 @[expose] public section
 
 noncomputable section
-
-namespace GlobalTheory.HeightCounting.CGTrueModel
-
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host GlobalTheory.CuspRep NumberField IsDedekindDomain
-open GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.SmGL GlobalTheory.PRep GlobalTheory.SplitWeil ValuativeRel
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-section Eta
-
-variable {R : Ranks} {H : Formalism.BasicNotions.Host R} {χ : HChar H.E}
-
-theorem prod_val (h : IsEtaT H χ) (v : HeightOneSpectrum (𝓞 H.F)) :
-    ∏ P ∈ aboveF (L := H.E) H.F v, χ.val P = if (aboveF (L := H.E) H.F v).card = 1 then -1 else 1 := by
-  obtain ⟨c, hc, hcm, hr, -⟩ := GlobalTheory.Mem.HostCM.host_cm R H
-  have h1 := h.res.1 v (unif v)
-  rw [etaFin, _root_.GlobalTheory.Mem.Chr.ordF_unif_self, zpow_one, HChar.resFin, MonoidHom.finsetProd_apply] at h1
-  rw [← h1]
-  refine Finset.prod_congr rfl fun P hP => ?_
-  have hP' : P.under (𝓞 H.F) = v := by simpa [aboveF] using hP
-  rw [MonoidHom.comp_apply, GlobalTheory.HeckeProduct.locK_unr χ (h.unr P), hr, hP', _root_.GlobalTheory.Mem.Chr.ordF_unif_self, zpow_one]
-
-theorem val_inert (h : IsEtaT H χ) {w : PlE H} (hw : ¬ IsSplitPl H w) : χ.val w = -1 := by
-  have e : aboveF (L := H.E) H.F (w.under (𝓞 H.F)) = {w} := by
-    ext P
-    have : P ∈ aboveF (L := H.E) H.F (w.under (𝓞 H.F)) ↔ P.under (𝓞 H.F) = w.under (𝓞 H.F) := by simp [aboveF]
-    rw [this, Finset.mem_singleton]
-    refine ⟨fun h' => ?_, fun h' => h' ▸ rfl⟩
-    by_contra hne
-    exact hw ((GlobalTheory.Mem.GoodPlace.isSplitPl_iff H w).2 ⟨P, fun h => hne h.symm, h'⟩)
-  have := prod_val h (w.under (𝓞 H.F))
-  rw [e] at this
-  simpa using this
-
-theorem val_split (h : IsEtaT H χ) {w w' : PlE H} (hw : IsSplitPl H w) (hc : IsConjPl H w w') :
-    χ.val w * χ.val w' = 1 := by
-  apply _root_.GlobalTheory.HeightCounting.TrueSide.val_split <;> assumption
-
-end Eta
-
-end GlobalTheory.HeightCounting.CGTrueModel
 
 end
 end -- clump:auto
@@ -178,7 +97,6 @@ open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.Loc
 open GlobalTheory.Mem.Chr hiding HChar
 
 namespace GlobalTheory.CuspRep.ParLawsT
-
 
 open GlobalTheory.CuspRep.ParLaws in
 theorem hasSatake_of_repEquiv {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
@@ -283,7 +201,6 @@ open NumberField IsDedekindDomain ValuativeRel Matrix Formalism.ConjugateSelfDua
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.SatakeFlip GlobalTheory.CuspRep GlobalTheory.CuspRep.ParLawsT
 open GlobalTheory.Mem.Chr hiding HChar
 open Formalism.BasicNotions GlobalTheory.CuspRep.ParLaws
-
 
 noncomputable section
 
@@ -417,9 +334,6 @@ theorem locParT_unr (hT : UpperTheory.Zero.LLC.RecTExists) (χ : HChar E) (h : I
 
 end Char
 
-
-
-
 def trueKT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) (T : GlobalTheory.RowTie.WDTie D.nd D.naut)
     (η η' : HostCGu D.host 1)
     (h1 : ∀ w, (ParLawsT.locGT hT D.nd.plOm η w).unr)
@@ -465,9 +379,6 @@ def trueKT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) (T : GlobalTheory.Row
     etaT_split := fun w w' hs hc a b ha hb => by
       rw [Fr η w (h1 w)] at ha; rw [Fr η w' (h1 w')] at hb; exact h4 w w' hs hc a b ha hb }
 
-
-
-
 def trueCGT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) (hE : IsEmpty D.nd.Loc) (T : GlobalTheory.RowTie.WDTie D.nd D.naut)
     (η η' h1 h2 h3 h4) :
     CGTrueT hT (setCG D hE (trueKT hT D T η η' h1 h2 h3 h4)) (wdCG hE _ T) where
@@ -479,8 +390,6 @@ def trueCGT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) (hE : IsEmpty D.nd.L
   tw := fun _ _ _ => rfl
   inf := fun _ _ _ => rfl
   csd := fun _ _ => Iff.rfl
-
-
 
 theorem etaLawsT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) {χ : HChar D.host.E} (hχ : IsEtaT D.host χ) :
     haveI := host_isCMField D.host
@@ -505,13 +414,13 @@ theorem etaLawsT (hT : UpperTheory.Zero.LLC.RecTExists) (D : D7) {χ : HChar D.h
   refine ⟨⟨CG.ofChar χ, CG.isUnitary_ofChar hχ.unitary⟩, ⟨CG.ofChar χ⁻¹, CG.isUnitary_ofChar hi⟩, rfl, rfl,
     fun w => (P w).1, fun w hw => (P w).2.trans ?_, fun w => ⟨(Q w).1, (Q w).2.trans ?_⟩,
     fun w w' hw hc a b ha hb => ?_⟩
-  · rw [CGTrueModel.val_inert hχ hw]; simp
+  · rw [GlobalTheory.HeightCounting.TrueSide.val_inert hχ hw]; simp
   · refine Eq.trans ?_ (congrArg (Multiset.map (·⁻¹)) (P w).2).symm
     simp
   · have ha' := (P w).2.symm.trans ha
     have hb' := (P w').2.symm.trans hb
     rw [Multiset.singleton_inj] at ha' hb'
-    rw [← ha', ← hb', ← Units.val_mul, ← mul_inv, CGTrueModel.val_split hχ hw hc, inv_one, Units.val_one]
+    rw [← ha', ← hb', ← Units.val_mul, ← mul_inv, GlobalTheory.HeightCounting.TrueSide.val_split hχ hw hc, inv_one, Units.val_one]
 
 end GlobalTheory.HeightCounting
 

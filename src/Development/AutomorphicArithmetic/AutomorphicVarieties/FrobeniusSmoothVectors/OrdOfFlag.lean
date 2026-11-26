@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TriProdZero
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LeAdicClosure
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
 import Mathlib.Tactic.Linter.Style
@@ -10,29 +11,7 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem prod_tri {C : Type} [CommRing C] {n : ℕ} (M : Fin n → Matrix (Fin n) (Fin n) C)
     (h1 : ∀ k i j, j < i → M k i j = 0) (h2 : ∀ k, M k k k = 0) : (List.ofFn M).prod = 0 := by
-  have main : ∀ k, k ≤ n → ∀ i j : Fin n, (j : ℕ) < k → ((List.ofFn M).take k).prod i j = 0 := by
-    intro k
-    induction k with
-    | zero => intro _ i j hj; exact absurd hj (Nat.not_lt_zero _)
-    | succ k ih =>
-      intro hk i j hj
-      have htake : (List.ofFn M).take (k + 1) = (List.ofFn M).take k ++ [M ⟨k, hk⟩] := by
-        rw [List.take_succ]
-        simp [show k < n by omega]
-      rw [htake, List.prod_append, List.prod_singleton, Matrix.mul_apply]
-      apply Finset.sum_eq_zero
-      intro m _
-      by_cases hm : (m : ℕ) < k
-      · rw [ih (Nat.le_of_succ_le hk) i m hm, zero_mul]
-      · by_cases hmj : j < m
-        · rw [h1 ⟨k, hk⟩ m j hmj, mul_zero]
-        · have e1 : m = ⟨k, hk⟩ := Fin.ext (by simp only [not_lt, Fin.le_def] at hm hmj ⊢; omega)
-          have e2 : j = ⟨k, hk⟩ := Fin.ext (by simp only [not_lt, Fin.le_def] at hm hmj ⊢; omega)
-          rw [e1, e2, h2, mul_zero]
-  have hall : (List.ofFn M).take n = List.ofFn M := List.take_of_length_le (by simp)
-  ext i j
-  rw [← hall]
-  exact main n le_rfl i j j.2
+  apply _root_.UpperTheory.V.AlgebraTools.tri_prod_zero <;> assumption
 
 private theorem prod_conj {R : Type} [Monoid R] (g : Rˣ) (L : List R) :
     (L.map fun x => (g : R) * x * ((g⁻¹ : Rˣ) : R)).prod = g * L.prod * ((g⁻¹ : Rˣ) : R) := by

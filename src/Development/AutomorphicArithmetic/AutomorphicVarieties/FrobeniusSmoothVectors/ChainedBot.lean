@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.ValuationCharacters.ConstOfFinite
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.CmOfRegular
@@ -18,13 +19,7 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 private theorem ringKrullDim_quotient_eq_quotient_comap_of_surjective' {A B : Type} [CommRing A] [CommRing B] (p : A →+* B)
     (hp : Function.Surjective p) (Q : Ideal B) :
     ringKrullDim (B ⧸ Q) = ringKrullDim (A ⧸ Q.comap p) := by
-  have hs : Function.Surjective ((Ideal.Quotient.mk Q).comp p) :=
-    Ideal.Quotient.mk_surjective.comp hp
-  have hk : RingHom.ker ((Ideal.Quotient.mk Q).comp p) = Q.comap p := by
-    ext a
-    simp [RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
-  rw [ringKrullDim_eq_of_ringEquiv (RingHom.quotientKerEquivOfSurjective hs).symm,
-    ringKrullDim_eq_of_ringEquiv (Ideal.quotEquivOfEq hk)]
+  apply _root_.UpperTheory.V.Ws.Ch.ringKrullDim_quotient_eq_quotient_comap_of_surjective <;> assumption
 
 private theorem chained_bot_of_chained_ker_of_surjective {A B : Type} [CommRing A] [CommRing B] (p : A →+* B)
     (hp : Function.Surjective p) (D : ℕ) (h : Chained (RingHom.ker p) D) :

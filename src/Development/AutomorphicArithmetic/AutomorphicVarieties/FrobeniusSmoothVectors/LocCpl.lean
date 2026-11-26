@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FibreTraces.ComplOfNil
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LeAdicClosure
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
@@ -15,20 +16,7 @@ import Mathlib.Tactic.NormNum.LegendreSymbol
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem cpl_of_nil {R : Type} [CommRing R] (I : Ideal R) (N : ℕ) (h : I ^ N = ⊥) : IsAdicComplete I R := by
-  have hle : ∀ n, N ≤ n → (I ^ n • ⊤ : Submodule R R) = ⊥ := by
-    intro n hn
-    rw [eq_bot_iff]
-    calc (I ^ n • ⊤ : Submodule R R) ≤ I ^ N • ⊤ := Submodule.smul_mono (Ideal.pow_le_pow_right hn) le_rfl
-      _ = ⊥ := by rw [h, Submodule.bot_smul]
-  refine { haus' := fun x hx => ?_, prec' := fun f hf => ⟨f N, fun n => ?_⟩ }
-  · have hxN := hx N
-    rw [hle N le_rfl, SModEq.bot] at hxN
-    exact hxN
-  · rcases le_total n N with hn | hn
-    · exact hf hn
-    · have hfn := hf hn
-      rw [hle N le_rfl, SModEq.bot] at hfn
-      rw [hfn]
+  apply _root_.compl_of_nil <;> assumption
 
 private theorem res_eq_of {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [IsCO O R]
     {x : R} {a : O} (h : x - algebraMap O R a ∈ maximalIdeal R) : res O R x = algebraMap O _ a := by
@@ -60,10 +48,7 @@ private theorem co_pow {O D R : Type} [CommRing O] [IsLocalRing O] [CommRing D] 
   let f' : D ⧸ y ^ N →+* ResidueField O := Ideal.Quotient.lift (y ^ N) f (fun a ha => by
     rw [← RingHom.mem_ker, hker]; exact hyN ha)
   have hf'mk : ∀ d, f' (Ideal.Quotient.mk _ d) = f d := fun d => rfl
-  have hf' : Function.Surjective f' := by
-    intro z
-    obtain ⟨d, rfl⟩ := hf z
-    exact ⟨_, hf'mk d⟩
+  have hf' : Function.Surjective f' := Ideal.Quotient.lift_surjective_of_surjective _ _ hf
   haveI hMmax : (RingHom.ker f').IsMaximal := RingHom.ker_isMaximal_of_surjective f' hf'
   have hMle : RingHom.ker f' ≤ y.map (Ideal.Quotient.mk (y ^ N)) := by
     intro z hz

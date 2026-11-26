@@ -24,8 +24,6 @@ theorem div_mul_sub_le_div_sub_div (n s P Q ee kk rr : ℕ) (hP : 0 < P) (hQ : 0
     exact_mod_cast Nat.lt_div_mul_add hQ
   have hns : (n : ℤ) - s ≤ ((n - s : ℕ) : ℤ) := by omega
   have hue : (((n - s) / P : ℕ) : ℤ) - ee ≤ ((((n - s) / P - ee : ℕ)) : ℤ) := by omega
-  have hs' : (s : ℤ) < kk * P := by exact_mod_cast hs
-  have he' : (ee : ℤ) < rr * Q := by exact_mod_cast he
   have hP' : (0 : ℤ) < P := by exact_mod_cast hP
   have hQ' : (1 : ℤ) ≤ Q := by exact_mod_cast hQ
   set A : ℤ := ((n / (P * Q) : ℕ) : ℤ)
@@ -99,10 +97,10 @@ theorem restPad : RestPad 1088 := by
     have hval : X.bfam p K la e j (X.F.fr (j - 1) i) =
         (X.nz p K la (j - 1) (X.F.fr (j - 1) i) - X.eZ e (j - 1) ⟨i, hi⟩) / X.Qc p K (j - 1) := by
       unfold Dat.bfam
-      rw [if_pos hx, if_pos hW, Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
-      · rw [if_pos rfl]
+      rw [ite_eq_left hx, ite_eq_left hW, Finset.sum_eq_single (⟨i, hi⟩ : Fin r)]
+      · rw [ite_eq_left rfl]
       · intro b _ hb'
-        rw [if_neg]
+        rw [ite_eq_right]
         intro heq
         apply hb'
         apply Fin.ext
@@ -125,7 +123,7 @@ theorem restPad : RestPad 1088 := by
     obtain ⟨h1, h2, -, -⟩ := sum_late_mem hl.1
     have hval : X.bfam p K la e j x = X.nz p K la j x := by
       unfold Dat.bfam
-      rw [if_pos h1, if_neg h2, if_neg (not_le.mpr hl.2)]
+      rw [ite_eq_left h1, ite_eq_right h2, ite_eq_right (not_le.mpr hl.2)]
     rw [hval]
     exact family_degrees_admissible hr hp (fun j x hx => (sum_LLsub X hV j x hx).1) la hla j x hx
 

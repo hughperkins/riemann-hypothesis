@@ -18,8 +18,6 @@ import Std.Tactic.BVDecide.Normalize.Prop
 section -- clump:auto
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
-
 noncomputable section
 
 namespace period_ring_base
@@ -62,9 +60,6 @@ theorem base_ι_inj (l : ℕ) [Fact l.Prime] : Function.Injective (ι l) := by
 
 theorem base_ι_σ (l : ℕ) [Fact l.Prime] : ∀ (g : GQ l) x, ι l (σB g x) = σD g (ι l x) := by
   intro g x; rw [ι_eq]; exact _root_.PositivityTheory.LocInh.GaloisCommutant.ιCD_σB_aux g x
-
-theorem base_φ_q (l : ℕ) [Fact l.Prime] : ∀ q, φ l (qB l q) = qB l q := by
-  intro q; rw [qB_eq]; exact PositivityTheory.LocInh.φB_qB q
 
 theorem base_σ_q (l : ℕ) [Fact l.Prime] : ∀ (g : GQ l) q, σB g (qB l q) = qB l q := by
   intro g q

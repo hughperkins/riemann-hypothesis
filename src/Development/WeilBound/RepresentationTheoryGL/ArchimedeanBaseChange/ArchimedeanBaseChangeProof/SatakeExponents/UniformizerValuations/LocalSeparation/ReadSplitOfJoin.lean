@@ -49,8 +49,6 @@ open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.Sp
 open GlobalTheory.BCT.TwistDisc
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.JoinDatum
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
@@ -253,8 +251,6 @@ open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.Sp
 open PositivityTheory.Rg.BcB.F PositivityTheory.Rg.BcB.F.RS
 open scoped Classical
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.JoinInfProof
@@ -317,8 +313,6 @@ noncomputable section
 
 open NumberField IsDedekindDomain Matrix
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace GlobalTheory.CompanionTheory.SatSplitAt
 
 theorem satSplit : PositivityTheory.Rg.BcB.F.RS.SatSplit := by
@@ -352,8 +346,6 @@ open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
 open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8
 open PositivityTheory.Rg.Rs.SatakeVectors PositivityTheory.Rg.Rs.SatakeVectors.SatakeVectorEventually PositivityTheory.Rg.BcB.F PositivityTheory.Rg.BcB.F.RS
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace GlobalTheory.CompanionTheory.JoinSatPf
 
@@ -468,8 +460,6 @@ noncomputable section
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
 open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.RS.Leaf
 
@@ -664,8 +654,6 @@ open scoped TensorProduct
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
 open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
 namespace PositivityTheory.Rg.BcB.F.RS
 
 namespace ReadingModuleProducts
@@ -719,14 +707,6 @@ namespace ReadingModuleProducts
 variable {G1 G2 Y1 Y2 : Type} [Group G1] [Group G2] [Monoid Y1] [Monoid Y2]
   {P1 : Submodule ℂ (Y1 → ℂ)} {P2 : Submodule ℂ (Y2 → ℂ)}
 
-theorem mem_fixed_iff {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) (U : Subgroup G)
-    (v : V) : v ∈ fixed ρ U ↔ ∀ u ∈ U, ρ u v = v := by
-  constructor
-  · intro h u hu
-    simpa using h ⟨u, hu⟩
-  · intro h u
-    simpa using h u.1 u.2
-
 theorem decomp (e1 : G1 →* Y1) (e2 : G2 →* Y2) (ρ1 : Representation ℂ G1 P1) (ρ2 : Representation ℂ G2 P2)
     (hρ1 : ∀ g v y, (ρ1 g v).1 y = v.1 (y * e1 g)) (hρ2 : ∀ g v y, (ρ2 g v).1 y = v.1 (y * e2 g))
     (S1 : Submodule ℂ P1) (S2 : Submodule ℂ P2) (U1 : Subgroup G1) (U2 : Subgroup G2) (t : S1 ⊗[ℂ] S2)
@@ -741,7 +721,7 @@ theorem decomp (e1 : G1 →* Y1) (e2 : G2 →* Y2) (ρ1 : Representation ℂ G1 
   have hx := expR S1 S2 b2 t
   have hfix : ∀ k, (m k).1 ∈ fixed ρ1 U1 := by
     intro k
-    rw [mem_fixed_iff]
+    rw [GlobalTheory.LGrp.mem_fixed]
     intro u hu
     by_cases hk : k ∈ m.support
     · have := coeff_zero (fun k => (b2 k).1.1) (linInd b2) m.support
@@ -767,7 +747,7 @@ theorem decomp (e1 : G1 →* Y1) (e2 : G2 →* Y2) (ρ1 : Representation ℂ G1 
   refine ⟨_, n.support, fun l => ⟨(b1 l).1, (Submodule.mem_inf.1 (b1 l).2).1⟩, n, fun l => (Submodule.mem_inf.1 (b1 l).2).2,
     ?_, linInd b1, hy⟩
   intro l
-  rw [mem_fixed_iff]
+  rw [GlobalTheory.LGrp.mem_fixed]
   intro u hu
   by_cases hl : l ∈ n.support
   · have := coeff_zero (fun l => (b1 l).1.1) (linInd b1) n.support
@@ -853,7 +833,7 @@ theorem sep_pair [TopologicalSpace G1] [TopologicalSpace G2] {X1 X2 : Type} [Add
       (∀ k, (y k).1 ∈ fixed ρ2 U2) ∧ LinearIndependent ℂ (fun k => (x k).1.1) ∧
       G = fun z => ∑ k ∈ s, (x k).1.1 z.1 * (y k).1.1 z.2 := by
     rintro G ⟨t, rfl⟩ ⟨U, hUo, hU⟩
-    rw [mem_fixed_iff] at hU
+    rw [GlobalTheory.LGrp.mem_fixed] at hU
     obtain ⟨κ, s, x, y, hx, hy, hli, hG⟩ := decomp e1 e2 ρ1 ρ2 hρ1 hρ2 S1 S2 (U.comap (MonoidHom.inl G1 G2))
       (U.comap (MonoidHom.inr G1 G2)) t
       (fun u hu z => by simpa [hρ] using congrFun (hU (u, 1) hu) z)
@@ -933,8 +913,6 @@ open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
 open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.RS
 
@@ -1126,8 +1104,6 @@ open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT GlobalTheory.LFun Formalism.L2.Host
 open PositivityTheory.Rg.Rs PositivityTheory.Rg.BcB.E PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.G8
-
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace PositivityTheory.Rg.BcB.F.RS
 

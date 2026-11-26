@@ -63,20 +63,7 @@ end Helpers
 
 theorem kfin_diag_mem_Kset (ε : Fin n → Bool) (θ : Fin n → ℝ) :
     Matrix.diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I)) ∈ Kset ε := by
-  unfold Kset
-  rw [Set.mem_setOf_eq]
-  refine ⟨?_, ?_⟩
-  · rw [Matrix.mem_unitaryGroup_iff, Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose,
-      Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    norm_num [Pi.star_apply, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq,
-      Complex.norm_exp_ofReal_mul_I]
-  · unfold Jm
-    rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]
-    congr 1
-    funext a
-    exact mul_comm _ _
+  apply _root_.ReciprocityTheory.ChartRestriction.DS.bwt_diag_mem_Kset <;> assumption
 
 section Wt
 
@@ -96,7 +83,7 @@ theorem kfin_wt_orth (hσ : IsURepOn (UJset ε) σ) {μ ν : Fin n → ℝ} {v w
   let θ : Fin n → ℝ := fun b => if b = a then c else 0
   have hs : ∀ f : Fin n → ℝ, ∑ b, f b * θ b = f a * c := by
     intro f
-    simp only [θ, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [θ, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   obtain ⟨h1, h2⟩ := kfin_diag_mem_Kset (n := n) ε θ
   have hK : Matrix.diagonal (fun b => Complex.exp ((θ b : ℂ) * Complex.I)) ∈ Formalism.REAL.Kset ε :=
     kfin_diag_mem_Kset ε θ

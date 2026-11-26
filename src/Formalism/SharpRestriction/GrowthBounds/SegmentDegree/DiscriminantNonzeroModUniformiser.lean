@@ -165,7 +165,6 @@ theorem late_vectors_distinct_tops : LateVectorsDistinctLeadingTerms := by
     exact hc
   simp only [row_eq]
   generalize evL X.F j x = l at hmem hsort hlen ⊢
-  have hNr : r ≤ l.length := hlen ▸ hlenr
   have hget : ∀ k (hk : k < l.length), l.getD k 0 = l[k] := fun k hk => List.getD_eq_getElem _ _ hk
   have hpw := List.pairwise_iff_getElem.mp hsort
   have hm : l.length - r < l.length := by omega
@@ -199,7 +198,6 @@ theorem late_vectors_distinct_tops : LateVectorsDistinctLeadingTerms := by
         have e1 := Int.mul_ediv_add_emod (X.F.fr 0 i - y1) (n' : ℤ)
         have e2 := Int.emod_nonneg (X.F.fr 0 i - y1) (ne_of_gt hn)
         have e3 := Int.emod_lt_of_pos (X.F.fr 0 i - y1) hn
-        have e4 : (-((X.F.fr 0 i - y1) / n')) * (n' : ℤ) = -((n' : ℤ) * ((X.F.fr 0 i - y1) / n')) := by ring
         constructor <;> linarith
       obtain ⟨T, hT⟩ : ∃ T : Finset ℤ, T = S.filter (fun s => y1 ≤ s) := ⟨_, rfl⟩
       have hTcard : T.card ≤ r := by
@@ -380,8 +378,6 @@ theorem word_order_bound_of_numeric_bound (D : Formalism.BasicNotions.D7) (hA3 :
     exact_mod_cast a2
   have hkd : Dat.k (r := r) K = (r : ℝ) + K := by unfold Dat.k; push_cast; ring
   rw [hkd] at n3
-  have hr0 : (0 : ℝ) ≤ (r : ℝ) * ((p ^ X.Rj p K j : ℕ) : ℝ) := by positivity
-  have hK0 : (0 : ℝ) ≤ (K : ℝ) * ((p ^ X.Rj p K j : ℕ) : ℝ) := by positivity
   rw [ordDeg_prod dA (fun _ => dG) mm hmm]
   refine le_trans ?_ n3
   split_ifs with he

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LengthSumHeightOneDisjointDivisors
 public import Mathlib.RingTheory.Length
 import Mathlib.Tactic.Linter.Style
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
@@ -12,17 +13,8 @@ open ReciprocityTheory.Gal UpperTheory.V.Base
 private theorem len_ker_eq_coker {R A : Type} [CommRing R] [AddCommGroup A] [Module R A]
     (f : A →ₗ[R] A) (hfin : Module.length R A ≠ ⊤) :
     Module.length R (A ⧸ LinearMap.range f) = Module.length R (LinearMap.ker f) := by
-  have h1 := Module.length_eq_add_of_exact (LinearMap.range f).subtype (LinearMap.range f).mkQ
-    (Submodule.subtype_injective _) (Submodule.mkQ_surjective _) (LinearMap.exact_subtype_mkQ _)
-  have h2 := Module.length_eq_add_of_exact (LinearMap.ker f).subtype (LinearMap.ker f).mkQ
-    (Submodule.subtype_injective _) (Submodule.mkQ_surjective _) (LinearMap.exact_subtype_mkQ _)
-  rw [(f.quotKerEquivRange).length_eq] at h2
-  have h3 : Module.length R (LinearMap.range f) ≠ ⊤ := by
-    intro h
-    rw [h, top_add] at h1
-    exact hfin h1
-  rw [h1, add_comm] at h2
-  exact (WithTop.add_right_inj h3).1 h2
+  intros
+  apply _root_.GlobalTheory.HerbrandLength.ker_eq_coker <;> assumption
 
 private theorem len_sup_ne_top {R A : Type} [CommRing R] [AddCommGroup A] [Module R A]
     (S T : Submodule R A) (hS : Module.length R S ≠ ⊤) (hT : Module.length R T ≠ ⊤) :

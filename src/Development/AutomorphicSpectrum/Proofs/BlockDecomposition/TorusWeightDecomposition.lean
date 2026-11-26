@@ -63,20 +63,8 @@ theorem exp_apply_of_eigen {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V
 private theorem diagonal_mul_I_eq_sum_single (θ : Fin n → ℝ) :
     (Matrix.diagonal fun a => (θ a : ℂ) * Complex.I) =
       ∑ a, ((θ a : ℂ) * Complex.I) • Matrix.single a a (1 : ℂ) := by
-  ext i j
-  rw [Matrix.sum_apply]
-  simp only [Matrix.smul_apply, Matrix.single_apply, Matrix.diagonal_apply, smul_eq_mul, mul_ite, mul_one,
-    mul_zero]
-  by_cases hij : i = j
-  · subst hij
-    simp
-  · rw [if_neg hij]
-    symm
-    apply Finset.sum_eq_zero
-    intro c _
-    rw [if_neg]
-    rintro ⟨rfl, rfl⟩
-    exact hij rfl
+  simp_rw [Matrix.smul_single, smul_eq_mul, mul_one]
+  exact (Matrix.sum_single_eq_diagonal _).symm
 
 theorem dtau_diag_w {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (θ : Fin n → ℝ) :
     T.dτ (Matrix.diagonal fun a => (θ a : ℂ) * Complex.I) T.w =

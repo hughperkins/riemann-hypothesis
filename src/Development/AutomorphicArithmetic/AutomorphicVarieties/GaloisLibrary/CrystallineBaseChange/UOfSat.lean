@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.SatHol
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
 public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
@@ -17,16 +18,7 @@ private theorem hecke_eq_dc {G V : Type} [Group G] [AddCommGroup V] [Module ℂ 
     (a : G) (h : G → ℂ) (h1 : ∀ g : G, (g : G ⧸ K) ∈ MulAction.orbit K (a : G ⧸ K) → h g = 1)
     (h2 : ∀ g : G, (g : G ⧸ K) ∉ MulAction.orbit K (a : G ⧸ K) → h g = 0) (hf : {c : G ⧸ K | h c.out ≠ 0}.Finite) (x : V) :
     heckeVec ρ K h x = Hi.dc ρ K K a x := by
-  classical
-  have hfin : (MulAction.orbit K (a : G ⧸ K)).Finite := hf.subset fun c hc => by
-    rw [Set.mem_setOf_eq, h1 _ (by rwa [QuotientGroup.out_eq'])]; exact one_ne_zero
-  letI := hfin.fintype
-  rw [Hi.dc, finsum_eq_sum_of_fintype, LinearMap.sum_apply, ← finsum_eq_sum_of_fintype,
-    finsum_set_coe_eq_finsum_mem (f := fun c : G ⧸ K => ρ c.out x), heckeVec]
-  refine finsum_congr fun c => ?_
-  by_cases hc : c ∈ MulAction.orbit K (a : G ⧸ K)
-  · rw [h1 _ (by rwa [QuotientGroup.out_eq'])]; simp [hc]
-  · rw [h2 _ (by rwa [QuotientGroup.out_eq'])]; simp [hc]
+  apply _root_.hecke_eq_dc <;> assumption
 
 variable {F : Type} [Field F] [NumberField F] (w : HeightOneSpectrum (𝓞 F))
 
@@ -40,19 +32,7 @@ private theorem iwahori_level_zero_eq : K1 w 0 = KGL w (n := 2) := by
 private theorem hecke_Tj {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin 2) (w.adicCompletion F)) V)
     (j : ℕ) (a : GL (Fin 2) (w.adicCompletion F)) (ha : a.val = diagJ 2 (atFin w (unif w) : w.adicCompletion F) j) (x : V) :
     heckeVec ρ (KGL w (n := 2)) (Tj ℂ 2 (Ov F w) (atFin w (unif w) : w.adicCompletion F) j) x = Hi.dc ρ (KGL w (n := 2)) (KGL w (n := 2)) a x := by
-  refine hecke_eq_dc ρ _ a _ (fun g hg => ?_) (fun g hg => ?_)
-    (Formalism.UG.P.finite_support_cosets (Final.GLintComm F w 2) (Tj_mem_hecke (unif_spec w) j).2) x
-  · obtain ⟨k, hk⟩ := hg
-    have h : ((k : GL (Fin 2) (w.adicCompletion F)) * a)⁻¹ * g ∈ KGL w (n := 2) := QuotientGroup.eq.1 hk
-    rw [Tj, Set.indicator_of_mem, Pi.one_apply]
-    refine ⟨k, k.2, _, h, ?_⟩
-    rw [← ha, ← Units.val_mul, ← Units.val_mul, mul_inv_cancel_left]
-  · rw [Tj, Set.indicator_of_notMem]
-    rintro ⟨k, hk, k', hk', e⟩
-    refine hg ⟨⟨k, hk⟩, ?_⟩
-    rw [← ha, ← Units.val_mul, ← Units.val_mul] at e
-    rw [Units.ext e]
-    exact (QuotientGroup.mk_mul_of_mem (k * a) hk').symm
+  apply _root_.hecke_Tj <;> assumption
 
 theorem UpperTheory.V.Br.uOfSat :
     UpperTheory.V.Br.UOfSat := by

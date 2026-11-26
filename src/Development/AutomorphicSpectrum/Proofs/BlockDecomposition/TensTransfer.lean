@@ -6,7 +6,6 @@ import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsDPMorphismB
 
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
 set_option linter.unusedVariables false
@@ -100,14 +99,7 @@ theorem piT_exact [∀ i, Module.Flat R (N i)] {M₁ : ι → Type w₁} {M₂ :
 theorem tens_zero {M : ι → Type w} [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)] {M' : Type w'} [AddCommGroup M']
     (hM : ∀ i, Subsingleton (M i)) (hM' : Subsingleton M') (f : ∀ i, N i → M i → M') :
     Tens R (N := N) (M := M) (M' := M') f := by
-  have h0 : ∀ i, Subsingleton (N i ⊗[R] M i) := fun i => by
-    refine ⟨fun x y => ?_⟩
-    have : ∀ z : N i ⊗[R] M i, z = 0 := fun z => by
-      induction z using TensorProduct.induction_on with
-      | zero => rfl
-      | tmul n x => rw [Subsingleton.elim x 0, TensorProduct.tmul_zero]
-      | add x y hx hy => rw [hx, hy, add_zero]
-    rw [this x, this y]
+  have h0 : ∀ i, Subsingleton (N i ⊗[R] M i) := fun i => haveI := hM i; inferInstance
   refine ⟨⟨⟨fun _ => 0, fun _ => 0, fun _ => Subsingleton.elim _ _, fun _ => Subsingleton.elim _ _⟩, fun _ _ => by simp⟩,
     fun i n x => Subsingleton.elim _ _⟩
 

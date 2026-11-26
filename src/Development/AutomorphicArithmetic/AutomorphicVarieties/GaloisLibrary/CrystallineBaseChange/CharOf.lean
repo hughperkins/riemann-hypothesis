@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.DirChar
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.IntOfIntegers
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.MemMirabIff
@@ -45,19 +46,7 @@ private theorem flow_const (φ : Sm ℚ 2) (z : Rinf ℚ) (h : lie ℚ 2 (toL (M
 
 private theorem red_uniq {M : ℕ} (hM : 1 ≤ M) {x : Af ℚ} {d e : ℤ} (hd : ∃ y ∈ Af.Ohat ℚ, x - d = M * y)
     (he : ∃ y ∈ Af.Ohat ℚ, x - e = M * y) : (d : ZMod M) = e := by
-  obtain ⟨y, hy, hd⟩ := hd
-  obtain ⟨z, hz, he⟩ := he
-  have hM' : (M : ℚ) ≠ 0 := Nat.cast_ne_zero.2 (by omega)
-  have h0 : algebraMap ℚ (Af ℚ) (M : ℚ)⁻¹ * M = 1 := by
-    rw [← map_natCast (algebraMap ℚ (Af ℚ)), ← map_mul, inv_mul_cancel₀ hM', map_one]
-  have h1 : algebraMap ℚ (Af ℚ) ((M : ℚ)⁻¹ * ((e : ℚ) - d)) = y - z := by
-    rw [map_mul, map_sub, map_intCast, map_intCast]
-    linear_combination algebraMap ℚ (Af ℚ) (M : ℚ)⁻¹ * (hd - he) + (y - z) * h0
-  obtain ⟨n, hn⟩ := ratAd.2.2 _ (h1 ▸ sub_mem hy hz)
-  rw [ZMod.intCast_eq_intCast_iff_dvd_sub]
-  refine ⟨n, ?_⟩
-  rw [inv_mul_eq_iff_eq_mul₀ hM'] at hn
-  exact_mod_cast hn
+  apply _root_.UpperTheory.V.Af.Nf.dc_uniq <;> assumption
 
 private theorem red_ex {M : ℕ} (hM : 1 ≤ M) : ∃ ρ : ↥(Af.Ohat ℚ) →* ZMod M,
     (∀ (x : ↥(Af.Ohat ℚ)) (d : ℤ), (∃ y ∈ Af.Ohat ℚ, (x : Af ℚ) - d = M * y) → ρ x = d) ∧

@@ -52,6 +52,7 @@ import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Topology.Sheaves.Init
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 import Mathlib.Tactic.Linter.Style
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.TwistedOperators.GKMapExtensionLevelCharacterCovariant, Development.AbelianVarietyTheory.Proofs.TwistedOperators.GKModuleMapCuspFormsExtendsMultiplicitySpace
@@ -127,7 +128,7 @@ theorem lev : GlobalTheory.Published.HarishChandraModules → ∀ (D : D7) (θ :
         have a2 := e₂ ⟨w, hsm τ w hw⟩
         simp only at a1 a2
         rw [LinearMap.sub_apply, LinearMap.smul_apply, a1, a2, hi, smul_eq_mul, sub_self]
-      have hz := GlobalTheory.T.sobolevForm_eq_zero_on_smooth_of_kFinite_discreteSeries hHC D V S M τ _ (sobCont_sub_smul (χ k) h₁ h₂) h0 (v τ) (v τ).2
+      have hz := GlobalTheory.KFiniteDense.eq_zero_of_kFin hHC D V S M τ _ (sobCont_sub_smul (χ k) h₁ h₂) h0 (v τ) (v τ).2
       have a1 := e₁ (v τ)
       have a2 := e₂ (v τ)
       rw [Function.update_eq_self] at a1 a2
@@ -156,14 +157,7 @@ theorem conj_back {n : ℕ} {P g : Matrix (Fin n) (Fin n) ℂ} (hP : IsUnit P) :
 theorem conj_mem_UH {n : ℕ} {ε : Fin n → Bool} {P G : Matrix (Fin n) (Fin n) ℂ} (hP : IsUnit P)
     (h : Pᴴ * Formalism.REAL.Jm ε * P = G) {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ Formalism.MainNotions.S.UJset ε) :
     P⁻¹ * g * P ∈ Formalism.QuantumDeterminants.UH G := by
-  have hd : IsUnit P.det := (Matrix.isUnit_iff_isUnit_det P).1 hP
-  have hk : gᴴ * Formalism.REAL.Jm ε * g = Formalism.REAL.Jm ε := hg
-  have h1 : (P⁻¹)ᴴ * Pᴴ = 1 := by rw [← Matrix.conjTranspose_mul, Matrix.mul_nonsing_inv _ hd, Matrix.conjTranspose_one]
-  change (P⁻¹ * g * P)ᴴ * G * (P⁻¹ * g * P) = G
-  calc (P⁻¹ * g * P)ᴴ * G * (P⁻¹ * g * P)
-      = Pᴴ * (gᴴ * ((P⁻¹)ᴴ * Pᴴ) * Formalism.REAL.Jm ε * (P * P⁻¹) * g) * P := by
-        rw [← h]; simp only [Matrix.conjTranspose_mul, Matrix.mul_assoc]
-    _ = G := by rw [h1, Matrix.mul_nonsing_inv _ hd, Matrix.mul_one, Matrix.mul_one, hk, h]
+  apply _root_.GlobalTheory.HolDict.ModelRep.conj_mem_inv <;> assumption
 
 theorem extExists : GlobalTheory.Published.HarishChandraModules → GlobalTheory.Published.CasselmanWallach → ∀ D : D7,
     GlobalTheory.IndefiniteRowSideFullHecke.KTypeExtension.ExtExists D := by

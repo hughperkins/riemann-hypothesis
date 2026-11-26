@@ -13,51 +13,6 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
 public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
 public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Sheaves.Init
-import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
-import Mathlib.Tactic.Basify
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DivisibilityFiltration, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiltrationExponentBound, Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegerSpanGenerators
@@ -270,7 +225,6 @@ end -- clump:auto
 section -- clump:auto
 @[expose] public section
 
-
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.MainNotions.CrystallineLiftingInputs in
 noncomputable def UpperTheory.Reformulated.B.IntegerSpanGenerators.Zspan
     {G : Type} [Group G] [TopologicalSpace G]
@@ -360,12 +314,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
 
-private noncomputable def N0 (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) :
-    Submodule O (W.DD T) :=
-  W.NΔ T ⊓ (W.Nl T i).restrictScalars O
-
 private theorem mem_wachFiltration_iff (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (x : W.DD T) :
-    x ∈ N0 W T i ↔ x ∈ W.N T ∧ DL W T i x := by
+    x ∈ Formalism.MainNotions.LiftingTheory.NΔi W T i ↔ x ∈ W.N T ∧ DL W T i x := by
   constructor
   · rintro ⟨⟨h1, h2⟩, y, -, hy⟩
     refine ⟨h1, ?_, h2⟩
@@ -378,7 +328,7 @@ private theorem mem_wachFiltration_iff (W : LocWach PD LL O v n) (T : LocLat G Q
     exact ⟨⟨h1, h3⟩, x, h1, h2⟩
 
 private theorem smul_mem_wachFiltration (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n)
-    (a : LetA O n) (ha : a ∈ W.AΔ) (x : W.DD T) (hx : x ∈ N0 W T i) : a • x ∈ N0 W T i := by
+    (a : LetA O n) (ha : a ∈ W.AΔ) (x : W.DD T) (hx : x ∈ Formalism.MainNotions.LiftingTheory.NΔi W T i) : a • x ∈ Formalism.MainNotions.LiftingTheory.NΔi W T i := by
   refine ⟨⟨(W.N T).smul_mem a hx.1.1, fun δ hδ => ?_⟩, (W.Nl T i).smul_mem a hx.2⟩
   have h := W.γD_smul T δ (algebraMap (LetA O n) W.EE a) x
   rw [algebraMap_smul, W.γE_ext, algebraMap_smul, hx.1.2 δ hδ] at h
@@ -445,7 +395,7 @@ private theorem aux (W : LocWach PD LL O v n) [IsDomain O]
     rw [val_succ PD.p hpr k, Nat.add_sub_cancel_left]
     refine unit_of_val v hinj hO _ _ _ (h2 (k + 1) (by omega)) ?_
     rw [map_pow, map_natCast, v.map_pow, W.v_l, nsmul_one]
-  have hser := UpperTheory.filtration_exponent_bound (N0 W T i) (W.γ T) W.π₀ ((PD.p : ℕ) : O)
+  have hser := UpperTheory.filtration_exponent_bound (Formalism.MainNotions.LiftingTheory.NΔi W T i) (W.γ T) W.π₀ ((PD.p : ℕ) : O)
     (fun y => y + padicValNat PD.p y.factorial) (eY PD.p) (fun k => u₁ W ^ k - 1)
     (monotone_nat_of_le_succ fun k => by have := val_succ PD.p hpr k; omega)
     (eY_mono PD.p hpr) hEe hlam (by simp) (smul_mem_wachFiltration W T i _ hR.πΔ) (fun k x hx => h1 k x hx)
@@ -467,7 +417,7 @@ private theorem aux (W : LocWach PD LL O v n) [IsDomain O]
     exact Finset.dvd_prod_of_mem (fun k => pk W k ^ ((PD.p - 1) * y))
       (Finset.mem_range.2 (show 0 < j by omega))
   · rintro _ ⟨w, hw, rfl⟩
-    have hw0 : w ∈ N0 W T i := (mem_wachFiltration_iff W T i w).2 hw
+    have hw0 : w ∈ Formalism.MainNotions.LiftingTheory.NΔi W T i := (mem_wachFiltration_iff W T i w).2 hw
     obtain ⟨c, hc0, hc, hK⟩ := hser w hw0
     refine ⟨fun y => ((W.φD T) ^ j) (c y), by simp [hc0],
       fun y => ⟨c y, (mem_wachFiltration_iff W T i _).1 (hc y), rfl⟩, Submodule.subset_span ?_⟩
@@ -476,7 +426,7 @@ private theorem aux (W : LocWach PD LL O v n) [IsDomain O]
       ⟨by simp [hc0], fun y => ?_, fun k => ?_⟩, hrs, ?_⟩
     · obtain ⟨x', hx', he⟩ := h1 0 w hw0
       exact ⟨x', hx'.1.1, hx'.1.2, by simpa using he⟩
-    · exact ((mem_wachFiltration_iff W T i _).1 ((N0 W T i).smul_mem _ (hc y))).symm
+    · exact ((mem_wachFiltration_iff W T i _).1 ((Formalism.MainNotions.LiftingTheory.NΔi W T i).smul_mem _ (hc y))).symm
     · obtain ⟨t, ht, he⟩ := hK k
       exact ⟨0, t, ht.1.1, ht.1.2, by rw [pow_zero, one_smul]; exact he⟩
     · rw [hcast]

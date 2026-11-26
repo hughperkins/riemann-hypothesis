@@ -2,47 +2,8 @@ module
 
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.AbLevel
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Linter.HaveILetI
 import Mathlib.Tactic.Linter.Style
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.ReduceModChar
 
 @[expose] public section
 
@@ -55,17 +16,9 @@ private theorem coe_unitsMap {g N : ℕ} [NeZero N] (h : g ∣ N) (u : (ZMod N)�
 
 private theorem pm_iff {n : ℕ} (v : (ZMod n)ˣ) (a : ℕ) (hv : (v : ZMod n) = (a : ZMod n)) :
     (a ≡ 1 [MOD n] ∨ a + 1 ≡ 0 [MOD n]) ↔ v ∈ Subgroup.zpowers (-1 : (ZMod n)ˣ) := by
-  have key : v ∈ Subgroup.zpowers (-1 : (ZMod n)ˣ) ↔ v = 1 ∨ v = -1 := by
-    constructor
-    · rintro ⟨k, rfl⟩
-      rcases Int.even_or_odd k with he | ho
-      · left
-        exact he.neg_one_zpow
-      · right
-        exact ho.neg_one_zpow
-    · rintro (rfl | rfl)
-      · exact Subgroup.one_mem _
-      · exact Subgroup.mem_zpowers _
+  have key : v ∈ Subgroup.zpowers (-1 : (ZMod n)ˣ) ↔ v = 1 ∨ v = -1 :=
+    ⟨fun ⟨k, hk⟩ => by dsimp only at hk; rw [← hk, neg_one_zpow_eq_ite]; split_ifs <;> simp,
+     by rintro (rfl | rfl); exacts [Subgroup.one_mem _, Subgroup.mem_zpowers _]⟩
   rw [key, ← ZMod.natCast_eq_natCast_iff, ← ZMod.natCast_eq_natCast_iff]
   push_cast
   rw [← hv]
@@ -73,26 +26,12 @@ private theorem pm_iff {n : ℕ} (v : (ZMod n)ˣ) (a : ℕ) (hv : (v : ZMod n) =
 
 private theorem jac_iff {p : ℕ} (hp : p.Prime) (v : (ZMod p)ˣ) (a : ℕ) (hv : (v : ZMod p) = (a : ZMod p)) :
     jacobiSym (a : ℤ) p = 1 ↔ v ∈ (powMonoidHom 2 : (ZMod p)ˣ →* (ZMod p)ˣ).range := by
-  haveI := Fact.mk hp
-  have ha : ((a : ℤ) : ZMod p) ≠ 0 := by
-    push_cast
-    rw [← hv]
-    exact v.ne_zero
+  have := Fact.mk hp
+  have ha : ((a : ℤ) : ZMod p) ≠ 0 := by push_cast; rw [← hv]; exact v.ne_zero
   rw [← jacobiSym.legendreSym.to_jacobiSym, legendreSym.eq_one_iff p ha]
   push_cast
-  rw [← hv]
-  constructor
-  · rintro ⟨r, hr⟩
-    have hr0 : r ≠ 0 := by
-      rintro rfl
-      exact v.ne_zero (by simpa using hr)
-    refine ⟨Units.mk0 r hr0, ?_⟩
-    ext
-    simp [hr, sq]
-  · rintro ⟨w, hw⟩
-    refine ⟨w, ?_⟩
-    rw [← hw]
-    simp [sq]
+  rw [← hv, Units.isSquare_coe_iff, isSquare_iff_exists_sq]
+  simp [MonoidHom.mem_range, powMonoidHom_apply, eq_comm]
 
 theorem UpperTheory.V.HV.hostLevel :
     ∀ (h : Host) (E : Type) [Field E] [NumberField E], IsChiField h.chi h.ex h.q1 h.d E → Chr.HasLevel E h.N h.H := by

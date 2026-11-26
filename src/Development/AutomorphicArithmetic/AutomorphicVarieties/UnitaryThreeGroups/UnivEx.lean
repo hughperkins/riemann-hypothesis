@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GRepresents
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
@@ -136,26 +137,16 @@ private theorem eqs_iff (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin
       obtain ⟨a, ha, hb⟩ := ex_theta _ _ (sub_eq_zero.1 h1)
       refine ⟨⟨a, s⟩, rfl, ?_⟩
       rw [← Matrix.fromBlocks_toBlocks X, h2, h3, ← ha, ← hb]
-      exact if_pos hs
+      exact ite_eq_left hs
     · obtain ⟨h1, h2, h3, -⟩ := Matrix.fromBlocks_inj.1 h
       obtain ⟨a, ha, hb⟩ := ex_theta _ _ (sub_eq_zero.1 h1)
       refine ⟨⟨a, s⟩, rfl, ?_⟩
       rw [← Matrix.fromBlocks_toBlocks X, h2, h3, ← ha, ← hb]
-      exact if_neg hs
+      exact ite_eq_right hs
   · rintro ⟨x, rfl, rfl⟩
     rw [emb_def]
     unfold eqs
     split_ifs <;> simp [GG.mat, mul_theta]
-
-private theorem lc_gg {Γ : Type} [TopologicalSpace Γ] (x : Γ → GG (m := m) (R := A)) (h1 : IsLocallyConstant fun g => (x g).right)
-    (h2 : ∀ a b, IsLocallyConstant fun g => (x g).mat a b) : IsLocallyConstant x := by
-  refine (IsLocallyConstant.iff_eventually_eq _).mpr fun g => ?_
-  have hr := h1.eventually_eq g
-  have hm : ∀ᶠ g' in nhds g, ∀ a b, (x g').mat a b = (x g).mat a b := by
-    simp only [Filter.eventually_all]
-    exact fun a b => (h2 a b).eventually_eq g
-  filter_upwards [hr, hm] with g' h1' h2'
-  exact SemidirectProduct.ext (Units.ext (Matrix.ext h2')) h1'
 
 end Emb
 
@@ -168,21 +159,8 @@ omit [IsTopologicalGroup Γ] in
 private theorem lc_mod (hη : IsLocallyConstant η) {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
     (s : GLift O η Ψ R) (n : ℕ) :
     IsLocallyConstant fun g => GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)) (s.hom g) := by
-  apply lc_gg
-  · have hfun : (fun g => (GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)) (s.hom g)).right) = fun g => η g := by
-      funext g
-      rw [GG.map_right]
-      exact s.hasMult g
-    rw [hfun]
-    exact hη
-  · intro a b
-    have hfun : (fun g => (GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)) (s.hom g)).mat a b) =
-        fun g => Ideal.Quotient.mk (maximalIdeal R ^ n) ((s.hom g).mat a b) := by
-      funext g
-      rw [GG.map_mat]
-      rfl
-    rw [hfun]
-    exact s.cont a b n
+  intros
+  apply _root_.UpperTheory.V.U3.GLift.locConst <;> assumption
 
 omit [IsTopologicalGroup Γ] in
 private theorem ker_closed {G : Type*} [Group G] (φ : Γ →* G) (h : IsLocallyConstant φ) :

@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FamilyUniformisationOfAbelianSchemeLaws
 public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
 import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Proper
 import Mathlib.AlgebraicGeometry.QuasiAffine
@@ -34,11 +35,7 @@ theorem quasiCompact_str (R : Type) [CommRing R] (N : ℕ) : QuasiCompact (PSpac
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
 theorem quasiCompact_alt (Xo : Moduli Dw l) : QuasiCompact Xo.s := by
-  obtain ⟨N, i, -, hq, h⟩ := Xo.qproj
-  haveI := hq
-  haveI := quasiCompact_str (KA l) N
-  rw [← h]
-  infer_instance
+  apply _root_.GlobalTheory.UnifParts.quasiCompact_str <;> assumption
 
 theorem isNoetherian_XF (Xo : Moduli Dw l) (c : Coeff l) : IsNoetherian (Xo.XF c) := by
   obtain ⟨N, i, hi, hq, h⟩ := Xo.qproj

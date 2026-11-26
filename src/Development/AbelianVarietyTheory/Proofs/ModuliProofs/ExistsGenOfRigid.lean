@@ -1,45 +1,8 @@
 module
 
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.AlgebraicGeometry.Modules.Sheaf
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.Normed.Algebra.GelfandRadius
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Combinatorics.Enumerative.DyckWord
-import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Geometry.Euclidean.Volume.Basic
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.NumberTheory.Height.Projectivization
-import Mathlib.NumberTheory.LucasLehmer
-import Mathlib.NumberTheory.SelbergSieve
-import Mathlib.RingTheory.Radical.NatInt
-import Mathlib.Tactic.Echelon.Zsqrtd
-import Mathlib.Tactic.Inclusion.Extension.Core.Core
-import Mathlib.Tactic.Inclusion.Extension.Interval.BinarySplit
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Exp
-import Mathlib.Tactic.Inclusion.Extension.IntervalDyadicReal.Hypotheses
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Basic
-import Mathlib.Tactic.Inclusion.Extension.IntervalInt.Hypotheses
 import Mathlib.Tactic.Lemma
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
 import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
 
@@ -128,13 +91,6 @@ private lemma exists_unit_on_open_of_gm_agree_on_cover (V : X.Opens) {κ : Type}
   ext1
   rw [gm_id_val_eq_germ V x (hO a hx), gm_id_val_eq_germ (O a) x hx]
   exact g0 a x hx
-
-private lemma gm_comp_eq_gm_pullU (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) (U : Z.Opens) (h : f x ∈ g ⁻¹ᵁ U) (a : Γ(Z, U)ˣ) :
-    gm (f ≫ g) x U a = gm f x (g ⁻¹ᵁ U) (pullU g U a) := by
-  ext1
-  rw [gm_val_eq_germ_app (f ≫ g) x U h, gm_val_eq_germ_app f x (g ⁻¹ᵁ U) h]
-  simp [pullU]
-  rfl
 
 private lemma germ_appLE_unit_eq_gm_val (f : X ⟶ Y) (U : Y.Opens) (V : X.Opens) (hVU : V ≤ f ⁻¹ᵁ U) (x : X) (hx : x ∈ V)
     (a : Γ(Y, U)ˣ) : (X.presheaf.germ V x hx).hom ((f.appLE U V hVU).hom a.1) = Units.val (gm f x U a) := by
@@ -229,7 +185,7 @@ theorem exists_normalised {N : LB Y} (hN : N.IsLB) {p : Y ⟶ X} {e : X ⟶ Y} (
   · intro x hx i hi
     have hxO : x ∈ V ⊓ ((N.pull e).U fun _ => i) := ⟨hx, Set.mem_iInter.2 fun _ => hi⟩
     rw [map_mul, gm_units_map_restrict e x inf_le_left (show e x ∈ p ⁻¹ᵁ V ⊓ N.U i from ⟨sec_mem he hx, hi⟩),
-      ← gm_comp_eq_gm_pullU e p x V (sec_mem he hx) d, he, hd i x hxO, gmu i x hxO, div_mul_cancel]
+      gm_pull e p x V (sec_mem he hx) d, he, hd i x hxO, gmu i x hxO, div_mul_cancel]
 
 theorem agree_of_rigid {N : LB Y} (hN : N.IsLB) {p : Y ⟶ X} {e : X ⟶ Y} (he : e ≫ p = 𝟙 X)
     (rig : ∀ (V : X.Opens) (u : Γ(Y, p ⁻¹ᵁ V)) (h : V ≤ e ⁻¹ᵁ (p ⁻¹ᵁ V)), (e.appLE _ V h).hom u = 1 → u = 1)

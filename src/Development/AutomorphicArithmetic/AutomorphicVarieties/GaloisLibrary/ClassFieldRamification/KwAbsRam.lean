@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.NormOneApproximationAtLevelPrimes
 public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.LogRootDiscChar
 public import Mathlib.Order.CompletePartialOrder
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.IsClassFieldHilbert
@@ -235,18 +236,7 @@ open scoped Pointwise
 
 private theorem kwRam_split (M N : ℕ) (hN : 0 < N) :
     ∃ a b n : ℕ, N = a * b ∧ a ∣ M ^ n ∧ b.Coprime M := by
-  induction N using Nat.strong_induction_on with
-  | _ N ih =>
-    by_cases hc : N.Coprime M
-    · exact ⟨1, N, 0, by simp, by simp, hc⟩
-    · obtain ⟨p, hp, hpN, hpM⟩ := Nat.Prime.not_coprime_iff_dvd.mp hc
-      obtain ⟨N', rfl⟩ := hpN
-      have hN' : 0 < N' := Nat.pos_of_ne_zero (by rintro rfl; simp at hN)
-      have hlt : N' < p * N' := by have := hp.two_le; nlinarith
-      obtain ⟨a, b, n, rfl, ha, hb⟩ := ih N' hlt hN'
-      refine ⟨p * a, b, n + 1, by ring, ?_, hb⟩
-      rw [pow_succ']
-      exact mul_dvd_mul hpM ha
+  apply _root_.GlobalTheory.UnRep.NormOne.exists_split <;> assumption
 
 theorem UpperTheory.V.CF.kwRam :
     ∀ (L : Type) [Field L] [NumberField L] [IsAbelianGalois ℚ L] (M : ℕ), 0 < M → (∀ p : ℕ, p.Prime → ¬ p ∣ M → UnramAt L p) → ∃ n : ℕ, Nonempty (L →ₐ[ℚ] CyclotomicField (M ^ n) ℚ) := by

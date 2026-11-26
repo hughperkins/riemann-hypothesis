@@ -76,8 +76,8 @@ section -- clump:auto
 @[expose] public section
 
 theorem UpperTheory.Reformulated.B.ConjugateSqrtNeg.conj_sqrt_neg :
-    ∀ {E : Type} [inst : Field E] [inst_1 : NumberField E]
-    [inst_2 : NumberField.IsCMField E] (d : ℕ) (x : E),
+    ∀ {E : Type} [Field E] [NumberField E]
+    [NumberField.IsCMField E] (d : ℕ) (x : E),
     (0 : ℕ) < d → x ^ (2 : ℕ) = -(↑d : E) → (NumberField.IsCMField.complexConj E : E → E) x = -x := by
   intro E _ _ _ d x hd hx
   obtain ⟨φ⟩ : Nonempty (E →+* ℂ) := inferInstance
@@ -261,7 +261,7 @@ theorem UpperTheory.Gal.G1.exists_auxiliary_prime_cmDatum :
   have hp2 : ¬ p ∣ 2 := fun h => by
     have := Nat.le_of_dvd (by norm_num) h
     omega
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   refine ⟨p, inferInstance, hb, sq_of_dvd p d (d * c) ?_ ?_⟩
   · have : (d * c) ^ 2 + d = d * (d * c ^ 2 + 1) := by ring
     rw [this]
@@ -342,9 +342,8 @@ open UpperTheory.Gal.W2.Seed
 namespace UpperTheory.Gal.G1
 
 alias exists_auxiliary_prime := _root_.UpperTheory.Gal.G1.exists_auxiliary_prime_cmDatum
-theorem ArithK_holds : ArithK := pArithK BarEx_holds QuadEx_holds CEx_holds UnitMod_holds CodiffGen_holds CodiffUnit_holds IdemEx_holds RealGen_holds PosGen_holds DeltaEx_holds PerfOf_holds
+theorem ArithK_holds : ArithK := pArithK BarEx_holds QuadEx_holds CEx_holds _root_.UpperTheory.Gal.W2.Seed.pUnitMod _root_.UpperTheory.Gal.W2.Seed.pCodiffGen CodiffUnit_holds _root_.UpperTheory.Gal.W2.Seed.pIdemEx RealGen_holds PosGen_holds DeltaEx_holds _root_.UpperTheory.Gal.W2.Seed.pPerfOf
 theorem ScOf_holds : ScOf := pScOf SetupBasic_holds
-theorem RootAt_holds : RootAt := pRootAt
 
 end UpperTheory.Gal.G1
 end -- clump:auto
@@ -655,7 +654,7 @@ namespace UpperTheory.Gal.Int.Geo.Pl
 
 theorem datEx_holds : DatEx := datEx_of exists_auxiliary_prime ArithK_holds SetupEx_holds ScOf_holds PerfCof_holds
 
-theorem sides_holds : Sides := pSides pCjMem (pBarAdj pDiscInt) (pKeyK pDiscInt) RootAt_holds
+theorem sides_holds : Sides := pSides pCjMem (pBarAdj pDiscInt) (pKeyK pDiscInt) _root_.UpperTheory.Gal.G1.pRootAt
 
 end UpperTheory.Gal.Int.Geo.Pl
 end -- clump:auto

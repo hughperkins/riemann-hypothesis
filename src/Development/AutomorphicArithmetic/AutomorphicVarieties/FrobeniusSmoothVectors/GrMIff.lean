@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpGbox
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
 import Mathlib.Tactic.Linter.Style
 
@@ -8,15 +9,7 @@ import Mathlib.Tactic.Linter.Style
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem sg_sub (R : Type) [CommRing R] (i j : ZMod 2) : sg R (i - j) = sg R i * sg R j := by
-  have h : ∀ i : ZMod 2, i = 0 ∨ i = 1 := by decide
-  have s0 : sg R 0 = 1 := pow_zero _
-  have s1 : sg R 1 = -1 := pow_one _
-  have e : (0 : ZMod 2) - 1 = 1 := by decide
-  rcases h i with rfl | rfl <;> rcases h j with rfl | rfl
-  · rw [sub_self, s0, one_mul]
-  · rw [e, s0, one_mul]
-  · rw [sub_zero, s0, mul_one]
-  · rw [sub_self, s0, s1, neg_mul_neg, one_mul]
+  apply _root_.sg_sub <;> assumption
 
 private theorem sg_sq (R : Type) [CommRing R] (i : ZMod 2) : sg R i * sg R i = 1 := by
   rw [← sg_sub, sub_self]

@@ -129,8 +129,6 @@ section Weil
 
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.CommutatorPairing
 
-attribute [local instance] Over.cartesianMonoidalCategory
-
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : LB A.left} {k : ℤ}
 
 theorem exists_theta_one (hL : L.IsLB) (T : Over S) :
@@ -286,8 +284,6 @@ theorem mem_iSup_of_dual {I : Type} [Fintype I] [DecidableEq I] (V : I → Submo
 end Linear
 
 section HT
-
-attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {X : Scheme.{0}} {Ω : Type} [Field Ω] {G : Over X} [GrpObj G] {ξ : Spec (CommRingCat.of Ω) ⟶ X}
   {E : Type} [AddCommGroup E] [Module Ω E]

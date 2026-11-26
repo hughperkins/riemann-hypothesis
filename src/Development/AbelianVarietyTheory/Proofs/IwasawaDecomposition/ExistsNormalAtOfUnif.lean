@@ -1,5 +1,6 @@
 module
 
+import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieBasisCoordinatesBijectiveTangent
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
 public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsValLineLogNormAtIffEmbedding
 public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsChartOfIsLocalRing
@@ -502,23 +503,8 @@ open MonoidalCategory CartesianMonoidalCategory MonObj Filter GlobalTheory.ArcLi
 theorem comb_tan {R : Type} [CommRing R] {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G] {n : ℕ}
     (v : Fin n → (epsR R ⟶ G)) (hv : ∀ k, IsTangent (v k)) (c : Fin n → R) (w : epsR R ⟶ G) (hc : IsLieComb c v w) :
     IsTangent w := by
-  rw [GlobalTheory.PowLie.isLieComb_iff_prod] at hc
-  subst hc
-  rw [GlobalTheory.PowLie.isTangent_iff]
-  have e0 : ∀ a : R, GlobalTheory.PowLie.zeroPt R ≫ GlobalTheory.PowLie.sc a = GlobalTheory.PowLie.zeroPt R := fun a => by
-    refine Over.OverMorphism.ext ?_
-    simp only [Over.comp_left, GlobalTheory.PowLie.zeroPt, GlobalTheory.PowLie.sc, Over.homMk_left]
-    rw [GlobalTheory.TanMod.spMap_comp']
-    congr 1
-    refine RingHom.ext fun r => ?_
-    simp [epsScaleR]
-  have e1 := map_prod (ReciprocityTheory.ChartRestriction.G.Geo.Tor.preHom (G := G) (GlobalTheory.PowLie.zeroPt R)) (fun k => GlobalTheory.PowLie.sc (c k) ≫ v k)
-    Finset.univ
-  refine e1.trans ?_
-  refine (Finset.prod_congr rfl fun k _ => ?_).trans (Finset.prod_const_one)
-  show GlobalTheory.PowLie.zeroPt R ≫ GlobalTheory.PowLie.sc (c k) ≫ v k = 1
-  rw [← Category.assoc, e0, (GlobalTheory.PowLie.isTangent_iff _).1 (hv k)]
-  rfl
+  intros
+  apply _root_.GlobalTheory.Reg.isTangent_of_isLieComb <;> assumption
 
 theorem sep_laurent {X : Scheme.{0}} {x : Sp (PowerSeries ℂ) ⟶ X} {G : Over X} {G' : Over (Sp (PowerSeries ℂ))} [GrpObj G]
     [GrpObj G'] [IsCommMonObj G'] {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G x φ) {n : ℕ}
@@ -951,7 +937,7 @@ theorem exists_chart_theta_unit : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     have e := hv j z hU
     have e0 : valAt' (show Sp ℂ ⟶ _ from (Ha.ex₀ z).b.left) (a.D₀.P.L.U j) (th.f j) = 0 := by
       rw [hc j]
-      exact (dif_pos hU).trans ((congrArg _ (map_zero _)).trans (map_zero _))
+      exact (dite_eq_left hU).trans ((congrArg _ (map_zero _)).trans (map_zero _))
     rw [e0] at e
     have := (mul_eq_zero.1 e.symm).resolve_right (n j z hU)
     exact (mul_eq_zero.1 this).resolve_left Θ.κ_ne
@@ -1271,7 +1257,7 @@ theorem main_of_lemmas (hFib : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
       yF ≫ pullback.snd _ _ = spMap c.F.val.toRingHom ∧ y w = yF ≫ Y.j := by
     intro w hw
     have h := hlift w hw
-    exact ⟨h.choose, h.choose_spec.1, h.choose_spec.2, dif_pos h⟩
+    exact ⟨h.choose, h.choose_spec.1, h.choose_spec.2, dite_eq_left h⟩
   refine ⟨y, fun U f hUf => ?_, ?_⟩
   · obtain ⟨T', hT'⟩ := Ha.point U f hUf
     refine ⟨max T' Ha.T, fun w hw => ?_⟩

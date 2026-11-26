@@ -49,6 +49,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Init
 public import Mathlib.RingTheory.Filtration
 import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedNormLattice.UniformContinuityGaloisGroup
+import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
 
 @[expose] public section
 
@@ -63,32 +64,11 @@ namespace NTA
 variable {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E))
 
 theorem iMul {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a * b) := by
-  obtain ⟨r1, s1, hs1, h1⟩ := ha
-  obtain ⟨r2, s2, hs2, h2⟩ := hb
-  refine ⟨r1 * r2, s1 * s2, fun h => ?_, ?_⟩
-  · rcases P.isPrime.mem_or_mem h with h | h
-    exacts [hs1 h, hs2 h]
-  · simp only [map_mul]
-    rw [← h1, ← h2]
-    ring
+  apply _root_.PI.TwistedEisensteinNonvanishing.W.ia_mul <;> assumption
 theorem iAdd {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a + b) := by
-  obtain ⟨r1, s1, hs1, h1⟩ := ha
-  obtain ⟨r2, s2, hs2, h2⟩ := hb
-  refine ⟨r1 * s2 + r2 * s1, s1 * s2, fun h => ?_, ?_⟩
-  · rcases P.isPrime.mem_or_mem h with h | h
-    exacts [hs1 h, hs2 h]
-  · simp only [map_mul, map_add (f := _)]
-    rw [← h1, ← h2]
-    ring
+  apply _root_.PI.TwistedEisensteinNonvanishing.W.ia_add <;> assumption
 theorem iSub {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a - b) := by
-  obtain ⟨r1, s1, hs1, h1⟩ := ha
-  obtain ⟨r2, s2, hs2, h2⟩ := hb
-  refine ⟨r1 * s2 - r2 * s1, s1 * s2, fun h => ?_, ?_⟩
-  · rcases P.isPrime.mem_or_mem h with h | h
-    exacts [hs1 h, hs2 h]
-  · simp only [map_mul, map_sub]
-    rw [← h1, ← h2]
-    ring
+  apply _root_.PI.TwistedEisensteinNonvanishing.W.ia_sub <;> assumption
 theorem iNat (m : ℕ) : IntAt P (m : E) := ⟨(m : 𝓞 E), 1, (Ideal.ne_top_iff_one _).mp P.isPrime.ne_top, by simp⟩
 theorem iPow {a : E} (ha : IntAt P a) (m : ℕ) : IntAt P (a ^ m) := by
   induction m with

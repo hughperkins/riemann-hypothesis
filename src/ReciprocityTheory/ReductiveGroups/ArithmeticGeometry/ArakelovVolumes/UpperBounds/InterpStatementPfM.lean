@@ -1,5 +1,6 @@
 module
 
+import all ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PairUnfoldPfB
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
 public import Mathlib.Analysis.InnerProductSpace.Calculus
 public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfD
@@ -32,19 +33,6 @@ open scoped ContDiff
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-private theorem val_chart_symm_apply {n : ℕ} {U : Set (V n)} (e : OpenPartialHomeomorph U (V n))
-    (he : IsChart n Subtype.val e) {w : V n} (hw : w ∈ e.target) : ((e.symm w : U) : V n) = w := by
-  have h1 : e.symm w ∈ e.source := e.map_target hw
-  rw [he h1]
-  exact e.right_inv hw
-
-private theorem comp_chart_symm_eventuallyEq_of_mem_target {n : ℕ} {U : Set (V n)} (e : OpenPartialHomeomorph U (V n))
-    (he : IsChart n Subtype.val e) (g : V n → ℂ) {w : V n} (hw : w ∈ e.target) :
-    (fun y : U => g y.1) ∘ e.symm =ᶠ[nhds w] g := by
-  filter_upwards [e.open_target.mem_nhds hw] with y hy
-  simp only [Function.comp_apply]
-  rw [val_chart_symm_apply e he hy]
-
 private theorem exists_isChart_subtype_val {n : ℕ} {U : Set (V n)} (hz : IsLocalHomeomorph (Subtype.val : U → V n))
     (y : U) : ∃ e : OpenPartialHomeomorph U (V n), IsChart n Subtype.val e ∧ y ∈ e.source := by
   obtain ⟨e, hy, he⟩ := hz y
@@ -60,7 +48,8 @@ private theorem db_subtype_val_eq_wdb {n : ℕ} {U : Set (V n)} (hz : IsLocalHom
     rw [hc.1 hc.2]
     exact (Classical.choose hex).map_source hc.2
   unfold wdb
-  rw [(comp_chart_symm_eventuallyEq_of_mem_target _ hc.1 g hw).fderiv_eq]
+  rw [((HE.comp_symm_eqOn g hc.1).eventuallyEq_of_mem
+    ((Classical.choose hex).open_target.mem_nhds hw)).fderiv_eq]
 
 private theorem d_subtype_val_eq_wd {n : ℕ} {U : Set (V n)} (hz : IsLocalHomeomorph (Subtype.val : U → V n))
     (g : V n → ℂ) (k : Fin n) (y : U) : d n Subtype.val k (fun y : U => g y.1) y = wd n k g y.1 := by
@@ -72,7 +61,8 @@ private theorem d_subtype_val_eq_wd {n : ℕ} {U : Set (V n)} (hz : IsLocalHomeo
     rw [hc.1 hc.2]
     exact (Classical.choose hex).map_source hc.2
   unfold wd
-  rw [(comp_chart_symm_eventuallyEq_of_mem_target _ hc.1 g hw).fderiv_eq]
+  rw [((HE.comp_symm_eqOn g hc.1).eventuallyEq_of_mem
+    ((Classical.choose hex).open_target.mem_nhds hw)).fderiv_eq]
 
 private theorem levi_lemma_6 {n : ℕ} {U : Set (V n)} (hz : IsLocalHomeomorph (Subtype.val : U → V n))
     (ph : V n → ℝ) (x : U) (ξ : Fin n → ℂ) :
@@ -152,10 +142,10 @@ theorem exhaustF_holds : ExhaustFStatement (E := E) := by
     intro e he
     refine ContDiffOn.congr (f := fun w => ((eF X x0 w : ℝ) : ℂ))
       (fun w hw => (hgE w ?_).contDiffWithinAt) (fun w hw => ?_)
-    · rw [← val_chart_symm_apply e he hw]
+    · rw [← HE.symm_val he hw]
       exact (e.symm w).2
     · simp only [Function.comp_apply]
-      rw [val_chart_symm_apply e he hw]
+      rw [HE.symm_val he hw]
   · unfold LeviNonneg
     intro x ξ
     rw [levi_lemma_6 hz (eF X x0) x ξ]
@@ -419,18 +409,7 @@ theorem densF_pos (x0 : Frame X.Ψ r) {z : V (nd X)} (hz : z ∈ OmF X x0) : 0 <
   | exact zpow_pos (norm_pos_iff.mpr hne) _
 
 private lemma continuous_cpt' (x0 : Frame X.Ψ r) : Continuous (cpt X x0) := by
-  have hr : Continuous fun y : Frame X.Ψ r => rmul x0 y := continuous_pi fun τ =>
-    (show Continuous fun y : Frame X.Ψ r => (mat x0 τ * mat y τ : Matrix (Fin r) (Fin r) ℂ) from
-      continuous_const.matrix_mul (continuous_apply τ))
-  unfold cpt nmat
-  refine hr.comp ?_
-  refine continuous_pi fun τ => continuous_pi fun a => continuous_pi fun b => ?_
-  by_cases h : b < a
-  · simp only [dif_pos h]
-    first
-    | fun_prop
-  · simp only [dif_neg h]
-    exact continuous_const
+  apply _root_.ReciprocityTheory.ChartRestriction.G.AR.Up.PairUnfoldPf.continuous_cpt_apply <;> assumption
 
 theorem densF_meas (x0 : Frame X.Ψ r) : Measurable (densF X x0) := by
   unfold densF

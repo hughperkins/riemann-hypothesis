@@ -3,6 +3,7 @@ module
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LeAdicClosure
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CharpolyFlag
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CharpolyFlag
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
 import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FlagLoc
 
@@ -12,20 +13,7 @@ open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem zpow_w_ne {k : Type} [Field k] {n : ℕ} (hn : n = 2 ∨ n = 3) (a : kˣ) (ha : a ^ 2 ≠ 1)
     (i j : Fin n) (hij : i ≠ j) : a ^ w n i ≠ a ^ w n j := by
-  have h1 : a ≠ 1 := by
-    rintro rfl
-    simp at ha
-  have h2 : a ≠ a⁻¹ := by
-    intro h
-    apply ha
-    rw [sq]
-    nth_rewrite 2 [h]
-    simp
-  rcases hn with rfl | rfl
-  · fin_cases i <;> fin_cases j <;> simp [w] at hij ⊢
-    all_goals first | exact h2 | exact Ne.symm h2
-  · fin_cases i <;> fin_cases j <;> simp [w] at hij ⊢
-    all_goals first | exact h1 | exact Ne.symm h1 | exact h2 | exact Ne.symm h2
+  apply _root_.zpow_w_ne' <;> assumption
 
 theorem UpperTheory.V.Fr.flag :
     ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] {F : Frame l (ResidueField O)} {C₀ : ℕ} {n : ℕ}, F.Ok C₀ → (n = 2 ∨ n = 3) → ∀ S : Space O F n, ∀ (C : Type) [CommRing C] [IsLocalRing C] (f : S.A →+* C) (v : F.V), UpperTheory.V.W.HasFlag ((S.u.map f).r.comp (F.loc0 v)).toHomUnits ((S.u.map f).ψ v) := by

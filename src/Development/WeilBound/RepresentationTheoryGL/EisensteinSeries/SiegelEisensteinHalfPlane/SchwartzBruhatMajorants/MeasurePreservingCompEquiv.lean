@@ -32,30 +32,6 @@ theorem measurePreserving_comp_equiv {ι κ : Type} [Fintype ι] [Fintype κ] {�
 
 noncomputable section
 
-theorem map_mulVec_fin {k : Type} [Field k] [NumberField k] {n : ℕ} (A : GL (Fin n) 𝔸[k]) :
-    (adeleMeasurePi k).map (fun x : Fin n → 𝔸[k] => (A : Matrix (Fin n) (Fin n) 𝔸[k]) *ᵥ x) =
-      ENNReal.ofReal ((ideleModule k (Matrix.GeneralLinearGroup.det A) : ℝ))⁻¹ •
-        adeleMeasurePi k (ι := Fin n) := by
-  apply GlobalTheory.CompanionTheory.LtrFourier.map_mulVec_fin
-
-theorem map_mulVec {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι] [DecidableEq ι]
-    (A : GL ι 𝔸[k]) :
-    (adeleMeasurePi k).map (fun x : ι → 𝔸[k] => (A : Matrix ι ι 𝔸[k]) *ᵥ x) =
-      ENNReal.ofReal ((ideleModule k (Matrix.GeneralLinearGroup.det A) : ℝ))⁻¹ •
-        adeleMeasurePi k (ι := ι) :=
-  _root_.GlobalTheory.CompanionTheory.LtrFourier.map_mulVec A
-
-def mulVecHomeo {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι] [DecidableEq ι]
-    (A : GL ι 𝔸[k]) : (ι → 𝔸[k]) ≃ₜ (ι → 𝔸[k]) where
-  toFun x := (A : Matrix ι ι 𝔸[k]) *ᵥ x
-  invFun x := ((A⁻¹ : GL ι 𝔸[k]) : Matrix ι ι 𝔸[k]) *ᵥ x
-  left_inv x := by
-    simp only [Matrix.mulVec_mulVec, Units.inv_mul, Matrix.one_mulVec]
-  right_inv x := by
-    simp only [Matrix.mulVec_mulVec, Units.mul_inv, Matrix.one_mulVec]
-  continuous_toFun := continuous_const.matrix_mulVec continuous_id
-  continuous_invFun := continuous_const.matrix_mulVec continuous_id
-
 theorem adelicFourierPi_ltr : ∀ {k : Type} [Field k] [NumberField k], ∀ {ι : Type} [Fintype ι] [DecidableEq ι], ∀ (A : GL ι 𝔸[k]) (F : (ι → 𝔸[k]) → ℂ), adelicFourierPi k (ltr A F) =
       (((ideleModule k (Matrix.GeneralLinearGroup.det A) : ℝ))⁻¹ : ℂ) •
         ltr (tInv A) (adelicFourierPi k F) := by

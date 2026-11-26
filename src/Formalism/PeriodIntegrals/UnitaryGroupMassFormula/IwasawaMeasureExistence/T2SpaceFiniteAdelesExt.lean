@@ -6,6 +6,7 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsScaledIntegralFiniteAdelePointsSubsetNhds
 
 @[expose] public section
 
@@ -33,18 +34,7 @@ theorem natCast_mul_apply (N : ℕ) (z : Af F) (v : HeightOneSpectrum (𝓞 F)) 
 
 theorem norm_natCast_lt_one (v : HeightOneSpectrum (𝓞 F)) (c : ℕ) (hc : Ideal.absNorm v.asIdeal ∣ c) :
     ‖(c : v.adicCompletion F)‖ < 1 := by
-  have hmem : (c : 𝓞 F) ∈ v.asIdeal := by
-    obtain ⟨k, hk⟩ := hc
-    rw [hk, Nat.cast_mul]
-    exact Ideal.mul_mem_right _ _ (Ideal.absNorm_mem _)
-  have hval := (HeightOneSpectrum.valuation_lt_one_iff_mem (K := F) v (c : 𝓞 F)).2 hmem
-  rw [Valued.toNormedField.norm_lt_one_iff]
-  have e : (c : v.adicCompletion F) = (((algebraMap (𝓞 F) F (c : 𝓞 F)) : F) : v.adicCompletion F) := by
-    rw [map_natCast]
-    rw [show (((c : F)) : v.adicCompletion F) = algebraMap F (v.adicCompletion F) (c : F) from rfl,
-      map_natCast]
-  rw [e, HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-  exact hval
+  apply _root_.GlobalTheory.EvAdm.norm_natCast_lt_one_of_dvd <;> assumption
 
 theorem mem_int_of_norm_le_one (v : HeightOneSpectrum (𝓞 F)) (x : v.adicCompletion F) (h : ‖x‖ ≤ 1) :
     x ∈ v.adicCompletionIntegers F :=
@@ -111,12 +101,8 @@ theorem exists_nat_den {E : Type} [Field E] [NumberField E] (s : Finset E) :
   obtain ⟨y, hy, h⟩ := exists_integral_multiples ℤ ℚ s
   refine ⟨y.natAbs, Int.natAbs_pos.mpr hy, fun x hx => ?_⟩
   have hi : IsIntegral ℤ ((y.natAbs : E) * x) := by
-    have hyx := h x hx
-    rw [zsmul_eq_mul] at hyx
-    rw [← Int.cast_natCast, Int.natCast_natAbs]
-    rcases abs_choice y with h' | h'
-    · rw [h']; exact hyx
-    · rw [h', Int.cast_neg, neg_mul]; exact hyx.neg
+    rw [← Int.cast_natCast, ← zsmul_eq_mul, ← Int.sign_mul_self, ← smul_smul]
+    exact (h x hx).zsmul _
   obtain ⟨a, ha⟩ := (IsIntegralClosure.isIntegral_iff (A := 𝓞 E)).mp hi
   exact ⟨a, ha⟩
 
@@ -249,19 +235,9 @@ theorem exists_denom : ∃ D : ℕ, 1 ≤ D ∧ ∀ o : 𝓞 I.E, ∀ j : ι,
   obtain ⟨y, hy0, hy⟩ := exists_integral_multiples ℤ ℚ
     ((Finset.univ : Finset (_ × ι)).image (fun p => b.repr ((eb p.1 : 𝓞 I.E) : I.E) p.2))
   refine ⟨y.natAbs, Nat.one_le_iff_ne_zero.2 (Int.natAbs_ne_zero.2 hy0), ?_⟩
-  have hint : ∀ c : I.F, IsIntegral ℤ (y • c) → IsIntegral ℤ ((y.natAbs : I.F) * c) := by
-    intro c hc
-    rcases Int.natAbs_eq y with h | h
-    · have : ((y.natAbs : ℤ) : I.F) * c = y • c := by rw [← h, zsmul_eq_mul]
-      rw [← Int.cast_natCast, this]
-      exact hc
-    · have : ((y.natAbs : ℤ) : I.F) * c = -(y • c) := by
-        rw [zsmul_eq_mul]
-        conv_rhs => rw [h]
-        push_cast
-        ring
-      rw [← Int.cast_natCast, this]
-      exact hc.neg
+  have hint : ∀ c : I.F, IsIntegral ℤ (y • c) → IsIntegral ℤ ((y.natAbs : I.F) * c) := fun c hc => by
+    rw [← Int.cast_natCast, ← zsmul_eq_mul, ← Int.sign_mul_self, ← smul_smul]
+    exact hc.zsmul _
   have gen : ∀ i j, ∃ r : 𝓞 I.F,
       (y.natAbs : I.F) * b.repr ((eb i : 𝓞 I.E) : I.E) j = algebraMap (𝓞 I.F) I.F r := by
     intro i j

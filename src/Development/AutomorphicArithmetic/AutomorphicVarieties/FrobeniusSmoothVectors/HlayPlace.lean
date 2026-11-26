@@ -1,5 +1,6 @@
 module
 
+import all Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.PlacesQ
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
 public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
@@ -18,26 +19,7 @@ open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing U
 
 private theorem hlay_place (Ω : Type) [Field Ω] [CharZero Ω] (p : ℕ) (hp : p.Prime) :
     ∃ A : ValuationSubring Ω, A.valuation (p : Ω) < 1 := by
-  have hmem : (p : Ω) ∈ (⊥ : Subring Ω) := Subring.mem_bot.mpr ⟨p, by simp⟩
-  set x : (⊥ : Subring Ω) := ⟨p, hmem⟩
-  have hI : Ideal.span {x} ≠ ⊤ := by
-    rw [Ne, Ideal.span_singleton_eq_top]
-    rintro ⟨u, hu⟩
-    obtain ⟨b, hb⟩ := Subring.mem_bot.mp (u⁻¹ : (⊥ : Subring Ω)ˣ).1.2
-    have h1 : (u : (⊥ : Subring Ω)) * (↑u⁻¹ : (⊥ : Subring Ω)) = 1 := u.mul_inv
-    have h2 : ((p : ℤ) * b : ℤ) = (1 : Ω) := by
-      have := congrArg Subtype.val h1
-      simp only [Subring.coe_mul, Subring.coe_one] at this
-      rw [hu] at this
-      push_cast
-      rw [hb]
-      exact this
-    have h3 : (p : ℤ) * b = 1 := by exact_mod_cast h2
-    have h4 : (p : ℤ) ∣ 1 := ⟨b, h3.symm⟩
-    have : p ∣ 1 := by exact_mod_cast h4
-    exact hp.one_lt.ne' (Nat.dvd_one.mp this)
-  obtain ⟨B, -, hB⟩ := Ideal.image_subset_nonunits_valuationSubring _ hI
-  exact ⟨B, (ValuationSubring.mem_nonunits_iff B).mp (hB ⟨x, Ideal.subset_span rfl, rfl⟩)⟩
+  apply _root_.UpperTheory.V.Chr.RationalPlaces.exists_place <;> assumption
 
 private theorem hlay_cop (l : ℕ) [hl : Fact l.Prime] (m : ℕ) : (l ^ m).Coprime (l - 1) := Nat.Coprime.pow_left m ((Nat.coprime_self_sub_right hl.out.one_le).mpr (Nat.coprime_one_right _))
 

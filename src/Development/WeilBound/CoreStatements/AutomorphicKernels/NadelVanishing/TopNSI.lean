@@ -52,6 +52,7 @@ import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFinite
 import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowMulIntersectionLeOfNefClassOnClosed
 import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
 import Std.Tactic.BVDecide.Normalize.Prop
+import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDivisorNonKltAtPointsNotContainingCentre
 
 -- This file was produced by scripts/clump.py from the modules listed below.
 -- Members: Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDivisorNonKltLocusFibre, Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartierDivToWeilQDivisorAddOfEffective, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffectiveQDivisorOffPointAmpleClass, Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenKawamataLogTerminalLocusLogCanonicalLocus, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOpenKltOffIsolatedLcCentre, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsolatedLcCentreOfZeroLcThreshold, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDivisorNonKltPointsNumericallyMultiple, Development.AbelianVarietyTheory.Proofs.DivisorProofs.AngehrnSiuCutLowerCentreDimension, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAmpleEffectiveKltInductionStart, Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogCanonicalCutAngehrnSiuInduction, Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsolatedNonKltDivisorOfPrincipalisation, Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopIsolated, Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopNadel, Development.WeilBound.CoreStatements.AutomorphicKernels.NadelVanishing.TopNSI
@@ -94,7 +95,7 @@ namespace GlobalTheory.QDivSum
 
 theorem sum_eq : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X] (p : X ⟶ Sp ℂ), IsProjOver p → letI := algebraΓOfHom p; ∀ (D E : CartierDiv X) (a b : ℕ), 0 < a → 0 < b → D.Eff → E.Eff → (b • D + a • E).Eff ∧ qWeil (b • D + a • E) (a * b) = qWeil D a + qWeil E b ∧ ∀ C : Closeds X, IsCompleteCurve ℂ C → (interNumRed ℂ C ![toLB (b • D + a • E)] : ℚ) / ((a * b : ℕ) : ℚ) = (interNumRed ℂ C ![toLB D] : ℚ) / a + (interNumRed ℂ C ![toLB E] : ℚ) / b := by
   intro X _ _ p hp
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   intro D E a b ha hb hD hE
   refine ⟨(GlobalTheory.RoundEqn.Eff.nsmul' hD b).add (GlobalTheory.RoundEqn.Eff.nsmul' hE a), ?_, ?_⟩
   · funext z
@@ -144,7 +145,7 @@ theorem exists_common_den_nonneg (q₁ q₂ : ℚ) (h₁ : 0 ≤ q₁) (h₂ : 0
 
 theorem exists_eff_off_pt_ample_class : ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X] (p : X ⟶ Sp ℂ), IsProjOver p → letI := algebraΓOfHom p; ∀ (N₀ : LB X) (A : CartierDiv X) (x : X) (r : ℕ) (lam μ : ℚ), N₀.IsLB → IsNef ℂ N₀ → IsAmpleLB (toLB A) → 0 < r → lam ≤ 1 → 0 < μ → ∃ (M : ℕ) (E : CartierDiv X), 0 < M ∧ E.Eff ∧ x ∉ E.supp ∧ ∀ C : Closeds X, IsCompleteCurve ℂ C → (interNumRed ℂ C ![toLB E] : ℚ) / M = (1 - lam) * interNumRed ℂ C ![N₀] / r + μ * interNumRed ℂ C ![toLB A] := by
   intro X _ _ p hp
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   intro N₀ A x r lam μ hN₀ hNef hA hr hlam hμ
   have hr' : (0 : ℚ) < r := by exact_mod_cast hr
   obtain ⟨a, b, M, hM, ha, hb⟩ :=
@@ -208,9 +209,9 @@ theorem isOpen_kltLocus_lcLocus : GlobalTheory.Published.Principalisation → �
     rw [← h] at this
     exact this
   obtain ⟨Y, hY, s, hs, K, B, hres, -⟩ := _root_.GlobalTheory.LogResExist.exists_logRes hP k X p n hp hdim η m G hη.ne_zero ⊥ hZ
-  haveI := hres.smooth
-  haveI : Smooth (s ≫ p) := hres.smooth.smooth
-  haveI : IsLocallyNoetherian Y := LocallyOfFiniteType.isLocallyNoetherian (s ≫ p)
+  have := hres.smooth
+  have : Smooth (s ≫ p) := hres.smooth.smooth
+  have : IsLocallyNoetherian Y := LocallyOfFiniteType.isLocallyNoetherian (s ≫ p)
   exact _root_.GlobalTheory.Discrepancy.isOpen_kltAt_and_lcAt_of_isLogRes k X p n hp hdim Δ η m G Y s K B hη hres
 
 end GlobalTheory.Discrepancy
@@ -233,7 +234,7 @@ theorem GlobalTheory.PairStep.exists_open_lc_klt_off_point :
     GlobalTheory.Published.Principalisation → ∀ (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetherian X] [GlobalTheory.IsNormalScheme X] (p : X ⟶ Sp ℂ) (n : ℕ), IsProjOver p → topologicalKrullDim X = n → ∀ (Γ : X → ℚ) (m : ℕ) (G : CartierDiv X) (x : X), 0 < m → IsLogCanonicalMultiple p n Γ m G → IsClosed ({x} : Set X) → LcCut p n Γ x 0 → ∃ U : X.Opens, x ∈ U ∧ (∀ y ∈ U, LcAt p n Γ y) ∧ (∀ y ∈ U, y ≠ x → KltAt p n Γ y) := by
   intro hPr X _ _ _ p n hp hdim Γ m G x hm hlc hx hcut
   obtain ⟨hlcx, hnk, hdimz⟩ := hcut
-  haveI : AlgebraicGeometry.IsNoetherian X := isNoetherian_of_isProjOver hp
+  have : AlgebraicGeometry.IsNoetherian X := isNoetherian_of_isProjOver hp
   have hopen := (_root_.GlobalTheory.Discrepancy.isOpen_kltLocus_lcLocus hPr ℂ X p n hp hdim Γ m G hm hlc).1
   set T : Set X := {y | ¬ KltAt p n Γ y} with hT
   have hTc : IsClosed T := by
@@ -298,7 +299,7 @@ theorem GlobalTheory.PairStep.exists_isolated_of_lcCut_zero : GlobalTheory.Publi
         x ∈ U ∧ (∀ y ∈ U, LcAt p n (Δ + qWeil D₀ m) y) ∧
         (∀ y ∈ U, y ≠ x → KltAt p n (Δ + qWeil D₀ m) y) ∧ ¬ KltAt p n (Δ + qWeil D₀ m) x := by
   intro hPr X _ _ _ p n hp hn hn1
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   intro Δ r N₀ x c hΔ hklt hr hN₀ hnef hbig hx hc hcZ hsum A lam μ m' D₀ hA hm' hD₀ hμ hlam hnum hcut
   obtain ⟨m, G, hm, hG⟩ := _root_.GlobalTheory.Discrepancy.exists_isLogCanonicalMultiple_of_kltAt X p n hp hn Δ hΔ hklt
   have hG' := GlobalTheory.isLogCanonicalMultiple_add_qWeil X p n Δ m m' G D₀ hm hm' hG
@@ -353,18 +354,7 @@ variable {X : Scheme.{0}} [IsIntegral X]
 
 theorem generatesAt_add_vanishesAt {D : CartierDiv X} {x : X} {f u : X.functionField}
     (hf : D.GeneratesAt x f) (hu : D.VanishesAt x u) : D.GeneratesAt x (f + u) := by
-  obtain ⟨e, he⟩ := D.exists_isEqn x
-  rw [he.generatesAt_iff] at hf ⊢
-  rw [he.vanishesAt_iff] at hu
-  obtain ⟨a, ha, hae⟩ := hf
-  obtain ⟨b, hb, hbe⟩ := hu
-  refine ⟨a + b, ?_, by rw [map_add (f := _), hae, hbe, add_mul]⟩
-  by_contra hn
-  have h1 : a + b ∈ IsLocalRing.maximalIdeal _ := (IsLocalRing.mem_maximalIdeal _).2 hn
-  have h2 : a ∈ IsLocalRing.maximalIdeal _ := by
-    have := Ideal.sub_mem _ h1 hb
-    simpa using this
-  exact (IsLocalRing.mem_maximalIdeal _).1 h2 ha
+  apply _root_.GlobalTheory.Cartier.CommonEqn.generatesAt_add <;> assumption
 
 variable [IsLocallyNoetherian X]
 
@@ -463,7 +453,7 @@ theorem exists_qWeil_eq_comb (X : Scheme.{0}) [IsIntegral X] [IsLocallyNoetheria
     ∃ (F : CartierDiv X) (M : ℕ), 0 < M ∧ F.Eff ∧ s • qWeil D m + t • qWeil E k = qWeil F M ∧
       ∀ C : Closeds X, IsCompleteCurve ℂ C → (interNumRed ℂ C ![toLB F] : ℚ) / M =
         s * ((interNumRed ℂ C ![toLB D] : ℚ) / m) + t * ((interNumRed ℂ C ![toLB E] : ℚ) / k) := by
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   obtain ⟨a, b, hb, rfl⟩ := exists_nat_div_of_nonneg s hs
   obtain ⟨a', b', hb', rfl⟩ := exists_nat_div_of_nonneg t ht
   have hm0 : (m : ℚ) ≠ 0 := Nat.cast_ne_zero.2 hm.ne'
@@ -502,7 +492,7 @@ theorem logCanonicalCut_lowers_centre_dimension : GlobalTheory.Published.Princip
   intro hPr X _ _ _ p n hp hn
   intro Δ m G r N₀ hN₀ A F a x z e c' lam μ m' D₀ hΔ hklt hm hG hr hNnef hA ha hF hx hzx he hdim
     hcen hc' hv hm' hD₀ hμ hcurve hlc
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
 
   have hr0 : (0 : ℝ) < r := by exact_mod_cast hr
   have hre : (0 : ℝ) < (r : ℝ) ^ e := pow_pos hr0 e
@@ -669,7 +659,7 @@ theorem exists_ample_eff_kltAt_start : GlobalTheory.Published.Principalisation �
         ∃ (lam μ : ℚ) (m' : ℕ) (D₀ : CartierDiv X), 0 < m' ∧ D₀.Eff ∧ 0 < μ ∧ lam < β ∧
           (∀ C : Closeds X, IsCompleteCurve ℂ C → (interNumRed ℂ C ![toLB D₀] : ℚ) / m' = lam * interNumRed ℂ C ![N₀] / r - μ * interNumRed ℂ C ![toLB A]) ∧ ∀ y, KltAt p n (Δ + qWeil D₀ m') y := by
   intro hPr X _ _ _ p n hp hn
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   intro Δ r N₀ hN₀ β hΔ hklt hr hnef hbig hβ
   obtain ⟨H, hH⟩ := exists_isAmpleLB_of_isProjOver hp
   obtain ⟨A, hA⟩ := toPic_surjective (cls H hH.isLB)
@@ -752,7 +742,7 @@ theorem exists_lcCut_induction : GlobalTheory.Published.Principalisation → ∀
           lam * interNumRed ℂ C ![N₀] / r - μ * interNumRed ℂ C ![toLB A]) ∧
         LcCut p n (Δ + qWeil D₀ m') x j' := by
   intro hPr X _ _ _ p n hP hn hn1
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   intro Δ r N₀ x c hΔ hklt hr hN₀ hnef hbig hx hc hZ
   obtain ⟨m, G, hm, hG⟩ := _root_.GlobalTheory.Discrepancy.exists_isLogCanonicalMultiple_of_kltAt X p n hP hn Δ hΔ hklt
   have hcpos : ∀ e, 1 ≤ e → e ≤ n → 0 < c e := fun e h1 h2 => hc e (Finset.mem_Icc.2 ⟨h1, h2⟩)
@@ -824,7 +814,7 @@ theorem exists_lcCut_induction : GlobalTheory.Published.Principalisation → ∀
         topologicalKrullDim (closure ({z} : Set X)) ≤ j
     · refine ⟨j, lam, μ, m', D₁, le_rfl, hm', hD₁, hμ, ?_, hnum, hlc, hnk, hall⟩
       rw [hsj]; linarith
-    push_neg at hall
+    push Not at hall
     obtain ⟨z, hzx, hzk, hzd⟩ := hall
     have hq : IsQCart (qWeil D₁ m') := ⟨m', D₁, hm', hD₁, rfl⟩
     obtain ⟨w, hwz, hw⟩ := _root_.GlobalTheory.PairStep.Centre.exists_isNkltCentre X p n hP hn Δ (qWeil D₁ m') z hq (hklt z) hzk
@@ -879,7 +869,7 @@ namespace GlobalTheory
 theorem isolatedNonKltDivisor_of_principalisation :
     GlobalTheory.Published.Principalisation → GlobalTheory.Published.IsolatedNonKltDivisor := by
   intro hP X _ _ _ p n hproj hdim hn Δ r N₀ x c hΔ hklt hr hnef hbig hx hc hvol hsum
-  letI := algebraΓOfHom p
+  let := algebraΓOfHom p
   have hLB : N₀.IsLB := hnef.isLB
   obtain ⟨A, hA, hj⟩ := _root_.GlobalTheory.PairStep.exists_lcCut_induction hP X p n hproj hdim hn Δ r N₀ x c hΔ hklt hr hLB hnef hbig hx hc hvol
   obtain ⟨j', lam, μ, m', D₀, hj', hm', hD₀, hμ, hlam, hnum, hcut⟩ := hj 0 (by omega)

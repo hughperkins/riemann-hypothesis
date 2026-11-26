@@ -159,10 +159,10 @@ theorem dictEx_holds : DictEx := by
           have : (i : ℕ) < j + 1 := hi
           exact Fin.le_def.2 (by omega)
         rcases hbi.lt_or_eq with hlt | heq
-        · rw [h0 b i hlt, if_neg (ne_of_gt hlt), sub_zero, zero_smul]
+        · rw [h0 b i hlt, ite_eq_right (ne_of_gt hlt), sub_zero, zero_smul]
           exact Submodule.zero_mem _
         · subst heq
-          rw [h1, if_pos rfl, sub_self, zero_smul]
+          rw [h1, ite_eq_left rfl, sub_self, zero_smul]
           exact Submodule.zero_mem _
     · simp
     · intro a b _ _ ha hb
@@ -359,7 +359,6 @@ theorem inv_up (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (hup : ∀ b a, 
   exact h
 
 end LatB
-
 
 open LatB LatA Alg in
 theorem dictLatB_holds : DictLatB := by
@@ -586,7 +585,6 @@ theorem rows_mem (hL : Formalism.HermitianLatticesTheory.gmap n (VS D).L0 = (VS 
 
 end LatF
 
-
 open Alg LatF in
 theorem dictLatF_holds : DictLatF := by
   intro D X u n hn hL
@@ -623,15 +621,10 @@ theorem mem_closure_image {A B : Type*} [AddCommGroup A] [AddCommGroup B] (f : A
 
 variable {D : D7} (X : HidaSetting D)
 
-def embHom : D.host.E →+ (InfinitePlace X.B.I.F → ℂ) where
-  toFun := embV X
-  map_zero' := by funext v; simp [embV]
-  map_add' x y := by funext v; simp [embV]
-
 theorem mem_cl_emb (I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)
     (y : InfinitePlace X.B.I.F → ℂ) :
     y ∈ AddSubgroup.closure (embV X '' (I : Set D.host.E)) ↔ ∃ t ∈ I, embV X t = y := by
-  have := mem_closure_image (embHom X) ((I : Submodule (𝓞 D.host.E) D.host.E).toAddSubgroup) y
+  have := mem_closure_image (Formalism.L2.SG.Pf.NcReal.JX.CovB.embVHom X) ((I : Submodule (𝓞 D.host.E) D.host.E).toAddSubgroup) y
   exact this
 
 theorem theta_spec (D : D7) : IsIntegral ℤ (theta D) ∧ theta D + D.host.conj (theta D) = 1 := by
@@ -711,17 +704,11 @@ def imH (a : Fin D.R.rS) : AddSubgroup D.host.E where
     rintro s ⟨hs1, hs2⟩
     exact ⟨Submodule.neg_mem _ hs1, by rw [map_neg, hs2]⟩
 
-def imHom : D.host.E →+ (InfinitePlace X.B.I.F → ℝ) where
-  toFun t := fun v => (embS D (X.pl v) t).im
-  map_zero' := by funext v; simp
-  map_add' s t := by funext v; simp
-
 theorem mem_cl_im (a : Fin D.R.rS) (z : InfinitePlace X.B.I.F → ℝ) :
-    z ∈ cLat X u (Sum.inr (Sum.inr a)) ↔ ∃ t ∈ imH a, imHom X t = z := by
-  exact mem_closure_image (imHom X) (imH a) z
+    z ∈ cLat X u (Sum.inr (Sum.inr a)) ↔ ∃ t ∈ imH a, Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom X t = z := by
+  exact mem_closure_image (Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom X) (imH a) z
 
 end Onto
-
 
 open Onto in
 theorem fibOnto_holds : FibOnto := by
@@ -740,7 +727,7 @@ theorem fibOnto_holds : FibOnto := by
   have hC : ∀ p : LsNc5.LtPair D.R.rS, ∃ s ∈ aaD D p.1.1 * aaD D p.1.2,
       embV X s = fun v => x (Sum.inr (Sum.inl p)) v - Hc X u x v p.1.1 p.1.2 / 2 :=
     fun p => (mem_cl_emb X _ _).1 (hx (Sum.inr (Sum.inl p)))
-  have hD : ∀ a : Fin D.R.rS, ∃ t ∈ imH a, imHom X t =
+  have hD : ∀ a : Fin D.R.rS, ∃ t ∈ imH a, Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom X t =
       fun v => x (Sum.inr (Sum.inr a)) v - -((Hc X u x v a a).re * (embS D (X.pl v) (theta D)).im) :=
     fun a => (mem_cl_im X u a _).1 (hx (Sum.inr (Sum.inr a)))
   choose tA htA htA' using hA
@@ -821,7 +808,7 @@ theorem fibOnto_holds : FibOnto := by
   · funext v
     show (embS D (X.pl v) (M a a)).im = _
     have hs := congrFun (htD' a) v
-    simp only [imHom, AddMonoidHom.coe_mk, ZeroHom.coe_mk, hHc v, Matrix.map_apply] at hs
+    simp only [Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom, AddMonoidHom.coe_mk, ZeroHom.coe_mk, hHc v, Matrix.map_apply] at hs
     have hr : (embS D (X.pl v) (Gp D X0 xs a a)).im = 0 := by
       have := congrArg (embS D (X.pl v)) (hGh a a)
       rw [emb_star X] at this
@@ -1026,17 +1013,12 @@ def imSub (a : Fin D.R.rS) : AddSubgroup D.host.E where
   zero_mem' := ⟨Submodule.zero_mem _, by rw [map_zero, neg_zero]⟩
   neg_mem' := fun {t} ht => ⟨Submodule.neg_mem _ ht.1, by rw [map_neg, ht.2]⟩
 
-def imHom : D.host.E →+ (InfinitePlace X.B.I.F → ℝ) where
-  toFun t := fun v => (embS D (X.pl v) t).im
-  map_zero' := by funext v; simp
-  map_add' s t := by funext v; simp
-
 theorem mem_cl_im (a : Fin D.R.rS) (x : InfinitePlace X.B.I.F → ℝ) :
     x ∈ cLat X u (Sum.inr (Sum.inr a)) ↔
       ∃ t : D.host.E, t ∈ aaD D a * aaD D a ∧ D.host.conj t = -t ∧ (fun v => (embS D (X.pl v) t).im) = x := by
-  have hc : cLat X u (Sum.inr (Sum.inr a)) = (imSub a).map (imHom X) :=
-    AddSubgroup.closure_eq ((imSub a).map (imHom X))
-  have key : x ∈ cLat X u (Sum.inr (Sum.inr a)) ↔ x ∈ (imSub a).map (imHom X) := by
+  have hc : cLat X u (Sum.inr (Sum.inr a)) = (imSub a).map (Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom X) :=
+    AddSubgroup.closure_eq ((imSub a).map (Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom X))
+  have key : x ∈ cLat X u (Sum.inr (Sum.inr a)) ↔ x ∈ (imSub a).map (Formalism.L2.SG.Pf.NcReal.JX.CovB.imVHom X) := by
     rw [hc]; exact Iff.rfl
   refine key.trans (AddSubgroup.mem_map.trans ?_)
   constructor
@@ -1060,29 +1042,7 @@ theorem im_inj {t t' : D.host.E} (ht : D.host.conj t = -t) (ht' : D.host.conj t'
   exact sub_eq_zero.mp ((map_eq_zero_iff _ (RingHom.injective _)).mp h0)
 
 theorem aaLb_inW {b : Fin D.R.rS} {y : (VS D).V} (hy : y ∈ aaLb X b) : InW X y := by
-  have hL : ∀ l ∈ X.Lb, InW X l := by
-    intro l hl
-    have hp := Alg.pW_inW (X := X) l
-    have he : pW X l = l := by
-      have h1 := Level.prV_Lb (X := X) l hl
-      rw [Level.prV_apply] at h1
-      simpa only [pW] using h1
-    rwa [he] at hp
-  simp only [aaLb, SetLike.mem_coe] at hy
-  induction hy using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨c, -, l, hl, rfl⟩ := hx
-    intro d
-    exact ⟨by rw [map_smul, ((hL l hl) d).1, smul_zero], by rw [map_smul, ((hL l hl) d).2, smul_zero]⟩
-  | zero => intro d; exact ⟨map_zero _, map_zero _⟩
-  | add x z _ _ hx hz =>
-    intro d
-    exact ⟨by rw [map_add (f := _), (hx d).1, (hz d).1, add_zero], by rw [map_add (f := _), (hx d).2, (hz d).2, add_zero]⟩
-  | smul o x _ hx =>
-    intro d
-    refine ⟨?_, ?_⟩
-    · rw [← algebraMap_smul D.host.E o x, map_smul, (hx d).1, smul_zero]
-    · rw [← algebraMap_smul D.host.E o x, map_smul, (hx d).2, smul_zero]
+  apply _root_.Formalism.L2.SG.Pf.NcReal.JX.NOf.Onto.aaLb_inW <;> assumption
 
 end Formalism.L2.SG.Pf.NcReal.JX.NOf
 end -- clump:auto
@@ -1111,10 +1071,7 @@ theorem star_eq_conj' (t : D.host.E) : star t = D.host.conj t := by
   rw [Formalism.BasicNotions.Examples₂.emb_star, Formalism.BasicNotions.Examples₂.emb_conj]
 
 theorem theta_spec : IsIntegral ℤ (theta D) ∧ theta D + D.host.conj (theta D) = 1 := by
-  have h := thetaEx_holds D
-  unfold theta
-  rw [dite_eq_left h]
-  exact h.choose_spec
+  apply _root_.Formalism.L2.SG.Pf.NcReal.JX.NOf.Onto.theta_spec <;> assumption
 
 theorem entry_rel {X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} {xs : Fin D.R.rS → (VS D).V}
     {M : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E} (hok : DataOK X X0 xs M) (b a : Fin D.R.rS) :
@@ -1215,10 +1172,7 @@ theorem theta_int_mem {I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.h
     exact (I : Submodule (𝓞 D.host.E) D.host.E).zero_mem
 
 theorem inW_sub {X : HidaSetting D} {x y : (VS D).V} (hx : InW X x) (hy : InW X y) : InW X (x - y) := by
-  intro c
-  obtain ⟨h1, h2⟩ := hx c
-  obtain ⟨h3, h4⟩ := hy c
-  exact ⟨by rw [map_sub, h1, h3, sub_zero], by rw [map_sub, h2, h4, sub_zero]⟩
+  apply _root_.Formalism.L2.SG.Pf.NcReal.JX.NOf.Ex.inW_sub <;> assumption
 
 theorem xblk {X : HidaSetting D} (u : D.what₂.Word) (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E)
     (xs : Fin D.R.rS → (VS D).V) (M : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E)

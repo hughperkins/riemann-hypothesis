@@ -1,5 +1,6 @@
 module
 
+import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.Curve
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.AlgInfCharIff
 public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.IsRegConj
@@ -44,16 +45,7 @@ theorem isReg_fac (P : Weyl.Pre a) (N : ℕ) (τ : E →+* ℂ) : IsReg (fac P N
   simp [fac_apply, hp]
 
 theorem diff_coef (P : Weyl.Pre a) (i j : Fin P.d) : Differentiable ℂ (P.coef i j) := by
-  obtain ⟨p, hp⟩ := P.poly i j
-  have e : P.coef i j = fun x => MvPolynomial.eval (fun ab : Fin a × Fin a => x ab.1 ab.2) p := funext fun x => hp _
-  rw [e]
-  clear e hp
-  induction p using MvPolynomial.induction_on with
-  | C c => simp
-  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
-  | mul_X p n hp =>
-    simp only [map_mul, MvPolynomial.eval_X]
-    exact hp.mul (by fun_prop : Differentiable ℂ fun x : Fin a → Fin a → ℂ => x n.1 n.2)
+  apply _root_.UpperTheory.V.Weyl.coefDiff <;> assumption
 
 theorem dOf_fac (P : Weyl.Pre a) (N : ℕ) (τ : E →+* ℂ) (X : Lie E a) :
     dOf (fac P N τ) X = P.D ((Matrix.of X).map (coord τ)) - ((N : ℂ) * coord τ (Matrix.of X).trace) • 1 := by

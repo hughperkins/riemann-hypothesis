@@ -264,7 +264,6 @@ theorem pie_B_sw {n : ℕ} {lam mu : Fin n → ℕ} {j : Fin n} (hj : j ∈ pie_
     have hkp : k ≠ pie_pr j := by
       intro e
       have h2 : k.val = j.val - 1 := congrArg Fin.val e
-      have h3 : j.val < k.val := hlt
       omega
     have hk' := pie_mem_B.1 hk
     rw [pie_sw_other mu hkj hkp] at hk'
@@ -290,7 +289,6 @@ theorem pie_bad_zero (n b : ℕ) (lam : Fin n → ℕ) (hlam : Antitone lam) :
       rw [← hjdef]
       exact Finset.le_max' _ k hk
     have hj := pie_mem_B.1 hjB
-    have hj2 := hj.2
     have hprj : pie_pr j ≤ j := by
       show (pie_pr j).val ≤ j.val
       exact Nat.sub_le _ _
