@@ -306,9 +306,14 @@ lemma dual_mem_vecsOfSize {K : Set T.G}
       S.vecsOfSize (8 * 𝔰.ϱ + 1) := by
   intro i
   obtain ⟨hs, hsK⟩ := hs_near
-  simpa only [mulVec_single_one, Matrix.col_apply, Units.inv_mul_cancel_left, Nat.add_comm 1] using
-    S.mul_mem_ofSize (hp (a + 1) ha)
-      (head_prod_mul_dual_mem_ofSize hK h_near hs hsK ha i)
+  set M : Matrix 𝔰.BesselIndex 𝔰.BesselIndex A := ↑s
+  set P : Aˣ := ∏ b ∈ Finset.range (a + 1), p b
+  have hP_inv : P⁻¹.val ∈ S.ofSize 1 := hp (a + 1) ha
+  have h_cramer : P.val * M i (eStar a) ∈ S.ofSize (8 * 𝔰.ϱ) :=
+    head_prod_mul_dual_mem_ofSize hK h_near hs hsK ha i
+  have h_entry : (M *ᵥ Pi.single (eStar a) 1) i = P⁻¹.val * (P.val * M i (eStar a)) := by simp
+  rw [h_entry, add_comm (8 * 𝔰.ϱ)]
+  exact S.mul_mem_ofSize hP_inv h_cramer
 
 /-- The entries of a head and of the dual vectors have bounded size. Let `K` be a set of isometries
 whose matrices have size 1, and let a < j ≤ ϱ. With R^(j) = `partialUnitriangularGroup j` and the
@@ -399,8 +404,11 @@ lemma hasMatrixSize_of_isHead {K : Set T.G}
     S.HasMatrixSize (99 * 𝔰.n ^ 2)
       (((weylElem j p)⁻¹ * g : T.G) : Matrix 𝔰.BesselIndex 𝔰.BesselIndex A) := by
   -- Write g = s⁻¹ (s g). The columns s e*_a bound s⁻¹, and the entries of p bound w_p⁻¹.
-  choose h_p h_p_inv h_col using fun (a : Fin 𝔰.ϱ) (ha : a < j) ↦
+  have h_entries (a : Fin 𝔰.ϱ) (ha : a < j) :
+      (p a : A) ∈ S.ofSize (10 * 𝔰.n) ∧ (((p a)⁻¹ : Aˣ) : A) ∈ S.ofSize (10 * 𝔰.n) ∧
+        ∀ i, (s : Matrix 𝔰.BesselIndex 𝔰.BesselIndex A) i (eStar a) ∈ S.ofSize (10 * 𝔰.n) :=
     head_entries_mem_ofSize hK hj h_near hs_near hp ha
+  choose h_p h_p_inv h_col using h_entries
   obtain ⟨_, hsK⟩ := hs_near
   have h_g : S.HasMatrixSize (60 * 𝔰.n ^ 2) (g : Matrix 𝔰.BesselIndex 𝔰.BesselIndex A) := by
     have h_prod : S.HasMatrixSize ((4 * (10 * 𝔰.n + 1) + 12) * j + 5 + 1 + 1)
